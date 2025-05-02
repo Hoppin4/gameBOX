@@ -1,0 +1,93 @@
+.auth-page {
+    background-color: rgb(59, 59, 59); 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh; 
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+  }
+  
+  .auth-form {
+    position: absolute;
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    color: white; 
+    text-align: center; 
+    justify-content: center; 
+    align-items: center;
+    display: flex; 
+    
+    background-color: #181A21; 
+    padding: 30px 50px; 
+    border-radius: 10px;
+  }
+  
+  .form-group{
+    display: flex; 
+    flex-direction: column; 
+     
+    align-items: flex-start;
+    
+  }
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold; 
+  }
+  
+  .form-group input {
+    padding: 10px 20px; 
+    background-color: #32353C; 
+    border: none; 
+    color: white; 
+    font-size: 15px; 
+    cursor: pointer;  
+    border-radius: 3px; 
+    font-weight: bold;
+    margin-bottom: 20px; 
+    width: 300px; 
+    height: 15px;
+  }
+  
+  .auth-button {
+    padding: 10px 20px; 
+    background-color: #f8b400; 
+    border: none; 
+    color: white; 
+    font-size: 16px; 
+    cursor: pointer;  
+    border-radius: 15px; 
+    font-weight: bold; 
+    width: 200px;
+  }
+  
+  .auth-button:hover {
+    background-color: #624902; 
+  }
+  
+  .auth-message {
+    margin-top: 15px;
+    text-align: center;
+    color: #333;
+  } 
+  .sonicImg{ 
+    width: 300px;
+    height: 100%; 
+    position: relative; 
+    object-fit: cover;
+    filter: brightness(80%); 
+    margin-left: 20px;
+  } 
+  .backGenshin{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0; 
+    filter: brightness(50%); 
+    z-index: -1; 
+  }

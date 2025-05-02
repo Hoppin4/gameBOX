@@ -1,0 +1,228 @@
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css"; 
+
+ body{
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}  
+
+.gameDetailPage {
+    background-color: black;
+    min-height: 100vh;
+    width: 100vw;
+    position: relative;
+    overflow-x: hidden;  
+    display: flex; 
+    z-index: 5;  
+   
+  }  
+  .backgroundImg{ 
+    position: absolute; 
+    width: 100%; 
+    height: 100vh; 
+    object-fit: cover; 
+    z-index: 1; 
+    opacity:.5; 
+    filter: brightness(40%);
+  } 
+  .gameNameContainer{ 
+    display: flex;  
+    flex-direction: column;
+
+    width: 60%;   
+    padding: 0px 20px 20px 20px; 
+    z-index: 10;
+
+  } 
+  .gameNameContainer p{
+    color: white; 
+    padding: 2px;
+  } 
+  .custom-stars {
+    display: inline-block;
+  } 
+  .modal-content {
+    width: 35%; 
+    padding: 20px;
+    background-color: #2C3641;
+    border-radius: 10px; 
+    top: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    overflow-y: auto; 
+    z-index: 999; 
+  }
+  
+
+  .modal-overlay { 
+    background-color: rgba(0, 0, 0, 0.3); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh; 
+    color: white; 
+    overflow-y: auto; 
+    z-index: 999
+  } 
+  .gameratingContainer{  
+   width: 80%;
+    display: flex;
+    flex-direction: column; 
+  
+
+  } 
+  .gamePlayedContainer button{  
+    display: flex ;
+    justify-content: center; 
+    align-items: center; 
+    height: 80px; 
+    width: 80px;   
+    background-color:transparent;
+    border: none;
+ 
+   
+  } 
+  .gamePlayedContainer div{ 
+    display: flex; 
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;
+  } 
+  .gamePlayedContainer p{ 
+    color:#CED2D7 ; 
+    margin-top: 0; 
+    margin-bottom: 10px;
+  } 
+  .carousel-container1 {
+    width: 66%;
+    margin: 0 auto; 
+    margin-top: 50px 
+    
+  }
+  
+  .slick-slide img {
+    width: 100%;
+    height: auto; 
+    border-radius: 10px;
+  } 
+  .seriesContainer{ 
+    display: flex;
+    overflow-x: auto;    
+    
+    gap: 10px;          
+    justify-content: start;  
+    scroll-snap-type: x mandatory; 
+    width: calc(5 * 220px);  
+  }  
+ 
+  .seriesContainer img{  
+    margin-right: 10px; 
+    margin-bottom: 10px;
+    width: 200px; 
+    height: 200px; 
+    object-fit: cover; 
+    object-position: center; 
+    border-radius: 10px;
+  } 
+  .seriesContainer::-webkit-scrollbar {  
+    
+    width: 10px; 
+    height: 8px; 
+  }
+  
+  .seriesContainer::-webkit-scrollbar-track {
+    background: #2C3641; 
+    border-radius: 10px; 
+  }
+  
+  .seriesContainer::-webkit-scrollbar-thumb {
+    background-color: #FF6347;
+    border-radius: 10px; 
+    border: 3px solid #2C3641; 
+  }
+  
+  .seriesContainer::-webkit-scrollbar-thumb:hover {
+    background-color: #FF4500;
+  }
+
+
+.seriesContainer button:hover img {
+    transform: scale(1.1);
+} 
+.listContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  grid-template-rows: repeat(2, 1fr);   
+  height: 100px;
+  width: 100px; 
+  gap:0 ;
+  border-radius: 8px; 
+  padding: 10px
+}
+
+.imageCover {
+  width: 100%;
+  height: 100%; 
+  overflow: hidden; 
+}
+
+.imageCover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lists{ 
+  display: flex; 
+  align-items: center;
+
+ 
+} 
+.lists p{ 
+  color: white; 
+  margin: 0;
+} 
+.lists:hover{ 
+  cursor: pointer; 
+  background-color: #FF6347;
+} 
+.create{ 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  border:0px; 
+  padding: 8px; 
+  border-radius: 5px;
+  background-color:#647689 ; 
+  color: white; 
+  font-weight: bold;
+} 
+.detailHeaders{ 
+  margin-bottom: 5px; 
+  color: grey !important; 
+  font-size: 13px; 
+} 
+.detailContainer{ 
+  display: flex; 
+  flex-direction: column; 
+  width: 50%; 
+
+} 
+.updetailContainer{ 
+  display: flex; 
+  justify-content: space-around;
+  width: 80%; 
+  
+}  
+.clock{ 
+  color: yellow;
+}
+.clock:hover{ 
+  color:rgb(150, 150, 62);
+}

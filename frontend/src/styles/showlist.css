@@ -1,0 +1,82 @@
+ .showlist-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+      margin-top: 50px;
+      height: 100vh; 
+      background-color: #2C3641; 
+      padding: 20px; 
+      box-sizing: border-box; 
+      width: 100%; 
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #2C3641;
+  }
+ 
+ .game-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 16px; 
+    padding: 16px; 
+    width: 50%;
+  }
+  .game-item {
+    width: 100%;
+    aspect-ratio: 2 / 1.5; /* Kutu kare olsun: en = boy */
+    overflow: hidden; /* Taşan kısmı gizle */
+    border-radius: 8px;
+  }
+  .game-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    border-radius: 8px;
+  } 
+  .showlist{  
+
+    display: flex;  
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;
+  } 
+  .avatar{ 
+    width: 30px; 
+    height: 30px; 
+    border-radius: 50%;  
+    object-fit: cover;
+  } 
+  .user-info{ 
+    display: flex; 
+    align-items: center; 
+    width: 50%; 
+    border-bottom: 1px solid #445566;
+  } 
+  .user-info p{ 
+    color: grey; 
+    margin-left: 10px; 
+    font-size: 16px; 
+
+  } 
+  .list-info{ 
+    display: flex; 
+    flex-direction: column;  
+    width: 50%; 
+    height: 100%; 
+  } 
+  .list-info h1{ 
+    color: white; 
+    font-size: 25px; 
+    margin-bottom: 1px; 
+  } 
+  .list-info h2{ 
+    color: grey; 
+    font-size: 15px; 
+    margin-bottom: 10px; 
+  } 
+  .game-item:hover{ 
+    cursor: pointer; 
+    transform: scale(1.05); 
+    transition: transform 0.2s; 
+  }

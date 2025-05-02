@@ -1,0 +1,36 @@
+.publisherPage {
+    background-color: #2C3641;
+    min-height: 100vh;
+    width: 100vw;
+    position: relative;
+    overflow-x: hidden;  
+    
+  }   
+  .publisherPageContent {
+    display: flex;
+    flex-direction: column;
+    padding: 20px; 
+    min-height: 100vh;
+    width: 100vw;  
+    margin-top: 20px;
+
+  } 
+  .publisherPageContentItem{ 
+    display: flex ;
+    align-items: center;  
+    
+    width: 100%; 
+    height: 50%;   
+    padding: 20px 0px;    
+  }  
+  .publisherPageContentItem:hover { 
+    background-color: #3A4752; 
+  }
+  .publisherPageContentItem img{  
+
+    width: 100%;
+    height: 100%; 
+    object-fit:fill; 
+    object-position: center; 
+    border-radius: 10px;
+  }

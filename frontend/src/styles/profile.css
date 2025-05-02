@@ -1,0 +1,329 @@
+.profileEditPage{ 
+    background-color: #1D2229;
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}    
+ 
+  html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #2C3641;
+    }
+.changeButtons{ 
+    background-color:#1D2229; 
+    color: #4caf50; 
+    cursor: pointer; 
+    font-size: 16px;
+    border: 0px; 
+
+} 
+.changeButtons:focus{ 
+    color: white; 
+    border-bottom: 1px solid white;
+} 
+.profileEditContainer{ 
+    margin-top: 100px;
+}
+.profileEditPage p{ 
+    color: white;
+    font-size: 13px;
+    margin: 10px 0; 
+    font-family:  GraphikWeb, -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", Meiryo, sans-serif, ColorEmoji;
+} 
+.nameInput{ 
+    display: flex; 
+   
+} 
+.nameInput1{ 
+    width: 175px !important; 
+    
+   
+}
+.profileEditPage input{ 
+    width: 370px;
+    height: 25px;
+    margin: 0 0;
+    padding: 5px;
+    border-radius: 5px;
+    border: none;
+    background-color: #2C3440;
+    color: #7F91AA;
+    font-size: 14px; 
+    font-family:  GraphikWeb, -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", Meiryo, sans-serif, ColorEmoji;
+} 
+.profileEditPage input:focus{  
+    color: black; 
+    background-color: white;
+
+} 
+.select{ 
+    padding: 4px;      
+    border-color: #2C3440; 
+    border-radius: 8px;  
+    background-color:#2C3440; 
+    font-size: 13px;     
+    color: #7F91AA;         
+    cursor: pointer;     
+    
+}  
+.tooltipStyle{  
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100px; 
+    height: 50px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    background-color: rgba(0, 0, 0, 0.5);
+    
+} 
+.infoButton{ 
+    background-color:#333c47; 
+    border-radius: 15px; 
+    border-color:#2C3440; 
+    width: 20px; 
+    height: 20px; 
+    color: white; 
+    text-align: center;  
+    justify-content: center; 
+    align-items: center; 
+    display: flex;
+    
+}
+.saveButton{  
+    width: 100px; 
+    height: 30px; 
+    background-color: green; 
+    color: white; 
+    border-radius: 5px; 
+    border: none; 
+    font-size: 14px; 
+    font-family:  GraphikWeb, -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", Meiryo, sans-serif, ColorEmoji;
+    margin-top: 14px;
+} 
+.profileEditPage h1{ 
+    color: white; 
+    font-size: 24px; 
+    margin: 0 0 10px 0; 
+    font-family:  GraphikWeb, -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", Meiryo, sans-serif, ColorEmoji;
+} 
+
+.imageUploader {
+    padding: 20px;
+  }
+  
+  .imageUploader input {
+    margin-bottom: 10px;
+  }
+  
+  .imageUploader button {
+    width: 20px !important;
+    border-radius: 20px !important; 
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .imageUploader button:disabled {
+    background-color: #ccc;
+  }
+  
+  .imageUploader img  {
+    width: 200px !important;
+    height: 200px;
+    border-radius: 50%; 
+    object-fit: cover; 
+    margin-top: 20px;
+  }
+  
+ .profilePage{ 
+    background-color: #1D2229;
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh; 
+    display: flex; 
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
+    overflow-y: auto;
+      
+} 
+.profilePage img{ 
+    width: 220px; 
+    height: 220px; 
+     
+    overflow: hidden; 
+    object-fit: cover;  
+    
+} 
+.imageContainer{
+    display: flex; 
+    justify-content: flex-start;
+    align-items: center;
+} 
+.imageContainer button{ 
+    background-color: #7F91AA; 
+    border-radius: 6px; 
+    border: 0px; 
+    padding: 5px 10px; 
+    font-size: 14px; 
+    color: #F8F9F9; 
+     
+}   
+.imageContainer button a{ 
+    text-decoration: none; 
+    color: #D7DBE0;  
+    font-family: GraphikWeb, -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", Meiryo, sans-serif, ColorEmoji;
+    font-weight: 700;
+}  
+.userName{ 
+    margin-bottom: 0px;
+    color: #F8F9F9; 
+    font-size: 22px;
+} 
+.name p{ 
+    font-size: 15px;
+    color: #7F91AA;
+}  
+.userNameContanier{ 
+    margin: 30px;  
+    width: 300px; 
+    height: 200px; 
+    margin-right: 100px;
+    
+} 
+.bio{ 
+ white-space: normal;
+  word-wrap: break-word; 
+  overflow-wrap: break-word; 
+  height: 100px;
+}
+.logOutButton{ 
+    background-color: red; 
+    border-radius: 6px; 
+    border: 0px; 
+    padding: 5px 10px; 
+    font-size: 15px; 
+    color: #F8F9F9;
+} 
+.profilePage::-webkit-scrollbar {
+    width: 10px; 
+    height: 8px; 
+  }
+  
+  .profilePage::-webkit-scrollbar-track {
+    background: #2C3641; 
+    border-radius: 10px; 
+  }
+  
+  .profilePage::-webkit-scrollbar-thumb {
+    background-color: #FF6347;
+    border-radius: 10px; 
+    border: 3px solid #2C3641; 
+  }
+  
+  .profilePage::-webkit-scrollbar-thumb:hover {
+    background-color: #FF4500;
+  } 
+  .listItemsContainer{ 
+    display: flex; 
+    flex-direction: column;
+    align-items: center; 
+    margin-top: 20px;  
+    margin-bottom: 20px; 
+    width: 100%; 
+    height: auto; 
+    background-color: #2C3641; 
+
+    padding: 10px; 
+    color: white;
+  } 
+  .listItem{ 
+    display: flex; 
+    align-items: center; 
+    width: 100%; 
+    margin-top: 20px;  
+    margin-bottom: 20px; 
+   height: 130px;
+    color: white; 
+    
+  } 
+  
+  .listImageContainer{ 
+ 
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    grid-template-rows: repeat(2, 1fr);   
+    height: 100%;
+    width: 40%; 
+    gap:0 ;
+    
+
+  }   
+  .imageCover{ 
+    width: 100%;
+  height: 100%; 
+  overflow: hidden;  
+    
+
+  }
+  .listImageContainer img{ 
+    width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block; 
+  
+  }
+ .listImageContainer:hover{ 
+    border: 1px solid #FF6347; 
+ } 
+ .listNameContainer{ 
+    display: flex; 
+    flex-direction:column;
+    justify-content:flex-start; 
+    width: 50%; 
+    height: 100%; 
+    padding-left: 20px;  
+ } 
+ .listNameContainer p{ 
+    font-size: 15px; 
+    color: #7F91AA; 
+    margin-bottom: 5px; 
+    padding: 0px;  
+ } 
+ .pencil :hover{ 
+    color: #FF6347;
+ } 
+ .list-header{
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    width: 100%; 
+    height: 50px; 
+    margin-top: 20px;  
+    margin-bottom: 20px; 
+    color: white;
+ } 
+ .create-list{ 
+    text-decoration: none; 
+    color: white; 
+    font-size: 15px;  
+    background-color: #7F91AA;
+    padding: 8px;
+    border-radius: 10px;
+    font-weight: 500;
+ }  
+ .create-list:hover{ 
+    background-color: #FF6347; 
+ }
