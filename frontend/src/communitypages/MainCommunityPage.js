@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useContext } from "react"; 
+import React, { useEffect, useState,useContext,useRef } from "react"; 
 import { useParams,Link } from "react-router-dom";
 import CommunityLeftLayout from "./CommunityLeftLayout"; 
 import { AuthContext } from "../provider/AuthProvider";   
@@ -15,6 +15,11 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import Swal from 'sweetalert2'; 
 import { GiCakeSlice } from "react-icons/gi";
 import { FaPencilAlt } from "react-icons/fa";
+import { GiJetPack } from "react-icons/gi"; 
+import { FaHotjar } from "react-icons/fa";  
+import { FaBoxArchive } from "react-icons/fa6"; 
+import { IoMdArrowDropdown } from "react-icons/io";
+
 
 function MainCommunityPage(){   
     const { id } = useParams(); 
@@ -36,14 +41,19 @@ function MainCommunityPage(){
    const [hasMore,setHasMore] = useState(true); 
    const [moreLoading,setMoreLoading] = useState(false);
    const [userCom,setUserCom] = useState(); 
-   const [votedPosts, setVotedPosts] = useState({});
+   const [votedPosts, setVotedPosts] = useState({}); 
+   const [selectedSort, setSelectedSort] = useState("New");  
+   const [direction,setDirection] = useState("desc"); 
+    const [order,setOrder] = useState("created_at");
+    const previousOrder = useRef(selectedSort);
    const { myCommunityList,removeFromList,addToList,session } = useContext(AuthContext);  
    const navigate = useNavigate(); 
 
    dayjs.extend(relativeTime); 
     const timeago = (time) =>dayjs(time).fromNow() 
     
-   const fetchData =async()=>{  
+   const fetchData =async()=>{   
+    console.log(page)
     setLoading(true)
     try{   
         console.log("mylist",myCommunityList)
@@ -110,7 +120,11 @@ function MainCommunityPage(){
             user_id:session.userId,  
            
         })   
-        setPostId(response.data.data[0].id)
+        setPostId(response.data.data[0].id)  
+        setTimeout(()=>{ 
+                    setPosts((prev) => [{...response.data.data[0],user:{id:session.userId,userName: session.userName,avatar_url: session.user_avatar,}}, ...prev]);
+
+        },500)
     }catch(error){ 
         console.log(error)
     }finally{ 
@@ -118,14 +132,17 @@ function MainCommunityPage(){
         closeList();
     }
        
-   }
-    const getPosts = async()=>{   
-        
+   } 
+   console.log(posts)
+    const getPosts = async(page)=>{   
+        console.log("aaaaaa",page)
         try{ 
             const response = await axios.get("http://localhost:5000/com/getPosts" ,{ 
                 params:{
                     comId:comId,
-                    page:page
+                    page:page ,
+                    order:order, 
+                    direction:direction,
                 }
             })    
             console.log("posts",response) 
@@ -141,7 +158,7 @@ function MainCommunityPage(){
                 );
                 return [...prev, ...newPosts];
             });  
-            console.log(response.data.data.length)  
+           
            
     }
         }catch(error){ 
@@ -151,14 +168,37 @@ function MainCommunityPage(){
          setMoreLoading(false);
         }
        
-   } 
+   }  
+   const skipNextPageEffect = useRef(false);
    useEffect(()=>{  
-    
-    if(comId){  
-        console.log("içeri giriyo",comId)
-        getPosts();
+    if(previousOrder.current !== selectedSort) {  
+        previousOrder.current = selectedSort;
+        return;
     }
-   },[comId,page]) 
+    if(page>1){  
+        console.log("içeri giriyo",comId)
+        getPosts(page);
+    }
+   },[page])    
+
+   useEffect(()=>{  
+    if(comId){    
+         setPostLoading(true); 
+         setPosts([]);  
+        setPage(1); 
+        setHasMore(true);
+        
+        
+        const timer = setTimeout(() => {  
+            if(comId){ 
+                getPosts(1);
+            }
+        },0);  
+         
+        return () => clearTimeout(timer);
+        
+    }
+   },[order,comId])
     
    const upvote = async(postId)=>{  
     if (votedPosts[postId]) return;   
@@ -187,7 +227,8 @@ function MainCommunityPage(){
     }catch(error){
         console.log(error);
     }
-   } 
+   }  
+  
 
    console.log(userCom)
     return( 
@@ -256,7 +297,30 @@ function MainCommunityPage(){
                                 </div>
                             </div>  
                      </Modal> 
-                   </div>   
+                   </div>  
+                   <div style={{display:"flex",flexDirection:"row",width:"100%",marginTop:"20px"}}>  
+                          <div style={{}} class="dropdown2">   
+                            <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:"5px"}}>
+                                            <p style={{margin:0,color:"white",color:"grey"}}>Sort By:</p>
+                                            <p style={{margin:0,color:"white",color:"grey"}}>{selectedSort}</p>  
+                                            <IoMdArrowDropdown color="grey" style={{marginTop:"5px"}}/>   
+                            </div>
+                                            <div class="dropdown-content2" >  
+                                                    <div onClick={()=>{setSelectedSort("Top");setOrder("upvotes");setDirection("desc")}} className="dropdown-item"> 
+                                                        <GiJetPack color="white" size={20} /> 
+                                                        <p>Top</p> 
+                                                    </div> 
+                                                    <div  onClick={()=>{setSelectedSort("New");setOrder("created_at");setDirection("desc")}} className="dropdown-item">
+                                                        <FaHotjar color="white" size={20} />
+                                                        <p>New</p>  
+                                                    </div>   
+                                                    <div onClick={()=>{setSelectedSort("Oldest");setOrder("created_at");setDirection("asc")}} className="dropdown-item"> 
+                                                        <FaBoxArchive color="white" size={20}/>
+                                                        <p>Oldest</p> 
+                                                    </div>  
+                                            </div> 
+                            </div> 
+                    </div>  
                    {postLoading ? ( 
                     <div style={{display:"flex",justifyContent:"center",alignItems:"center",  width:"100%",height:"100%"}}> 
                         <div className="spinner"></div>
@@ -280,7 +344,7 @@ function MainCommunityPage(){
                                 <p style={{fontWeight:"100",color:"grey"}}>{timeago(data.created_at)}</p>  
                                 {session && myCommunityList && ( 
                                      (userCom?.Authorization === "Admin" || session.userId === data.user_id) && ( 
-                                        <div style={{position:"absolute",right:0,cursor:"pointer"}} class="dropdown"> 
+                                        <div onClick={(e)=>{e.stopPropagation();e.preventDefault();}} style={{position:"absolute",right:0,cursor:"pointer"}} class="dropdown"> 
                                             <p style={{margin:0}}><BsThreeDotsVertical size={18} /></p>  
                                             <div class="dropdown-content" > 
                                                     <p onClick={()=>{deletePost(data.id)}}>Delete</p> 
@@ -305,13 +369,13 @@ function MainCommunityPage(){
                             )}  
                             <div style={{display:"flex",gap:"20px"}}> 
                                 <div className="post-icon-con"> 
-                                    <BiUpvote className={`upvote ${votedPosts[data.id] === "up" ? "disabled" : ""}`} onClick={()=>upvote(data.id)}  size={18} />  
+                                    <BiUpvote className={`upvote ${votedPosts[data.id] === "up" ? "disabled" : ""}`} onClick={(e)=>{e.stopPropagation();e.preventDefault();upvote(data.id)}}  size={18} />  
                                     <p>{data.upvotes}</p>
-                                    <BiDownvote  className={`downvote ${votedPosts[data.id] === "down" ? "disabled" : ""}`} onClick={()=>downvote(data.id)}  size={18} />
+                                    <BiDownvote  className={`downvote ${votedPosts[data.id] === "down" ? "disabled" : ""}`} onClick={(e)=>{e.stopPropagation();e.preventDefault();downvote(data.id)}}  size={18} />
                                 </div>  
                                 <div className="post-icon-con">  
                                     <CiChat1 color="grey" size={20}/> 
-                                    <p style={{marginLeft:"3px"}}>6</p>
+                                    <p style={{marginLeft:"3px"}}>{data.comment_count}</p>
                                 </div>
                             </div>
                             

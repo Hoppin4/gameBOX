@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState,useContext } from "react"; 
+import React, { useEffect, useState,useContext,useRef } from "react"; 
 import { useParams } from "react-router-dom";
 import CommunityLeftLayout from "./CommunityLeftLayout"; 
 import { AuthContext } from "../provider/AuthProvider";  
@@ -11,19 +11,22 @@ import { BiUpvote,BiDownvote} from "react-icons/bi";
 import { CiChat1 } from "react-icons/ci";   
 import { useNavigate } from "react-router-dom";
 
+
 function PostCommentPage(){   
     const navigate = useNavigate();
     const { id } = useParams();  
     const [loading,setLoading] = useState(true); 
     dayjs.extend(relativeTime);  
-    const [votedPosts, setVotedPosts] = useState({}); 
+    const [votedPosts, setVotedPosts] = useState({});  
+    const [votedComments, setVotedComments] = useState({});  
     const [comments,setComments] = useState([]); 
     const [commentLoading,setCommentLoading] = useState(true);
     const timeago = (time) =>dayjs(time).fromNow() 
     const [data,setData] = useState();  
     const [focused,setFocused] = useState(false); 
     const [comment,setComment] = useState(); 
-    const [commentPage,setCommentPage]= useState(1);
+    const [commentPage,setCommentPage]= useState(1); 
+   
     const { myCommunityList,removeFromList,addToList,session } = useContext(AuthContext);  
     console.log("session",session) 
     
@@ -147,7 +150,39 @@ function PostCommentPage(){
     }catch(error){
         console.log(error);
     }
-   }  
+   }   
+    const commentupvote = async(commentId)=>{ 
+        if(votedComments[commentId]) return; 
+        setVotedComments((prev) => ({ ...prev, [commentId]: "up" })); 
+       setComments(comments.map((comment) => 
+            commentId === comment.id
+                ? { ...comment, upvotes: comment.upvotes + 1 }
+                : comment
+            ));
+        try{ 
+                const response = await axios.post("http://localhost:5000/com/commentUpVote" ,{
+                commentId:commentId
+            })
+        }catch(error){ 
+            console.log(error); 
+        } 
+    } 
+     const commentdownvote = async(commentId)=>{ 
+        if(votedComments[commentId]) return; 
+        setVotedComments((prev) => ({ ...prev, [commentId]: "down" })); 
+         setComments(comments.map((comment) => 
+            commentId === comment.id
+                ? { ...comment, upvotes: comment.upvotes - 1 }
+                : comment
+            ));
+        try{ 
+                const response = await axios.post("http://localhost:5000/com/commentDownVote" ,{
+                commentId:commentId
+            })
+        }catch(error){ 
+            console.log(error); 
+        } 
+    }
    console.log("aaaa",comments)
     return( 
         <div className="main">  
@@ -201,7 +236,7 @@ function PostCommentPage(){
                             </div>  
                             <div className="post-icon-con">  
                                 <CiChat1 color="grey" size={20}/> 
-                                <p style={{marginLeft:"3px"}}>6</p>
+                                <p style={{marginLeft:"3px"}}>{data.comment_count}</p>
                             </div>
                     </div>
                  </div> 
@@ -221,9 +256,11 @@ function PostCommentPage(){
                 <div></div>
                 ) : ( 
                      
-                 <div style={{display:"flex",alignItems:"center",width:"60%",padding:"10px",flexDirection:"column",marginLeft:"20px"}}>
-                    {comments && comments.map((comment)=>(  
-                        <div className="comment-con">  
+                 <div style={{display:"flex",alignItems:"center",width:"60%",padding:"10px",flexDirection:"column",marginLeft:"20px"}}>  
+                    
+                    {comments && comments.map((comment,index)=>(   
+                        <div style={{display:"flex",alignItems:"center",width:"100%",padding:"10px",flexDirection:"column"}}>
+                        <div key={index} className="comment-con">  
                          {comment.user.avatar_url ? (  
                                     <div style={{display:"flex",justifyContent:"center",marginTop:"5px"}}> 
                                         <img className="post-con-avatar" src={comment.user.avatar_url}></img>
@@ -255,12 +292,27 @@ function PostCommentPage(){
                                  
                             <div className="postdescription-con" style={{marginLeft:"9px"}}>     
                                 <p style={{color:"grey",margin:0}}>{comment.content}</p> 
-                            </div>  
+                            </div>   
+                              <div style={{display:"flex",gap:"20px",marginTop:"10px"}}> 
+                                    <div className="post-icon-con"> 
+                                            <BiUpvote  className={`upvote ${votedComments[comment.id] === "up" ? "disabled" : ""}`}  onClick={()=>commentupvote(comment.id)}   size={18} />  
+                                            <p>{comment.upvotes}</p>
+                                        <BiDownvote className={`downvote ${votedComments[comment.id] === "down" ? "disabled" : ""}`}  onClick={()=>commentdownvote(comment.id)}   size={18} />
+                                    </div>  
+                                    <div className="post-icon-con">  
+                                        <CiChat1 color="grey" size={20}/> 
+                                        <p style={{marginLeft:"3px"}}>Reply</p>
+                                    </div>
+                            </div>
                         </div>  
-                        </div>
-
+                        </div>  
+                        
+                    </div>
+                        
                     ))} 
-                </div>
+                    </div> 
+                    
+
                 )}
             
         </div>

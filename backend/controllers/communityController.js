@@ -232,7 +232,9 @@ const getCommunityInfo = async(req,res)=>{
 } 
 const getPostbyComId = async(req,res)=>{ 
   const comId = req.query.comId; 
-  const page = req.query.page; 
+  const page = req.query.page;  
+  const order = req.query.order; 
+  const direction = req.query.direction === 'asc';
   const limit = 20;  
 
   const from = (page - 1) * limit; 
@@ -243,7 +245,8 @@ const getPostbyComId = async(req,res)=>{
       .select(`
         *,
         user:Users (id, userName, avatar_url)`)
-      .eq('community_id', comId) 
+      .eq('community_id', comId)  
+      .order(order, { ascending:direction })
       .range(from, to);
         res.json({data})
     }catch(error){ 
@@ -344,7 +347,25 @@ const getComments = async(req,res)=>{
     }catch(error){ 
       res.json(error)
     }
+}  
+const commentUpVote = async(req,res)=>{  
+  const { commentId } = req.body;
+  try { 
+    const {data,error}=await supabase 
+    .rpc('increment_upvote_comment_count', { comment_id: commentId })
+  }catch(error){ 
+    res.json(error)
+  }
+} 
+const commentDownVote = async(req,res)=>{  
+  const { commentId } = req.body; 
+  try { 
+    const {data,error}=await supabase 
+    .rpc('decrease_upvote_comment_count', { comment_id: commentId })
+  }catch(error){ 
+    res.json(error)
+  }
 }
 module.exports = {iconUploader,createCommunity,upload,bannerUploader,getCommunities,getMyCommunities,joinCommunity 
   ,deleteMemberCommunity,checkComName,getCommunityInfo,createPost,postImageUploader,getPostbyComId,deletePost, 
-  upVote,downVote,PostInfo,createComment,deleteComment,getComments}
+  upVote,downVote,PostInfo,createComment,deleteComment,getComments,commentUpVote,commentDownVote}
