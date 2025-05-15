@@ -1,13 +1,16 @@
+ 
 import React from 'react'; 
-import {  useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import axios from 'axios'; 
-import { useEffect,useState } from 'react'; 
+import { useEffect,useState,useRef } from 'react'; 
 import "../styles/publisherPage.css"; 
 import { GiPc } from "react-icons/gi";
 import { SiMacos,SiIos } from "react-icons/si";
 import { FaPlaystation } from "react-icons/fa";  
 import { FaXbox } from "react-icons/fa"; 
-
+import { FaSteam } from "react-icons/fa";
+import { SiEpicgames } from "react-icons/si"; 
+import { FaAppStoreIos } from "react-icons/fa";  
 import { Link } from 'react-router-dom';  
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';  
@@ -18,33 +21,51 @@ import LeftLayout from './LeftLayout';
 
 
 
- function PublisherPage() {  
-    const { slug } = useParams(); 
+ function TagsPage() {  
+    const { tag } = useParams(); 
     const [moreLoading,setMoreLoading] = useState(false)
     const [data, setData] = useState([])    
     const [page,setPage]= useState(1);
     const [loading, setLoading] = useState(true); 
-    const [hasMore, setHasMore] = useState(true);
+    const [hasMore, setHasMore] = useState(true);  
+    const [platform,setPlatform] = useState();
+    const [selected,setSelected] = useState("Platforms");
     axios.defaults.withCredentials = true;
-
+   
+    const scrollPosition = useRef(0);
     
      
     const fetchData = async () => {    
-        setMoreLoading(true)
+        setMoreLoading(true) 
         try{  
+            if(platform !== null){ 
+                const response = await axios.get("http://localhost:5000/api/getTags", {
+                    params: {
+                      tags:tag, 
+                      page:page, 
+                      platform:platform 
+                    }
+                  });   
+                  if(data.length === 0) { 
+                    setData(response.data.results); 
+                  }else{ 
+                    setData(prevData => [...prevData,...response.data.results]); 
+                  }
+            }else{ 
+                const response = await axios.get("http://localhost:5000/api/getTagsout", {
+                    params: {
+                      tags:tag, 
+                      page:page, 
+                    
+                    }
+                  });   
+                  if(data.length === 0) { 
+                    setData(response.data.results); 
+                  }else{ 
+                    setData(prevData => [...prevData,...response.data.results]); 
+                  }
+            }
             
-            const response = await axios.get("http://localhost:5000/api/publisher", {
-                params: {
-                  publishers: slug, 
-                  page:page,
-                 
-                }
-              });   
-              if(data.length === 0) { 
-                setData(response.data.results); 
-              }else{ 
-                setData(prevData => [...prevData,...response.data.results]); 
-              }
               
               
         }catch(error){ 
@@ -56,20 +77,39 @@ import LeftLayout from './LeftLayout';
             setMoreLoading(false) 
         }
         
-    } 
+    }  
+    const currentPlatform = useRef(platform) 
+
     useEffect(() => {  
-        
+        if( currentPlatform.current !== platform) {  
+            currentPlatform.current = platform
+            return
+        }
         fetchData(); 
-    }, [page]);   
+    }, [page]); 
+
+    useEffect(()=>{  
+        setLoading(true)
+        setData([]) 
+        setPage(1)  
+      
+        const timer = setTimeout(() => {
+            if (tag) {
+              fetchData();
+            }
+          }, 0);
+         
+          return () => clearTimeout(timer);
+    },[platform])  
 
 
-    function slugToTitle(slug) {
-        return slug
-          .replace(/-/g, ' ')                     
+    function slugToTitle(tag) {
+        return tag
+                              
           .toLowerCase()                          
           .replace(/\b\w/g, char => char.toUpperCase()); 
       } 
-      const title = slugToTitle(slug); 
+      const title = slugToTitle(tag); 
     
       console.log(title);
   return (
@@ -85,9 +125,31 @@ import LeftLayout from './LeftLayout';
             <div style={{display:"flex",justifyContent:"space-between", width:"100%"}}> 
             <div style={{display:"flex",flexDirection:"column",justifyContent:"flex-end",alignItems:'flex-end' ,width:"86.5%",marginLeft:"13.5%"}}>
             <div style={{width:"100%"}}>
-                    <p style={{color:"white",fontSize:"30px",margin:0,marginTop:"5px",marginBottom:"10px"}}>{title} Games</p>
-            </div>
-            <div style={{width:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"auto",borderTop:"2px grey solid",marginTop:"15px"}}> 
+                    <p style={{color:"white",fontSize:"40px",margin:0,marginTop:"5px",marginBottom:"10px"}}>{title} Games</p>
+            </div>  
+            <div style={{width:"100%"}}> 
+                   
+                   <div class="dropdown"> 
+                                   <div className="dropbtn">
+                                       <p style={{margin:0}}> </p> 
+                                       <p style={{margin:0,marginLeft:"5px",fontWeight:"bold"}}> {selected}</p>  
+                                       <p style={{margin:0,marginLeft:"5px"}}>-</p>
+                                   </div>
+                                   <div class="dropdown-content" >
+                                       <p  className={selected === "PC" ? "active" : ""} onClick={()=>{setPlatform(4);setSelected("PC")}} >PC</p>
+                                       <p className={selected === "Playstation 5" ? "active" : ""}  onClick={()=>{setPlatform(187);setSelected("Playstation 5")}}>Playstation 5</p>
+                                       <p  className={selected === "Xbox series S/X" ? "active" : ""} onClick={()=>{setPlatform(186);setSelected("Xbox series S/X")}}>Xbox series S/X</p>  
+                                       <p  className={selected === "Xbox One" ? "active" : ""} onClick={()=>{setPlatform(1);setSelected("Xbox One")}}>Xbox One</p>  
+                                       <p  className={selected === "Ios" ? "active" : ""} onClick={()=>{setPlatform(3);setSelected("Ios")}}>Ios</p>  
+                                       <p  className={selected === "Android" ? "active" : ""} onClick={()=>{setPlatform(21);setSelected("Android")}}>Android</p>  
+                                       <p  className={selected === "Macos" ? "active" : ""} onClick={()=>{setPlatform(5);setSelected("Macos")}}>Macos</p>  
+                                       <p  className={selected === "Nintendo Switch" ? "active" : ""} onClick={()=>{setPlatform(7);setSelected("Nintendo Switch")}}>Nintendo Switch</p> 
+                                       
+                                   </div>
+                   </div> 
+               </div> 
+            <div style={{width:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"auto",borderTop:"2px grey solid",marginTop:"15px"}}>  
+              
                 <div className="games-grid"> 
                     {data.map((item,index)=>(   
                         <div className="game-card" key={index}>   
@@ -215,4 +277,4 @@ import LeftLayout from './LeftLayout';
     </div>
   );
 } 
-export default PublisherPage;
+export default TagsPage;

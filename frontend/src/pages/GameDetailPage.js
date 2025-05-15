@@ -11,15 +11,13 @@ import { IoGameController } from "react-icons/io5";
 import { FaHeart } from "react-icons/fa"; 
 import { TbClockHour8Filled } from "react-icons/tb";
 import { AuthContext } from "../provider/AuthProvider"; 
-import { debounce, set } from 'lodash';  
-import Slider from 'react-slick'; 
+import { debounce } from 'lodash';  
 import { GiPc } from "react-icons/gi";
 import { SiMacos } from "react-icons/si";
 import { FaPlaystation } from "react-icons/fa";  
 import { FaXbox } from "react-icons/fa"; 
 import { FaSteam } from "react-icons/fa";
-import { SiEpicgames } from "react-icons/si"; 
-import { FaAppStoreIos } from "react-icons/fa"; 
+import { SiEpicgames } from "react-icons/si";  
 import { useNavigate } from "react-router-dom"; 
 import avatar from "../images/avatar.png"; 
 import { FaTrash } from "react-icons/fa";  
@@ -33,7 +31,7 @@ import LeftLayout from "./LeftLayout";
     const { gameId,gameTitle } = useParams();   
     console.log(gameId)
     const navigate = useNavigate();  
-    const { loggedIn, setLoggedIn,session, } = useContext(AuthContext);   
+    const { loggedIn,session } = useContext(AuthContext);   
     const [isOpen, setIsOpen] = useState(false); 
     const [isOpenList, setIsOpenList] = useState(false);
     const openModal = () => setIsOpen(true);
@@ -64,14 +62,8 @@ import LeftLayout from "./LeftLayout";
     const [isExist,setIsExist] = useState([]);  
     const [expand,setExpand] = useState(false) 
     const [stores,setStores] = useState([]);
-    console.log(session)
-    const settings = {
-        dots: true,
-        infinite: true, 
-        speed: 500, 
-        slidesToShow: 1,
-        slidesToScroll: 1 
-      }; 
+  
+
       const getLists = async () => {   
        
         setListLoading(true);
@@ -260,11 +252,13 @@ import LeftLayout from "./LeftLayout";
      console.log(gameData)
   return (
     <div className="gameDetailPage">   
-    <div style={{marginTop:"100px"}}>
-        <LeftLayout></LeftLayout> 
+        <div style={{marginTop:"90px"}}>
+            <LeftLayout></LeftLayout> 
         </div>
         {loading?(  
-            <div></div>
+                <div style={{display:"flex",justifyContent:"center",alignItems:"center",  width:"100%",height:"100%"}}> 
+                    <div className="spinner"></div>
+                </div>
             ):( 
                 <div style={{display:"flex",flexDirection:"column",width:"100%",alignItems:"center"}}>   
                     
@@ -282,7 +276,7 @@ import LeftLayout from "./LeftLayout";
                                 </div>
                             {gameData.platforms.length > 0 && ( 
                                     gameData.platforms.map((data,index)=>(  
-                                        <Link to={`/PlatformsPage/${data.platform.slug}`} state={{id:data.platform.id,name:data.platform.name}} style={{textDecoration:"none",color:"white"}}>
+                                        <Link to={`/MainGamesPage/${data.platform.slug}`} state={{id:data.platform.id,name:data.platform.name}} style={{textDecoration:"none",color:"white"}}>
                                             <button style={{display:"flex",alignItems:"center",justifyContent:"space-between",backgroundColor:"transparent",border:"none",cursor:"pointer"}} key={index} > 
                                             
                             
@@ -434,7 +428,7 @@ import LeftLayout from "./LeftLayout";
                                     <div style={{display:"flex",flexWrap:"wrap"}}>
                                     {gameData.platforms.map((data,index)=>(   
                                         index<gameData.platforms.length-1 ? ( 
-                                            <Link  style={{color:"grey"}}>
+                                            <Link to={`/MainGamesPage/${data.platform.slug}`} style={{color:"grey"}}>
                                             
                                                 <p style={{margin:0,padding:2,fontSize:"14px"}}>{data.platform.name},</p> 
                                             
@@ -456,13 +450,13 @@ import LeftLayout from "./LeftLayout";
                                     <div style={{display:"flex",flexWrap:"wrap"}}>
                                     {gameData.genres.map((data,index)=>(   
                                         index<gameData.genres.length-1 ? ( 
-                                            <Link   style={{color:"grey"}}>
+                                            <Link  to={`/games/${data.slug}`}  style={{color:"grey"}}>
                                             
                                                 <p style={{margin:0,padding:2,fontSize:"14px"}}>{data.name},</p> 
                                             
                                             </Link>
                                         ) : ( 
-                                            <Link  style={{color:"grey"}}>
+                                            <Link to={`/games/${data.slug}`} style={{color:"grey"}}>
                                             
                                                 <p style={{margin:0,padding:2,fontSize:"14px"}}>{data.name}</p> 
                                             
@@ -488,13 +482,13 @@ import LeftLayout from "./LeftLayout";
                                     <div style={{display:"flex"}}>
                                     {gameData.developers.map((data,index)=>(   
                                         index<gameData.developers.length-1 ? ( 
-                                            <Link  style={{color:"grey"}}>
+                                            <Link to={`/developer/${data.slug}`} style={{color:"grey"}}>
                                             
                                                 <p style={{margin:0,padding:2,fontSize:"14px"}}>{data.name},</p> 
                                             
                                             </Link>
                                         ) : ( 
-                                            <Link   style={{color:"grey"}}>
+                                            <Link  to={`/developer/${data.slug}`} style={{color:"grey"}}>
                                             
                                                 <p style={{margin:0,padding:2,fontSize:"14px"}}>{data.name}</p> 
                                             
@@ -511,13 +505,13 @@ import LeftLayout from "./LeftLayout";
                                     <p className="detailHeaders">Publisher</p>  
                                     {gameData.publishers.map((data,index)=>(   
                                         index<gameData.publishers.length-1 ? ( 
-                                            <Link   style={{color:"grey"}}>
+                                            <Link  to={`/publishers/${data.slug}`}  style={{color:"grey"}}>
                                             
                                                 <p style={{margin:0,padding:2,fontSize:"14px"}}>{data.name},</p> 
                                             
                                             </Link>
                                         ) : ( 
-                                            <Link style={{color:"grey"}}>
+                                            <Link to={`/publishers/${data.slug}`} style={{color:"grey"}}>
                                             
                                                 <p style={{margin:0,padding:2,fontSize:"14px"}}>{data.name}</p> 
                                             
@@ -545,7 +539,7 @@ import LeftLayout from "./LeftLayout";
                                     <div style={{display:"flex",flexWrap:"wrap"}}> 
                                         {gameData.tags.map((data,index)=>( 
                                           
-                                          <Link  style={{color:"grey"}}>
+                                          <Link to={`/tags/${data.slug}`} style={{color:"grey"}}>
                                                 <p style={{margin:0,fontSize:"14px"}}>{data.name},</p> 
                                         
                                             </Link>
@@ -559,7 +553,7 @@ import LeftLayout from "./LeftLayout";
                                 <p className="detailHeaders">Website</p>  
                                 <div style={{display:"flex",flexWrap:"wrap"}}>  
                                     <Link to={gameData.website} style={{color:"grey"}}>  
-                                        <p style={{margin:0,fontSize:"14px"}}>{gameData.website}</p> 
+                                        <p  style={{margin:0,fontSize:"14px"}}>{gameData.website}</p> 
                                         
                                     </Link>
                                    

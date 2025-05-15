@@ -1,0 +1,225 @@
+.community_main-container{ 
+    position: fixed; 
+    left: 0;
+   width: 12.5%;  
+   height: 90vh; 
+   overflow-y: scroll;
+   scrollbar-width: none; 
+   overflow: auto;  
+   margin-left: 10px; 
+   z-index: 999; 
+
+} 
+.community_main-container p{ 
+   color: white;
+
+} 
+.modal-container{ 
+    display: flex; 
+    flex-direction: column; 
+    padding: 10px;
+} 
+.modalcont-input { 
+    display: flex; 
+    flex-direction: column;  
+    width: 55%;   
+    
+   
+    
+} 
+.modalcont-input input {  
+    width: 95% !important;
+    background-color:#1f282d; 
+    padding: 18px 0 18px 19px;  
+    border-radius: 8px;
+    margin-top: 20px; 
+    border: 0;
+}    
+.modalcont-input input:focus {  
+  background-color: white;
+}    
+.description:focus{ 
+    background-color: white;
+}
+.description{ 
+    width: 95% !important;
+    background-color:#1f282d; 
+    padding: 18px 0 18px 19px;  
+    border-radius: 8px;
+    margin-top: 20px; 
+    border: 0;
+} 
+.modal-container p { 
+    font-size: 14px;
+} 
+.modalcont{ 
+    display: flex; 
+    flex-direction: row;   
+    width: 100%; 
+
+} 
+.community_modal-content {
+    width: 50%; 
+    padding: 20px;
+    background-color: #2C3641;
+    border-radius: 10px; 
+    top: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    overflow-y: auto; 
+    z-index: 999; 
+  }
+  
+
+  .community_modal-overlay { 
+    background-color: rgba(0, 0, 0, 0.3); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh; 
+    color: white; 
+    overflow-y: auto; 
+    z-index: 999
+  }  
+  .example-container{ 
+    display: flex;    
+    flex-direction: column;
+    width: 35%; 
+    height: auto; 
+    align-self:baseline; 
+    
+    box-shadow: 0px 4px 8px rgb(51, 119, 168);  
+   background-color: #202730;
+   border-radius: 8px;
+    margin-top: 20px; 
+    margin-left: 30px; 
+    
+  }   
+  .cancelnextButton{ 
+    display: flex; 
+    width: 100%; 
+    justify-content: flex-end; 
+    
+  } 
+  .cancelnextButton button{ 
+    padding: 12px; 
+    margin: 5px; 
+    border: 0; 
+    border-radius: 15px; 
+    color: white; 
+    font-size: 15px;
+  }  
+
+
+  .tagContainer{ 
+    display: flex; 
+    flex-direction: column; 
+    background-color:#15191B; 
+    margin:3px; 
+    border-radius:15px; 
+    padding-left: 5px; 
+    padding-right: 5px; 
+    cursor: pointer;
+  } 
+  .tagContainer:hover{  
+    background-color:#161f23;
+
+  } 
+  .tagContainer2{ 
+    display:flex; 
+    background-color:#15191B; 
+    border-radius:8px;
+    justify-content:center; 
+    align-items: center; 
+    width: 100%;  
+    cursor: pointer;
+  } 
+  .tagContainer2:hover{
+    background-color:#161f23;
+  } 
+  .communities-container{ 
+      border: 1px solid grey; 
+      border-radius: 15px;  
+      padding: 10px; 
+      min-height: 72px; 
+      height: auto; 
+      background-color:#131a1f; 
+      z-index: 1;  
+  }  
+  .communities-container:hover{ 
+    background-color:#2e3c46
+  } 
+  .communities-container img{ 
+    height: 40px;
+    width: 40px;  
+    border-radius: 50%;
+
+  } 
+  .communities{ 
+    display: grid; 
+    flex-direction: column;
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 16px; 
+      padding: 16px; 
+      width: 100%;  
+      height: auto;
+      justify-content: center; 
+      align-items: center;     
+    
+      
+  } 
+  .communities-container-img{ 
+    display: flex; 
+    align-items: center;  
+  
+    
+  } 
+  .communities-container-img h2{ 
+    margin-left: 10px;
+  } 
+  .community-name-container{ 
+    display: flex; 
+    flex-direction: column;  
+    justify-content: center;   
+    margin-left: 15px; 
+    width: 80%;
+  } 
+  .community-name-container p{ 
+    margin: 0;  
+    font-size: 12px; 
+    color: #8BA2AD;
+  } 
+  .community-name{ 
+    font-size: 18px !important; 
+    font-weight:600; 
+    color: white !important;
+  } 
+  .com-joinbutton{ 
+    padding: 8px;  
+    padding-left: 12px; 
+    padding-right: 12px;
+    border-radius: 15px; 
+    border: 0; 
+    background-color: rgb(103, 103, 230); 
+    color: white; 
+    cursor: pointer; 
+    z-index: 999; 
+  } 
+  .com-joinbutton:hover{ 
+  
+    background-color: rgb(19, 19, 252); 
+  
+  } 
+  .com-joinedbutton{ 
+    padding: 8px;  
+    padding-left: 12px; 
+    padding-right: 12px;
+    border-radius: 15px; 
+    border: 1px solid grey; 
+    background-color:transparent; 
+    color: white; 
+    cursor: pointer; 
+    z-index: 999;  }

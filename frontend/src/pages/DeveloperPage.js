@@ -1,13 +1,16 @@
+ 
 import React from 'react'; 
-import {  useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import axios from 'axios'; 
-import { useEffect,useState } from 'react'; 
+import { useEffect,useState,useRef } from 'react'; 
 import "../styles/publisherPage.css"; 
 import { GiPc } from "react-icons/gi";
 import { SiMacos,SiIos } from "react-icons/si";
 import { FaPlaystation } from "react-icons/fa";  
 import { FaXbox } from "react-icons/fa"; 
-
+import { FaSteam } from "react-icons/fa";
+import { SiEpicgames } from "react-icons/si"; 
+import { FaAppStoreIos } from "react-icons/fa";  
 import { Link } from 'react-router-dom';  
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';  
@@ -18,33 +21,51 @@ import LeftLayout from './LeftLayout';
 
 
 
- function PublisherPage() {  
+ function DeveloperPage() {  
     const { slug } = useParams(); 
     const [moreLoading,setMoreLoading] = useState(false)
     const [data, setData] = useState([])    
     const [page,setPage]= useState(1);
     const [loading, setLoading] = useState(true); 
-    const [hasMore, setHasMore] = useState(true);
+    const [hasMore, setHasMore] = useState(true);  
+    const [platform,setPlatform] = useState();
+    const [selected,setSelected] = useState("Platforms");
     axios.defaults.withCredentials = true;
-
+   
+    const scrollPosition = useRef(0);
     
      
     const fetchData = async () => {    
-        setMoreLoading(true)
+        setMoreLoading(true) 
         try{  
+            if(platform !== null){ 
+                const response = await axios.get("http://localhost:5000/api/getdeveloper", {
+                    params: {
+                      slug:slug, 
+                      page:page, 
+                      platform:platform 
+                    }
+                  });   
+                  if(data.length === 0) { 
+                    setData(response.data.results); 
+                  }else{ 
+                    setData(prevData => [...prevData,...response.data.results]); 
+                  }
+            }else{ 
+                const response = await axios.get("http://localhost:5000/api/getdeveloperout", {
+                    params: {
+                      slug:slug, 
+                      page:page, 
+                    
+                    }
+                  });   
+                  if(data.length === 0) { 
+                    setData(response.data.results); 
+                  }else{ 
+                    setData(prevData => [...prevData,...response.data.results]); 
+                  }
+            }
             
-            const response = await axios.get("http://localhost:5000/api/publisher", {
-                params: {
-                  publishers: slug, 
-                  page:page,
-                 
-                }
-              });   
-              if(data.length === 0) { 
-                setData(response.data.results); 
-              }else{ 
-                setData(prevData => [...prevData,...response.data.results]); 
-              }
               
               
         }catch(error){ 
@@ -56,22 +77,41 @@ import LeftLayout from './LeftLayout';
             setMoreLoading(false) 
         }
         
-    } 
+    }  
+    const currentPlatform = useRef(platform) 
+
     useEffect(() => {  
-        
+        if( currentPlatform.current !== platform) {  
+            currentPlatform.current = platform
+            return
+        }
         fetchData(); 
-    }, [page]);   
+    }, [page]); 
+
+    useEffect(()=>{  
+        setLoading(true)
+        setData([]) 
+        setPage(1)  
+      
+        const timer = setTimeout(() => {
+            if (slug) {
+              fetchData();
+            }
+          }, 0);
+         
+          return () => clearTimeout(timer);
+    },[platform])  
 
 
     function slugToTitle(slug) {
         return slug
-          .replace(/-/g, ' ')                     
+            .replace(/-/g, ' ')                    
           .toLowerCase()                          
           .replace(/\b\w/g, char => char.toUpperCase()); 
       } 
       const title = slugToTitle(slug); 
     
-      console.log(title);
+      
   return (
     <div className='main'>  
          <LeftLayout></LeftLayout>
@@ -85,12 +125,34 @@ import LeftLayout from './LeftLayout';
             <div style={{display:"flex",justifyContent:"space-between", width:"100%"}}> 
             <div style={{display:"flex",flexDirection:"column",justifyContent:"flex-end",alignItems:'flex-end' ,width:"86.5%",marginLeft:"13.5%"}}>
             <div style={{width:"100%"}}>
-                    <p style={{color:"white",fontSize:"30px",margin:0,marginTop:"5px",marginBottom:"10px"}}>{title} Games</p>
-            </div>
-            <div style={{width:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"auto",borderTop:"2px grey solid",marginTop:"15px"}}> 
+                    <p style={{color:"white",fontSize:"40px",margin:0,marginTop:"5px",marginBottom:"10px"}}>Games Of {title}</p>
+            </div>  
+            <div style={{width:"100%"}}> 
+                   
+                   <div class="dropdown"> 
+                                   <div className="dropbtn">
+                                       <p style={{margin:0}}> </p> 
+                                       <p style={{margin:0,marginLeft:"5px",fontWeight:"bold"}}> {selected}</p>  
+                                       <p style={{margin:0,marginLeft:"5px"}}>-</p>
+                                   </div>
+                                   <div className="dropdown-content" >
+                                       <p  className={selected === "PC" ? "active" : ""} onClick={()=>{setPlatform(4);setSelected("PC")}} >PC</p>
+                                       <p className={selected === "Playstation 5" ? "active" : ""}  onClick={()=>{setPlatform(187);setSelected("Playstation 5")}}>Playstation 5</p>
+                                       <p  className={selected === "Xbox series S/X" ? "active" : ""} onClick={()=>{setPlatform(186);setSelected("Xbox series S/X")}}>Xbox series S/X</p>  
+                                       <p  className={selected === "Xbox One" ? "active" : ""} onClick={()=>{setPlatform(1);setSelected("Xbox One")}}>Xbox One</p>  
+                                       <p  className={selected === "Ios" ? "active" : ""} onClick={()=>{setPlatform(3);setSelected("Ios")}}>Ios</p>  
+                                       <p  className={selected === "Android" ? "active" : ""} onClick={()=>{setPlatform(21);setSelected("Android")}}>Android</p>  
+                                       <p  className={selected === "Macos" ? "active" : ""} onClick={()=>{setPlatform(5);setSelected("Macos")}}>Macos</p>  
+                                       <p  className={selected === "Nintendo Switch" ? "active" : ""} onClick={()=>{setPlatform(7);setSelected("Nintendo Switch")}}>Nintendo Switch</p> 
+                                       
+                                   </div>
+                   </div> 
+               </div> 
+            <div style={{width:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",height:"auto",borderTop:"2px grey solid",marginTop:"15px"}}>  
+              
                 <div className="games-grid"> 
                     {data.map((item,index)=>(   
-                        <div className="game-card" key={index}>   
+                        <div  className="game-card" key={index}>   
                             <Link style={{textDecoration:"none"}} state={{gameImage:item.background_image}} to={`/GameDetailPage/${item.id}/${item.name}`}> 
                             <div className="gameItemImg-wrapper">
                                 <img src={`${item.background_image}?w=300&q=50`} className="gameItemImg" loading="lazy"></img>  
@@ -106,7 +168,7 @@ import LeftLayout from './LeftLayout';
  
                                                  {item.short_screenshots.map((img, idx) => (
                                              idx > 0 && ( 
-                                                 <SwiperSlide style={{width: '100%', height: '100%'}} key={idx}>
+                                                 <SwiperSlide  style={{width: '100%', height: '100%'}} key={idx}>
                                                     <img src={`${img.image}?w=300`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
                                                  </SwiperSlide>
                                              )
@@ -123,7 +185,7 @@ import LeftLayout from './LeftLayout';
                                 <div style={{display:"flex"}}> 
                                 <div className="icon-container">
                                 {item.platforms.map((item,index)=>(  
-                                    <div>
+                                    <div key={index}>
                                         {item.platform.id === 5 ? <SiMacos size={20} color="white" /> : null} 
                                         {item.platform.id === 4 ? <GiPc size={20} color="white" /> : null}  
                                         {item.platform.id === 187 ? <FaPlaystation size={20} color="white" /> : null}   
@@ -137,7 +199,7 @@ import LeftLayout from './LeftLayout';
                                 </div>  
                                 <div >
                                 {item.metacritic !== null && (  
-                                   <div
+                                   <div key={index}
                                    style={{
                                                 backgroundColor: item.metacritic > 75 
                                                 ? "#008000"  
@@ -178,7 +240,7 @@ import LeftLayout from './LeftLayout';
                                     <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"5px"}}>
                                     <p style={{color:"grey",fontSize:"12px",width:"50%"}}>Genres:</p> 
                                         {item.genres.map((data,index)=>( 
-                                            <div style={{display:"flex",justifyContent:"center",alignItems:"center"}}> 
+                                            <div key={index} style={{display:"flex",justifyContent:"center",alignItems:"center"}}> 
                                                 <p style={{color:"white",fontSize:"12px",padding:"2px"}}>{data.name}</p>
                                             </div>
                                         ))} 
@@ -188,7 +250,7 @@ import LeftLayout from './LeftLayout';
                             </Link> 
                         </div>  
                     ))}  
-                    
+                   
                 </div>   
                 {hasMore && ( 
                      <div className="load-more-button">
@@ -215,4 +277,4 @@ import LeftLayout from './LeftLayout';
     </div>
   );
 } 
-export default PublisherPage;
+export default DeveloperPage;

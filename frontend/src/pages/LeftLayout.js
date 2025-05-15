@@ -1,7 +1,7 @@
 import React from "react"
 import { Outlet, Link } from "react-router-dom";
 import "../styles/leftLayout.css"  
-import { useEffect,useState , useContext} from "react";
+import { useEffect,useState , useContext,useRef} from "react";
 import axios from "axios";  
 import { AuthContext } from "../provider/AuthProvider";
 import { BsCollection } from "react-icons/bs"; 
@@ -14,14 +14,72 @@ import { BsNintendoSwitch,BsAndroid2 } from "react-icons/bs";
 function LeftLayout(){   
     const { loggedIn, setLoggedIn,session } = useContext(AuthContext);
   
-    console.log(session)
+   
+    const [searchResults,setSearchResults] = useState([]); 
+    const [searchLoading,setSearchLoading] = useState(false); 
+    const [searchTerm,setSearchTerm] = useState(""); 
+  
+    
+    const fetchGames = async (term) => {
+      try {
+        setSearchLoading(true);
+        const response = await axios.get("http://localhost:5000/api/getMainGames",{
+          params: { search:term } 
+      });  
+        setSearchResults(response.data.results);
+      } catch (error) {
+        console.error('API error:', error);
+      } finally {
+        setSearchLoading(false);
+      }
+    };
+   useEffect(() => {
+          const delayDebounce = setTimeout(() => {
+            if (searchTerm.length > 2   ) {
+              fetchGames(searchTerm);
+            } else {
+              setSearchResults([]);
+            }
+          }, 500); 
+      
+          return () => clearTimeout(delayDebounce);
+  }, [searchTerm]); 
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+
+      if (ref.current && !ref.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
     return( 
         <div className="main-container1"> 
             <Link className="link-container" to={"/"}>
                 <h2>Home</h2> 
             </Link> 
-           
+            <div style={{marginBottom:"15px"}}> 
+                <input className="input3"  onFocus={() => setOpen(true)} value={searchTerm} onChange={(e)=>setSearchTerm(e.target.value)} placeholder="Search for games..."></input>   
+                {open && ( 
+                    <div ref={ref} className="searchContainer2" style={{position:"absolute",backgroundColor:"black",width:"100%",maxHeight:"50%",overflowX:"hidden",overflow:"auto",overflowY:"scroll"}}> 
+                         {searchResults.map((data,index)=>( 
+                            <Link key={index} state={{gameImage:data.background_image}} to={`/GameDetailPage/${data.id}/${data.name}`} className="searchContainer3" style={{width:"100%",display:"flex",marginBottom:"10px",alignItems:"center",cursor:"pointer",textDecoration:"none"}}> 
+                                <img style={{width:"30%",height:"60px",borderRadius:"8px",objectFit:"cover"}} src={data.background_image}></img> 
+                                <p style={{color:"white",fontSize:"15px"}}>{data.name}</p>
+                            </Link>
+                         ))}
+                     </div>
+                )}
+               
+                
+            </div> 
             {loggedIn && session && session.userName && ( 
                 <div> 
                     <Link style={{textDecoration:"none",color:"white",display:"flex",alignItems:"center"}} to={`/${session.userName}`}>

@@ -1,0 +1,334 @@
+.maincom-container{ 
+    width: 100%; 
+    position: relative; 
+    margin-bottom: 50px;
+} 
+.maincom-img1{ 
+    width: 100%; 
+    height: 150px; 
+    object-fit: cover; 
+    border-radius: 15px; 
+    background-color: #1A282D; 
+} 
+.maincom-img2{    
+    left: 5%;
+    top:  110px;
+    position: absolute;
+    width: 110px; 
+    height: 110px; 
+    object-fit: cover; 
+    border-radius: 50%; 
+    background-color: yellow;  
+    border: 5px solid black;
+} 
+.maincom_nameCon{  
+    display: flex;
+    width: 80%; 
+    padding: 5px;  
+    border-radius: 15px;  
+    margin-left: 17%; 
+
+} 
+.maincom_nameCon p{ 
+    color: white;  
+    font-size: 30px; 
+    margin: 0; 
+    font-weight: bold;
+} 
+.maincom-createpost{ 
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    border:1px solid grey; 
+    background-color: transparent; 
+    width: 15%; 
+    border-radius: 15px; 
+    padding: 6px;
+    color: white; 
+    cursor: pointer;
+} 
+.maincom-join{ 
+    cursor: pointer; 
+    border:1px solid grey; 
+    width: 10%; 
+    border-radius: 15px; 
+    padding: 6px;
+    color: white; 
+    cursor: pointer; 
+    margin-left: 15px; 
+    background-color: bisque; 
+} 
+.maincom-joined{ 
+    cursor: pointer; 
+    border:1px solid grey; 
+    background-color: transparent; 
+    width: 10%; 
+    border-radius: 15px; 
+    padding: 6px;
+    color: white; 
+    cursor: pointer; 
+    margin-left: 15px; 
+} 
+.post-con{ 
+    border-radius: 15px;
+    width: 100%; 
+    padding: 10px;
+}  
+.post-con:hover{ 
+    background-color: #0B1416; 
+} 
+.post-con-avatar{ 
+    width: 35px; 
+    height: 35px; 
+    border-radius: 50%;
+} 
+.post-username-con{ 
+    display: flex;  
+    align-items: center; 
+    position: relative; 
+    
+} 
+.post-username-con p{ 
+    font-size: 13px; 
+    color: rgb(222, 211, 211); 
+    font-weight: bold; 
+    margin-left: 9PX;
+} 
+.post-title-con{ 
+    color: white; 
+    font-size: 22px; 
+} 
+.post-title-con p{ 
+    margin: 0; 
+    margin-top: 8px;  
+    margin-bottom: 15px; 
+    font-weight: 600;  
+      display: flex;
+    flex-direction: column;
+    width: 100%;                        
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    overflow: hidden; 
+
+} 
+.postimage-con{ 
+    width: 100%; 
+    margin-bottom: 6px;
+}  
+.postimage-con img{ 
+    width: 100%; 
+    max-height: 400px; 
+    border-radius: 15px;
+}
+.post-icon-con{ 
+    background-color: #1A282D;  
+    display: flex; 
+    align-items: center;
+    gap: 5px; 
+    padding: 6px; 
+    align-self: center; 
+    width: 7%;  
+    border-radius: 15PX;
+    justify-content: center; 
+    cursor: pointer;
+} 
+.post-icon-con p{  
+    font-size: 15px; 
+    margin: 0; 
+    color: rgb(202, 197, 197); 
+
+
+}  
+.upvote{
+    color: grey;
+}
+.upvote:hover{
+    color: blue;
+}  
+.downvote{ 
+    color: grey;
+}
+.downvote:hover{
+    color: red;
+} 
+.post-icon-con:hover{ 
+    background-color: #223237;
+} 
+.dropdown {
+  position: relative;
+  display: inline-block; 
+  padding: 3px; 
+  border-radius: 50%;
+
+}  
+.dropdown:hover {
+   background-color: grey; 
+} 
+.dropdown-content {
+  display: none;
+  position: absolute; 
+  background-color: #0F1A1C;
+  min-width: 160px;
+  border: 0;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+  z-index: 1;  
+  border-bottom-left-radius: 5px; 
+  border-bottom-right-radius: 5px;
+} 
+.dropdown:hover .dropdown-content {
+  display: block;
+}  
+.dropdown-content p {
+ margin: 0;
+}  
+.postdescription-con{ 
+    display: flex;
+    flex-direction: column;
+    width: 100%;                        
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    overflow: hidden; 
+} 
+.upvote.disabled{ 
+    color: blue;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+.downvote.disabled {
+  color: red;
+  pointer-events: none;
+  cursor: not-allowed;
+} 
+.post-loadmore{ 
+    display: flex; 
+    justify-content: center; 
+    width: 70%; 
+    padding-top: 20px;
+} 
+.post-loadmore button{ 
+    width: 20%; 
+    padding: 7px; 
+    border: 0; 
+    border-radius: 15px; 
+    background-color: #373A49; 
+    color: white;
+} 
+.post-pencilcon{ 
+    display: flex;
+    align-items: center; 
+    position: relative; 
+    margin-bottom: 15px; 
+    margin-top: 30px;
+} 
+.post-pencil{ 
+    position: absolute; 
+    right: 10px;  
+    color: grey;
+} 
+.post-cakecon{ 
+    display: flex; 
+    align-items: center;
+    margin-bottom: 15px;
+} 
+.com-info {
+  background-color: #0B1416;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: auto;
+  width: 70%;
+  padding: 15px;
+  border-radius: 15px;
+} 
+.com-info p{ 
+    color: grey; 
+    font-size: 14px; 
+    margin: 0; 
+
+} 
+.post-cake{ 
+    margin-right: 10px; 
+    color: grey;
+} 
+.post-info-description{ 
+    display: flex;
+    flex-direction: column;
+    width: 100%;                        
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    overflow: hidden;  
+    
+} 
+.comment-input{ 
+    display: flex;  
+    width:100%; 
+   padding: 10px;
+    border-radius: 15px; 
+    background-color: #1A282D;  
+    border:0 ; 
+    height: auto; 
+    height: 30px;
+ 
+} 
+.post-comment-con{ 
+    display: flex;  
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center; 
+    width: 100%; 
+    
+    border-radius: 15px; 
+    margin-top: 15px;
+} 
+.comment-con{
+    display: flex;   
+    flex-direction: row; 
+    width: 100%;  
+    padding: 10px;  
+    
+    border-radius: 15px; 
+    background-color: #1A282D;  
+    border:0 ; 
+    height: auto;   
+    margin-top: 50px; 
+} 
+.commentcancelbutton{ 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    border:0;
+    background-color: red;
+    width: auto; 
+    border-radius: 15px; 
+    padding: 8px;
+    color: white; 
+    cursor: pointer;
+} 
+.commentconfirmbutton{ 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    border:0;
+    background-color: green;
+    width: auto; 
+    border-radius: 15px; 
+    padding: 8px;
+    color: white; 
+    cursor: pointer;
+} 
+.post-concan { 
+  display: flex;
+  flex-direction: row;
+  color: white;
+  font-size: 30px;
+  position: absolute;
+  right: 0;
+  gap: 10px; 
+  margin-top: 10px;
+} 
+.post-concannot{ 
+    display: none;
+}

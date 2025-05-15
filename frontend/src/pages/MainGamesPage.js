@@ -1,38 +1,29 @@
-import { useEffect, useState,useContext ,useRef, lazy} from "react";
+import { useEffect, useState,useContext ,useRef} from "react";
 import React from "react" 
 import axios from "axios" 
 import "../styles/mainGamesPage.css";  
-import { Tooltip, OverlayTrigger, Button } from 'react-bootstrap';  
 import { AuthContext } from "../provider/AuthProvider";  
 import { Link, useParams } from "react-router-dom"; 
 import { GiPc } from "react-icons/gi";
 import { SiIos, SiMacos } from "react-icons/si";
 import { FaPlaystation } from "react-icons/fa";  
 import { FaXbox } from "react-icons/fa"; 
-import { FaSteam } from "react-icons/fa";
-import { SiEpicgames } from "react-icons/si"; 
-import { FaAppStoreIos } from "react-icons/fa"; 
-import { useNavigate } from "react-router-dom"; 
-import avatar from "../images/avatar.png"; 
-import { FaTrash } from "react-icons/fa";  
-import blackScreen from "../images/black.jpg";
-import { FaCircleCheck } from "react-icons/fa6";  
+ 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import LeftLayout from "./LeftLayout"; 
-import { Route } from "react-router-dom";
+
 import { BsAndroid, BsNintendoSwitch } from "react-icons/bs"; 
-import { VscDebugBreakpointLog } from "react-icons/vsc";
 
 function MainGamesPage(){    
     const { slug } = useParams();
-const { session } = useContext(AuthContext);
+
 axios.defaults.withCredentials = true;
 const [popularGames, setpopularGames] = useState([]);
 const [hasMore, setHasMore] = useState(true);
-const supportedSlugs = ['pc', 'playstation5', 'xbox-one', 'nintendo', 'ios', 'android'];
+const supportedSlugs = ['pc', 'playstation5', 'xbox-one', 'nintendo-switch', 'ios', 'android','xbox-series-x','macos','playstation4'];
 const [loading, setLoading] = useState(true);
 const [moreLoading, setMoreLoading] = useState(false);
 const [page, setPage] = useState(1);
@@ -113,14 +104,20 @@ const fetchData = async (currentPage, currentSlug, currentOrder) => {
         platform = 4;
       } else if (currentSlug === 'playstation5') {
         platform = 187;
-      } else if (currentSlug === 'xbox-one') {
+      } else if (currentSlug === 'xbox-series-x') {
         platform = 186;
-      } else if (currentSlug === 'nintendo') {
+      } else if (currentSlug === 'nintendo-switch') {
         platform = 7;
       } else if (currentSlug === 'ios') {
         platform = 3;
       } else if (currentSlug === 'android') {
         platform = 21;
+      }else if(currentSlug === 'xbox-one'){ 
+        platform = 1;
+      }else if(currentSlug === 'playstation4'){ 
+        platform =18;
+      }else if(currentSlug === 'macos'){ 
+        platform =5;
       }
       
       response = await axios.get("http://localhost:5000/api/platforms", {
@@ -196,11 +193,6 @@ useEffect(() => {
 }, [page]);
 
 
-const loadMoreGames = () => {
-  if (!moreLoading && hasMore && !loading) {
-    setPage(prevPage => prevPage + 1);
-  }
-};
     
     return( 
         <div className="main">     
@@ -229,9 +221,9 @@ const loadMoreGames = () => {
                                 <p style={{margin:0,marginLeft:"5px"}}>-</p>
                             </div>
                             <div class="dropdown-content" >
-                                <p  className={selected === "Link 1" ? "active" : ""} onClick={()=>{setSelected("Popularity");setOrder("reviews_count")}}>Popularity</p>
-                                <p className={selected === "Link 2" ? "active" : ""} onClick={()=>{setSelected("Name");setOrder("name");}}>Name</p>
-                                <p  className={selected === "Link 3" ? "active" : ""} onClick={()=>{setSelected("Release Date");setOrder("-released");}}>Release Date</p>
+                                <p  className={selected === "Popularity" ? "active" : ""} onClick={()=>{setSelected("Popularity");setOrder("reviews_count")}}>Popularity</p>
+                                <p className={selected === "Name" ? "active" : ""} onClick={()=>{setSelected("Name");setOrder("name");}}>Name</p>
+                                <p  className={selected === "Release Date" ? "active" : ""} onClick={()=>{setSelected("Release Date");setOrder("-released");}}>Release Date</p>
                             </div>
                         </div>
                     </div>

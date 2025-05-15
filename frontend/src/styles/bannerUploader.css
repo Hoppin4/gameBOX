@@ -1,0 +1,26 @@
+.bannerUploader{ 
+    margin-bottom: 20px;
+} 
+.uploadContainer{  
+    display: flex;  
+    flex-direction: row; 
+    justify-content: center; 
+    align-items: center; 
+    background-color: #257ba6; 
+    width: 30%; 
+    border-radius: 20px; 
+    padding-top: 7px; 
+    padding-bottom: 7px; 
+    cursor: pointer; 
+   
+
+} 
+.uploadContainer p{   
+    margin: 0;
+    margin-left: 8px; 
+   
+
+} 
+.uploadContainer:hover{ 
+    background-color: #195574;
+}

@@ -180,7 +180,7 @@ html, body {
  
 } 
 .load-more-button button{ 
-  background-color: grey; 
+  background-color: rgb(41, 28, 28); 
   padding: 5px;  
   width: 20%;
   border:0; 
@@ -262,4 +262,23 @@ html, body {
 
 .dropdown:hover .dropdown-content {
   display: block;
+} 
+.upload{ 
+  display: none;  
+  border: 0; 
+  position: absolute;  
+
+}  
+.imgup{ 
+  width: 100%;
+  height: auto;
 }
+.imgup:hover .upload{ 
+  display: flex; 
+  justify-content: center; 
+  cursor: pointer; 
+  right: 0; 
+  background-color: grey; 
+  border-radius: 50%; 
+  padding: 5px;
+}  

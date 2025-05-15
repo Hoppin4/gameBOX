@@ -7,9 +7,7 @@ import { AuthContext } from "../provider/AuthProvider";
 
 const Layout = () => {   
   const { loggedIn, setLoggedIn,session } = useContext(AuthContext);
-  
-  console.log(loggedIn)
-
+ 
   
   return ( 
     <div> 
@@ -17,7 +15,9 @@ const Layout = () => {
         <ul className="navbar"> 
           <li><Link to="/">GameBOX</Link></li>
           <li><Link to="/MainGamesPage/month-trending">Games</Link></li>
-          <li><Link to="/community">Community</Link></li> 
+         
+          <li><Link to="/community">Community</Link></li>  
+         
           {!loggedIn ? (  
             <div style={{display:"flex"}}>
               <li><Link to="/signup">Sign Up</Link></li>

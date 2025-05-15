@@ -274,7 +274,7 @@ const publisher = async (req, res) => {
                 key: process.env.API_KEY, 
                 page: page,
                 page_size: 20 , 
-                ordering:"-rating", 
+                ordering:"popularity", 
                 publishers:publishers,
             }
         });
@@ -550,9 +550,128 @@ const getReviewComp = async(req,res)=>{
     }catch(error){ 
         res.status(500).json({ message: 'Error fetching data', error: response.error });
     }
+} 
+const getGamebyGenres = async(req,res) => { 
+    const genre = req.query.genre; 
+    const platform = req.query.platform;  
+    const page = req.query.page;
+    try {
+        const response = await axios.get('https://api.rawg.io/api/games', { 
+            params: {
+                key: process.env.API_KEY, 
+                page: page,
+                page_size: 20 , 
+                ordering:"popularity", 
+                genres:genre, 
+                platforms:platform
+            }
+        });
+        res.json(response.data);
+    } catch (error) { 
+        res.status(500).json({ message: 'Veri çekme hatası', error: error.message });
+    }
+} 
+const getGamebyGenresout = async(req,res) => { 
+    const genre = req.query.genre; 
+    const page = req.query.page;
+    try {
+        const response = await axios.get('https://api.rawg.io/api/games', { 
+            params: {
+                key: process.env.API_KEY, 
+                page: page,
+                page_size: 20 , 
+                ordering:"popularity", 
+                genres:genre, 
+              
+            }
+        });
+        res.json(response.data);
+    } catch (error) { 
+        res.status(500).json({ message: 'Veri çekme hatası', error: error.message });
+    }
+} 
+const getGamebyTags = async(req,res) => { 
+    const tag = req.query.tags;  
+    const platform = req.query.platform;  
+    const page = req.query.page;
+    try {
+        const response = await axios.get('https://api.rawg.io/api/games', { 
+            params: {
+                key: process.env.API_KEY, 
+                page: page,
+                page_size: 20 , 
+                ordering:"popularity", 
+                tags:tag, 
+                platforms:platform
+            }
+        });
+        res.json(response.data);
+    } catch (error) { 
+        res.status(500).json({ message: 'Veri çekme hatası', error: error.message });
+    }
+} 
+const getGamebyTagsout = async(req,res) => { 
+    const tag = req.query.tags; 
+    const page = req.query.page;
+    try {
+        const response = await axios.get('https://api.rawg.io/api/games', { 
+            params: {
+                key: process.env.API_KEY, 
+                page: page,
+                page_size: 20 , 
+                ordering:"popularity", 
+                tags:tag, 
+              
+            }
+        });
+        res.json(response.data);
+    } catch (error) { 
+        res.status(500).json({ message: 'Veri çekme hatası', error: error.message });
+    }
+} 
+const getGamebydeveloper = async(req,res) => { 
+    const slug = req.query.slug;  
+    const platform = req.query.platform; 
+    const page = req.query.page;
+    try {
+        const response = await axios.get('https://api.rawg.io/api/games', { 
+            params: {
+                key: process.env.API_KEY, 
+                page: page,
+                page_size: 20 , 
+                ordering:"popularity", 
+                developers:slug,  
+                platforms:platform,
+              
+            }
+        });
+        res.json(response.data);
+    } catch (error) { 
+        res.status(500).json({ message: 'Veri çekme hatası', error: error.message });
+    }
+} 
+const getGamebydeveloperout = async(req,res) => { 
+    const slug = req.query.slug; 
+    const page = req.query.page;
+    try {
+        const response = await axios.get('https://api.rawg.io/api/games', { 
+            params: {
+                key: process.env.API_KEY, 
+                page: page,
+                page_size: 20 , 
+                ordering:"popularity", 
+                developers:slug,  
+              
+            }
+        });
+        res.json(response.data);
+    } catch (error) { 
+        res.status(500).json({ message: 'Veri çekme hatası', error: error.message });
+    }
 }
 module.exports = { getGames,getPopularGames,getGamebyId,sentReview, 
     getReview,searchGame,getMainGames,deleteReview,publisher, 
     platforms,createList,deleteList,getList,insertGameToList 
     ,deleteGameFromList,getGameFromList,getListbyId,updateList 
-,getGameFromListbyUserId,getMostPopularGames,getUserReviews,getReviewComp }; 
+,getGameFromListbyUserId,getMostPopularGames,getUserReviews,getReviewComp,  
+getGamebyGenres,getGamebyGenresout,getGamebyTags,getGamebyTagsout,getGamebydeveloper,getGamebydeveloperout }; 
