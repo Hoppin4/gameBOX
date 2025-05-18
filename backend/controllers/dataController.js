@@ -129,7 +129,23 @@ const getGamebyId = async (req, res) => {
                 key: process.env.API_KEY, 
                
             }
-        });  
+        });    
+        const response6 = await supabase
+            .from('Posts')
+            .select(`
+                id,
+                title,
+                created_at,
+                community_id,
+                community:Communities (
+                id,
+                name,
+                icon_image
+                )
+            `)
+            .eq('gameID', gameId)
+            .order('created_at', { ascending: false })
+            .limit(5);
         const { data, error } = await supabase
             .from('Reviews')
             .select('*')
@@ -142,7 +158,8 @@ const getGamebyId = async (req, res) => {
             screenshots: response3.data,  
             series: response4.data, 
             userReview: data, 
-            stores:response5.data,
+            stores:response5.data, 
+            posts: response6.data,
             
           });
     } catch (error) { 

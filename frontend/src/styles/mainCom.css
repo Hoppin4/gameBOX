@@ -375,4 +375,17 @@
 } 
 .dropdown-item:hover{ 
     background-color: #3E4348; 
+} 
+.game-com-link { 
+    margin-left: 30px;
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
+    text-decoration: none; 
+    border-radius: 15px;
+}  
+.game-com-link:hover{ 
+    background-color: #3E4348;
 }

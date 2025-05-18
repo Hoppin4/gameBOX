@@ -140,16 +140,33 @@ const createPost = async (req,res)=>{
   const { title, 
     content,  
     community_id ,
-    user_id } = req.body;
+    user_id,gameId,gameName,gameImage } = req.body; 
+     
+    const { data: existing } = await supabase
+        .from('Games')
+        .select('game_id')
+        .eq('game_id', gameId)
+        .maybeSingle(); 
+        if (!existing) {
+            await supabase.from('Games').insert([
+              {
+                game_id: gameId, 
+                game_name: gameName, 
+                game_image: gameImage,
+
+              },
+            ]);
+            
+          }
   try{ 
-    const { data, error } = await supabase
-  .from('Posts')
-  .insert([{community_id: community_id,user_id: user_id,title:title,content:content}]) 
-  .select(); 
-  res.json({data})
-  }catch(error){ 
-    res.json(500).send("error joining communities")
-  }
+      const { data, error } = await supabase
+      .from('Posts')
+      .insert([{community_id: community_id,user_id: user_id,title:title,content:content,gameID:gameId}]) 
+      .select(); 
+      res.json({data})
+    }catch(error){ 
+      res.json(500).send("error joining communities")
+    }
 } 
 
 const checkComName = async (req,res)=>{ 
@@ -244,7 +261,8 @@ const getPostbyComId = async(req,res)=>{
       .from('Posts')
       .select(`
         *,
-        user:Users (id, userName, avatar_url)`)
+        user:Users (id, userName, avatar_url), 
+        game:Games (game_id, game_name, game_image)`)
       .eq('community_id', comId)  
       .order(order, { ascending:direction })
       .range(from, to);
@@ -295,7 +313,8 @@ const PostInfo = async(req,res) =>{
     .from('Posts') 
     .select(`
         *, 
-        creator:Users!Posts_user_id_fkey (id, userName, avatar_url)`) 
+        creator:Users!Posts_user_id_fkey (id, userName, avatar_url), 
+        game:Games (game_id, game_name, game_image)`) 
     .eq('id', postId)
     .single() 
     res.json({data})
@@ -365,7 +384,53 @@ const commentDownVote = async(req,res)=>{
   }catch(error){ 
     res.json(error)
   }
+} 
+const updateCommunity = async (req, res) => { 
+  const { communityId, name, description } = req.body; 
+ 
+  try {
+    const { data, error } = await supabase
+      .from('Communities')
+      .update({ name:name, description:description })
+      .eq('id', communityId)
+      .select();
+    
+    if (error) {
+      return res.status(500).json({ message: "Error updating community", error: error.message });
+    }
+    
+    return res.status(200).json({ message: "Community updated successfully", data });
+  } catch (error) {
+    return res.status(500).json({ message: "Error updating community", error: error.message });
+  }
+} 
+const getPopularPost = async (req, res) => {  
+  const page = req.query.page;  
+  const order = req.query.order; 
+  const direction = req.query.direction === 'asc';
+  const limit = 20;  
+
+  const from = (page - 1) * limit; 
+  const to = from + limit - 1; 
+    
+  try{ 
+      const { data, error } = await supabase
+    .from('Posts')
+    .select(`
+      *,
+      user:Users (id, userName, avatar_url), 
+      game:Games (game_id, game_name, game_image), 
+      community:Communities (id, name, icon_image)`)
+    .order(order, { ascending: direction })
+    .range(from, to);
+   res.json({data})
+  }
+
+  catch(error){
+    res.json(error)
+  }
+  
 }
 module.exports = {iconUploader,createCommunity,upload,bannerUploader,getCommunities,getMyCommunities,joinCommunity 
   ,deleteMemberCommunity,checkComName,getCommunityInfo,createPost,postImageUploader,getPostbyComId,deletePost, 
-  upVote,downVote,PostInfo,createComment,deleteComment,getComments,commentUpVote,commentDownVote}
+  upVote,downVote,PostInfo,createComment,deleteComment,getComments,commentUpVote,commentDownVote,updateCommunity,getPopularPost}

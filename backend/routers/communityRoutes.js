@@ -5,7 +5,7 @@ const {iconUploader,createCommunity,upload,bannerUploader,getCommunities,getMyCo
     downVote,
     upVote,createComment,deleteComment,
     PostInfo,getComments,commentUpVote,
-    commentDownVote} = require('../controllers/communityController'); 
+    commentDownVote,updateCommunity,getPopularPost} = require('../controllers/communityController'); 
 
 const router = express.Router();  
  
@@ -29,6 +29,7 @@ router.post('/createComment', createComment);
 router.delete('/deleteComment', deleteComment); 
 router.get('/getComments', getComments); 
 router.post('/commentUpVote', commentUpVote);
-router.post('/commentDownVote', commentDownVote);
-
+router.post('/commentDownVote', commentDownVote); 
+router.post('/updateComm',updateCommunity)
+router.get('/getPopularPost', getPopularPost);
 module.exports = router;

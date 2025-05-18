@@ -18,7 +18,8 @@ import BannerLoader from "../components/BannerLoader";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "../styles/leftLayout.css"  
- 
+import { TbBuildingBroadcastTowerFilled } from "react-icons/tb";
+
 import { useNavigate } from 'react-router-dom';
 
 function CommunityLeftLayout(){    
@@ -178,9 +179,10 @@ console.log(selectedTag)
                 
                 <h2>Home</h2>  
               
-            </Link> 
-                <h2>Popular</h2> 
-                
+            </Link>  
+            <Link to={"/c/popular"} style={{textDecoration:"none",color:"white",display:"flex",alignItems:"center",margin:0}}>
+                <h2 style={{margin:0}}>Popular</h2> 
+            </Link>    
             {loggedIn && session && session.userName && ( 
                 <div> 
                     <Link style={{textDecoration:"none",color:"white",display:"flex",alignItems:"center"}} to={`/${session.userName}`}>
@@ -318,49 +320,25 @@ console.log(selectedTag)
 
                     )}
                         
-                </Modal>
-                <h2 style={{marginTop:"15px"}}>Explore</h2> 
-                <Link style={{textDecoration:"none"}} to={'/communities'}>  
-                    <h2 style={{marginTop:"15px"}}>Communities</h2> 
-                </Link>
+                </Modal> 
+                 <Link style={{textDecoration:"none"}} to={'/communities'}>  
+                    <h2 style={{marginTop:"15px",marginBottom:0}}>Explore</h2>  
+                 </Link>
+                <div style={{display:"flex",alignItems:"center",marginTop:"15px"}}>  
+                    <h2 style={{marginBottom:0}}>Communities</h2> 
+                </div>
                 
                     <div className="link-container" onClick={()=>{if (!session) {
-                        navigate('/signup'); 
-                        return;
-                    };setIsOpenList(true)}}>  
-                        <div className="layoutIcons">
-                            <AiFillDashboard size={20} className="layoutI" /> 
-                        </div>
-                        <p>Create a Community</p>  
+                            navigate('/signup'); 
+                            return;
+                        };setIsOpenList(true)}}>  
+                            <div className="layoutIcons">
+                                <TbBuildingBroadcastTowerFilled  size={20} className="layoutI" /> 
+                            </div>
+                            <p>Create a Community</p>  
                         
                     </div>
-                    <Link className="link-container" to={"/MainGamesPage/this-week"}>  
-                        <div className="layoutIcons">
-                            <FaHotjar size={20} className="layoutI"/> 
-                        </div>
-                        <p>This Week</p>
-                    </Link> 
-                    <Link className="link-container" to={"/MainGamesPage/next-week"}>  
-                        <div className="layoutIcons">
-                            <TbPlayerTrackNextFilled size={20} className="layoutI"/> 
-                        </div>
-                        <p>Next Week</p>
-                    </Link> 
 
-                    <h2 style={{marginTop:"15px"}}>Top</h2>   
-                    <Link className="link-container" to={"/MainGamesPage/best-of-the-year"} >  
-                        <div className="layoutIcons">
-                            <GiTrophyCup size={20} className="layoutI"/> 
-                        </div>
-                        <p>Best of the Year</p> 
-                    </Link>
-                    <Link className="link-container" to={"/MainGamesPage/all-time-top"}>  
-                        <div className="layoutIcons">
-                            <FaCrown size={20} className="layoutI"/> 
-                        </div>
-                        <p>All time Bests</p>
-                    </Link>  
-  
 
             <Outlet/>
         </div>

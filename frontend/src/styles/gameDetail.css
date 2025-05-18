@@ -151,7 +151,7 @@
   }
 
 
-.seriesContainer button:hover img {
+.seriesContainer .serieslink:hover img {
     transform: scale(1.1);
 } 
 .listContainer {

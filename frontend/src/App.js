@@ -23,7 +23,8 @@ import TagsPage from './pages/TagsPage';
 import DeveloperPage from './pages/DeveloperPage'; 
 import ShowCommunityPage from './communitypages/ShowCommunityPage'; 
 import MainCommunityPage from './communitypages/MainCommunityPage';   
-import PostCommentPage from './communitypages/PostCommentPage';
+import PostCommentPage from './communitypages/PostCommentPage'; 
+import PopularPostsPage from './communitypages/PopularPostsPage';
 
 function App() {
    
@@ -53,7 +54,8 @@ function App() {
             <Route path='/developer/:slug' element={<DeveloperPage/>}/> 
             <Route path='/communities' element={<ShowCommunityPage/>}/> 
             <Route path='/c/:id' element={<MainCommunityPage/>}/> 
-            <Route path='/c/comment/:id' element={<PostCommentPage/>}/>
+            <Route path='/c/comment/:id' element={<PostCommentPage/>}/> 
+            <Route path='/c/popular' element={<PopularPostsPage/>}/>
             
           </Route> 
           

@@ -11,7 +11,7 @@ import { IoGameController } from "react-icons/io5";
 import { FaHeart } from "react-icons/fa"; 
 import { TbClockHour8Filled } from "react-icons/tb";
 import { AuthContext } from "../provider/AuthProvider"; 
-import { debounce } from 'lodash';  
+import { debounce, set } from 'lodash';  
 import { GiPc } from "react-icons/gi";
 import { SiMacos } from "react-icons/si";
 import { FaPlaystation } from "react-icons/fa";  
@@ -61,7 +61,8 @@ import LeftLayout from "./LeftLayout";
     const [listLoading, setListLoading] = useState(false); 
     const [isExist,setIsExist] = useState([]);  
     const [expand,setExpand] = useState(false) 
-    const [stores,setStores] = useState([]);
+    const [stores,setStores] = useState([]); 
+     const [posts,setPosts] = useState([]);
   
 
       const getLists = async () => {   
@@ -142,7 +143,9 @@ import LeftLayout from "./LeftLayout";
                 setSlider(response.data.screenshots); 
                 setSeries(response.data.series); 
                 setUserReview(response.data.userReview);  
-                setStores(response.data.stores);
+                setStores(response.data.stores); 
+                setPosts(response.data.posts); 
+
                  
                 
             }catch(error){ 
@@ -153,7 +156,7 @@ import LeftLayout from "./LeftLayout";
         };  
         getGamebyId();
     },[gameId]) 
-     
+     console.log("posts",posts)
     useEffect(()=>{ 
         const getReview = async (gameId, userId) => { 
             try{ 
@@ -609,8 +612,24 @@ import LeftLayout from "./LeftLayout";
                             </div>
                         </div>
 
+                        )} 
+                        {posts.length > 0 && (  
+                            <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",width:"100%",marginTop:"20px"}}> 
+                                <p style={{fontSize:"20px",color:"white"}}>Latest Posts</p>
+                                <div style={{width:"100%",gap:"10px"}}> 
+                                    {posts.map((data,index)=>(  
+                                        <Link to={`/c/comment/${data.id}`} className="game-post-link2"  key={index}>   
+                                            <Link className="game-post-link" to={`/c/${data.community.id}`} >
+                                                <img style={{width:"30px",borderRadius:"50%"}} src={data.community.icon_image}></img>
+                                                <p>/{data.community.name}</p> 
+                                            </Link>  
+                                            <p style={{margin:0,marginTop:"5px"}}>{data.title}</p>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
                         )}
-                        
+                    
                        </div>  
                         
                       
@@ -624,12 +643,12 @@ import LeftLayout from "./LeftLayout";
                         <div className="seriesContainer">  
                             
                             {series.results.map((data,index)=>(  
-                                <button onClick={() => navigate(`/GamedetailPage/${data.id}`, { state: { gameId: data.id,gameTitle:data.name } })}key={index} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:"white",backgroundColor:"transparent",border:"none",cursor:"pointer"}}> 
+                                <Link className="serieslink" to={`/GamedetailPage/${data.id}/${data.slug}`} state={{ gameImage: data.background_image }}key={index} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:"white",backgroundColor:"transparent",border:"none",cursor:"pointer",textDecoration:"none",marginLeft:"10px"}}> 
                                     <div style={{height:"60px"}}>  
                                         <p style={{fontSize:"15px",marginTop:20,color:"grey"}}>{data.name}</p> 
                                     </div> 
                                     <img src={data.background_image} alt={`Fotoğraf ${index + 1}`} />
-                                </button>
+                                </Link>
                                 ))}
                         </div> 
                     </div>

@@ -9,7 +9,8 @@ import Swal from 'sweetalert2';
 import { BsThreeDotsVertical } from "react-icons/bs"; 
 import { BiUpvote,BiDownvote} from "react-icons/bi";
 import { CiChat1 } from "react-icons/ci";   
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 
 
 function PostCommentPage(){   
@@ -94,7 +95,7 @@ function PostCommentPage(){
              navigate("/signup") 
              return
         }
-        if(comment.length > 10){  
+        if(comment.length > 7){  
            
             
             try{
@@ -183,7 +184,7 @@ function PostCommentPage(){
             console.log(error); 
         } 
     }
-   console.log("aaaa",comments)
+   console.log("aaaa",data)
     return( 
         <div className="main">  
             <CommunityLeftLayout /> 
@@ -192,7 +193,8 @@ function PostCommentPage(){
                     <div className="spinner"></div>
                 </div>
             ) : ( 
-                <div style={{width:"60%",height:"100%"}}>  
+                <div style={{display:"flex",width:"70%",height:"100%"}}>   
+                   <div style={{width:"80%",height:"100%"}}> 
                     <div className="post-con">
                      <div className="post-username-con">
                             {data.creator.avatar_url ? ( 
@@ -249,7 +251,16 @@ function PostCommentPage(){
                         </div>
                          
                     </div>
-                 </div>
+                 </div>  
+                </div>  
+                {data.game && (  
+                    <Link to={`/GameDetailPage/${data.game.game_id}/${data.game.game_name}`} state={{gameImage:data.game.game_image}} className="game-com-link" > 
+                        <img style={{width:"80%",height:"auto",borderRadius:"15px"}} src={data.game.game_image}/>  
+                        <p style={{color:"white"}}>{data.game.game_name}</p>
+
+                    </Link>
+                    )}
+                 
                 </div>
             )}  
             {commentLoading ? (  
