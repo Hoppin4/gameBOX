@@ -14,7 +14,7 @@ const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
 
 app.use(cors({ 
-  origin: ['http://localhost:3000', 'https://moviebox-a4351.web.app'], 
+  origin: ['https://moviebox-a4351.web.app'], 
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
   credentials: true,
 }));
@@ -33,7 +33,7 @@ app.use(session({
   cookie: { 
     maxAge: oneWeek,
     httpOnly: true,
-    secure: isProduction,
+    secure: true,
     sameSite: 'none'
   }
 }));
