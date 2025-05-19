@@ -63,7 +63,7 @@ import LeftLayout from "./LeftLayout";
     const [expand,setExpand] = useState(false) 
     const [stores,setStores] = useState([]); 
      const [posts,setPosts] = useState([]); 
-     const [reviewSending,setReviewSending] = useState(false);
+     const [reviewsLoading,setReviewLoading] = useState(true);
   
 
       const getLists = async () => {   
@@ -159,7 +159,8 @@ import LeftLayout from "./LeftLayout";
     },[gameId]) 
      console.log("posts",posts)
     useEffect(()=>{ 
-        const getReview = async (gameId, userId) => { 
+        const getReview = async (gameId, userId) => {  
+            setReviewLoading(true);
             try{ 
                 const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getReview", { 
                     params: { gameId: gameId, userId: userId } 
@@ -174,7 +175,9 @@ import LeftLayout from "./LeftLayout";
                 } 
             }catch(error){ 
                 console.error('Error getting review:', error); 
-            }  
+            }  finally{ 
+                setReviewLoading(false);
+            }
         } 
         if(loggedIn){
             getReview(gameId,session.userId);
@@ -200,7 +203,7 @@ import LeftLayout from "./LeftLayout";
    
 
       const sentReview = async (gameId, userId, rating, review,liked,played) => {   
-        setReviewSending(true)
+  
         try{  
             const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/api/sentReview", { 
                 gameId: gameId, 
@@ -212,12 +215,9 @@ import LeftLayout from "./LeftLayout";
                 
             }); 
            
-            
+      
         }catch(error){ 
             console.error('Error sending review:', error); 
-        }finally{ 
-            setShowInput(false);
-
         }
       }  
 
@@ -247,7 +247,7 @@ import LeftLayout from "./LeftLayout";
         return; 
         }
         if (loggedIn  && rating !== null ) {
-            debouncedSend(gameId, session.userId, rating, review, liked, played,session.userName,session.user_avatar);
+            debouncedSend(gameId, session.userId, rating, review, liked, played);
         } 
         },0); 
         return () => clearTimeout(timer);
@@ -414,7 +414,7 @@ import LeftLayout from "./LeftLayout";
                                 <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>  
                                     <p>Write your comment here</p>
                                     <textarea onChange={(e)=>setReviewInput(e.target.value)}style={{width:"80%",height:"150px",backgroundColor:"#171719",color:'white',fontFamily:"monospace" }}></textarea>  
-                                    <button onClick={()=>{setReview(reviewInput);}}style={{margin:10,backgroundColor:'green',border:"none",borderRadius:"10px",fontSize:"15px",color:"white",width:"80px",height:"30px "}}>Save</button>
+                                    <button onClick={()=>{setReview(reviewInput);setShowInput(false)}}style={{margin:10,backgroundColor:'green',border:"none",borderRadius:"10px",fontSize:"15px",color:"white",width:"80px",height:"30px "}}>Save</button>
                                 </div>
                                 </Modal>
                                     </div>
@@ -656,8 +656,13 @@ import LeftLayout from "./LeftLayout";
                                 ))}
                         </div> 
                     </div>
-                    )}  
-                    {userReview !== null && ( 
+                    )}   
+                    {reviewsLoading ? ( 
+                        <div style={{display:"flex",justifyContent:"center",alignItems:"center",width:"100%",height:"100%"}}>
+                            <div className="spinner"></div>  
+                        </div>
+                    ) : (  
+                         userReview !== null && ( 
                         <div style={{width:"45%",marginTop:"50px",justifyContent:"center",alignItems:"center"}}>  
                             <p style={{borderBottom:"2px solid grey",color:"white",fontSize:"20px"}}>Reviews</p>
                             {userReview.map((data,index)=>(  
@@ -690,7 +695,10 @@ import LeftLayout from "./LeftLayout";
                                 </div>
                                 ))}
                         </div>
+                    )
+
                     )}
+                   
                 </div> 
                 
             )}
