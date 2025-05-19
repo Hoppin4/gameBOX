@@ -33,7 +33,7 @@ app.use(session({
   cookie: { 
     maxAge: oneWeek,
     httpOnly: true,
-    secure: false,
+    secure: true,
     sameSite: 'none'
   }
 }));
