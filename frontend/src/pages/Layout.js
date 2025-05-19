@@ -9,7 +9,7 @@ import gameboxLogo from "../images/gameboxes.jpg";
 const Layout = () => {   
   const { loggedIn, setLoggedIn,session } = useContext(AuthContext);
  
-  
+  console.log(session)
   return ( 
     <div> 
       <nav className="nav">    
