@@ -11,17 +11,20 @@ const communityRoutes = require('./routers/communityRoutes');
 dotenv.config();
 
 const app = express();
-
+const isProduction = process.env.NODE_ENV === 'production';
 
 app.use(cors({ 
   origin: ['http://localhost:3000', 'https://moviebox-a4351.web.app'], 
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
   credentials: true,
 }));
+
 const oneWeek = 1000 * 60 * 60 * 24 * 7;
+
 app.use(express.json());  
 app.use(cookieParser()); 
 app.use(bodyParser.urlencoded({ extended: true })); 
+
 app.use(session({ 
   key: "userId", 
   secret: "subscribe", 
@@ -30,16 +33,16 @@ app.use(session({
   cookie: { 
     maxAge: oneWeek,
     httpOnly: true,
-    secure: isProduction, // ✅ sadece production'da true
-    sameSite: isProduction ? 'none' : 'lax' // ✅ production için 'none' olmalı
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax'
   }
 }));
 
 app.get('/', (req, res) => {
   res.send('Backend is running!');
 });
- 
-app.use('/com',communityRoutes);
+
+app.use('/com', communityRoutes);
 app.use('/api', dataRoutes); 
 app.use('/user', userRoutes);
 
