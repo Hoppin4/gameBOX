@@ -69,7 +69,7 @@ import LeftLayout from "./LeftLayout";
        
         setListLoading(true);
         try { 
-            const response = await axios.get("http://localhost:5000/api/getList", { 
+            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getList", { 
                 params: { userId: session.userId } 
             }); 
             console.log("List data:", response.data);
@@ -87,7 +87,7 @@ import LeftLayout from "./LeftLayout";
     const getListGames = async (listId) => { 
        
         try { 
-            const response = await axios.get("http://localhost:5000/api/getGameFromListbyUserId", { 
+            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getGameFromListbyUserId", { 
                 params: { listId: listId, gameId: gameId } 
             });  
            const exists = response.data.exists;  
@@ -109,7 +109,7 @@ import LeftLayout from "./LeftLayout";
     }  
     const insertGameToList = async (listId) => { 
         try {  
-            const response = await axios.post("http://localhost:5000/api/insertGameToList", { 
+            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/api/insertGameToList", { 
                  
                     gameId: gameId,
                     listId:listId, 
@@ -134,7 +134,7 @@ import LeftLayout from "./LeftLayout";
             
             setLoading(true);       
             try{ 
-                const response = await axios.get("http://localhost:5000/api/gamebyId", {
+                const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/gamebyId", {
                     params: { gameId: gameId , gameName: gameTitle , gameImage:image } 
                 });   
                 console.log(response)
@@ -160,7 +160,7 @@ import LeftLayout from "./LeftLayout";
     useEffect(()=>{ 
         const getReview = async (gameId, userId) => { 
             try{ 
-                const response = await axios.get("http://localhost:5000/api/getReview", { 
+                const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getReview", { 
                     params: { gameId: gameId, userId: userId } 
                 });  
                 console.log("AAAA",response) 
@@ -183,7 +183,7 @@ import LeftLayout from "./LeftLayout";
      
     const deleteReview = async(reviewId) => { 
         try{ 
-            const response = await axios.delete("http://localhost:5000/api/deleteReview", { 
+            const response = await axios.delete("https://moviebox2-1084798053682.europe-west1.run.app/api/deleteReview", { 
                 params: { reviewId: reviewId } 
             }); 
           
@@ -200,7 +200,7 @@ import LeftLayout from "./LeftLayout";
 
       const sentReview = async (gameId, userId, rating, review,liked,played,userName,avatar_url) => {  
         try{  
-            const response = await axios.post("http://localhost:5000/api/sentReview", { 
+            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/api/sentReview", { 
                 gameId: gameId, 
                 userId: userId, 
                 rating: rating, 

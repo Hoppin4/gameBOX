@@ -39,7 +39,7 @@ import LeftLayout from './LeftLayout';
         setMoreLoading(true) 
         try{  
             if(platform !== null){ 
-                const response = await axios.get("http://localhost:5000/api/genres", {
+                const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/genres", {
                     params: {
                       genre:genre, 
                       page:page, 
@@ -52,7 +52,7 @@ import LeftLayout from './LeftLayout';
                     setData(prevData => [...prevData,...response.data.results]); 
                   }
             }else{ 
-                const response = await axios.get("http://localhost:5000/api/genresout", {
+                const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/genresout", {
                     params: {
                       genre:genre, 
                       page:page, 

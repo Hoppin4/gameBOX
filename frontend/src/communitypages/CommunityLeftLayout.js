@@ -81,7 +81,7 @@ function CommunityLeftLayout(){
     },[communityName]) 
     const check = async () =>{ 
         try{ 
-            const response = await axios.get("http://localhost:5000/com/check", {
+            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/com/check", {
                 params:{ 
                     comName:communityName
                 }          
@@ -115,7 +115,7 @@ function CommunityLeftLayout(){
    const createCommunity = async()=>{  
     setCreateLoading(true)
         try{ 
-            const response = await axios.post("http://localhost:5000/com/createCommunity", {
+            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/createCommunity", {
                 communityName: communityName, 
                 description: description,    
                 userId: session.userId,     

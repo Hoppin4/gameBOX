@@ -25,7 +25,7 @@ function NewListPage() {
     const fetchGames = async (term) => {
         try {
           setSearchLoading(true);
-          const response = await axios.get("http://localhost:5000/api/getMainGames",{
+          const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getMainGames",{
             params: { search:term } 
         });  
           setSearchResults(response.data.results);
@@ -71,7 +71,7 @@ function NewListPage() {
             return;
           }
            try{ 
-                const response = await axios.post("http://localhost:5000/api/createList", { 
+                const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/api/createList", { 
                     listName: listName, 
                     description: listDescription,  
                     userId: session.userId,
@@ -90,7 +90,7 @@ function NewListPage() {
                   
                   const listId = response.data.data[0].id; 
                 const gamePromises = gameList.map((game) => { 
-                      return axios.post("http://localhost:5000/api/insertGameToList", { 
+                      return axios.post("https://moviebox2-1084798053682.europe-west1.run.app/api/insertGameToList", { 
                           listId: listId, 
                           gameId: game.id,   
                           gameName: game.name, 

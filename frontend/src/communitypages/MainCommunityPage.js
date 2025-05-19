@@ -76,7 +76,7 @@ function MainCommunityPage(){
     setLoading(true)
     try{   
         console.log("mylist",myCommunityList)
-        const response = await axios.get("http://localhost:5000/com/getCommunityInfo" ,{ 
+        const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/com/getCommunityInfo" ,{ 
             params:{ 
                 comId:id
             }
@@ -117,7 +117,7 @@ function MainCommunityPage(){
      const fetchGames = async (term) => {
       try {
         setSearchLoading(true);
-        const response = await axios.get("http://localhost:5000/api/getMainGames",{
+        const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getMainGames",{
           params: { search:term } 
       });  
         setSearchResults(response.data.results);
@@ -154,7 +154,7 @@ function MainCommunityPage(){
     });
     if(result.isConfirmed){ 
         try{ 
-            const response = await axios.delete("http://localhost:5000/com/deletePost" ,{   
+            const response = await axios.delete("https://moviebox2-1084798053682.europe-west1.run.app/com/deletePost" ,{   
                 params:{ 
                     postId:postId }
             });
@@ -182,7 +182,7 @@ function MainCommunityPage(){
         return;
     }
     try{ 
-        const response = await axios.post("http://localhost:5000/com/createPost" ,{ 
+        const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/createPost" ,{ 
             title:postTitle, 
             content:description,  
             community_id:comData.id, 
@@ -213,7 +213,7 @@ function MainCommunityPage(){
 
         console.log("aaaaaa",page)
         try{ 
-            const response = await axios.get("http://localhost:5000/com/getPosts" ,{ 
+            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/com/getPosts" ,{ 
                 params:{
                     comId:comId,
                     page:page ,
@@ -285,7 +285,7 @@ function MainCommunityPage(){
         c.id === postId ? { ...c, upvotes: c.upvotes + 1 } : c
     ));
     try{ 
-        const response = await axios.post("http://localhost:5000/com/upvote" ,{
+        const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/upvote" ,{
             postId:postId
         }) 
     }catch(error){
@@ -299,7 +299,7 @@ function MainCommunityPage(){
         c.id === postId ? { ...c, upvotes: c.upvotes - 1 } : c
     ));  
     try{ 
-        const response = await axios.post("http://localhost:5000/com/downvote" ,{
+        const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/downvote" ,{
             postId:postId
         }) 
     }catch(error){
@@ -311,7 +311,7 @@ function MainCommunityPage(){
         setcomDescription(updateDescription);
         
         try{ 
-            const response = await axios.post("http://localhost:5000/com/updateComm" ,{ 
+            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/updateComm" ,{ 
                 communityId:comData.id, 
                 name:updateName, 
                 description:updateDescription, 

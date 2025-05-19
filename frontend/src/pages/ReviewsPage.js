@@ -18,7 +18,7 @@ function ReviewsPage(){
      
     const getReview = async()=>{ 
         try{ 
-            const response = await axios.get("http://localhost:5000/api/getUserReviews",{
+            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getUserReviews",{
                 params: { userId:id, limit:limit } 
             });   
             const reviews = response.data.response.data; 
@@ -26,7 +26,7 @@ function ReviewsPage(){
             const enrichedReviews = await Promise.all(
                 reviews.map(async (review) => {
                   try {
-                    const gameRes = await axios.get("http://localhost:5000/api/getReviewComp", {
+                    const gameRes = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getReviewComp", {
                       params: { gameId: review.game_id },
                     });
                    
@@ -61,7 +61,7 @@ function ReviewsPage(){
     }   
     const deleteReview = async(reviewId) => { 
         try{ 
-            const response = await axios.delete("http://localhost:5000/api/deleteReview", { 
+            const response = await axios.delete("https://moviebox2-1084798053682.europe-west1.run.app/api/deleteReview", { 
                 params: { reviewId: reviewId } 
             }); 
           

@@ -13,7 +13,7 @@ function ShowListPage() {
     const [userData, setUserData] = useState("");
     const getUser = async () => { 
         try { 
-            const response = await axios.post("http://localhost:5000/user/getUser", { 
+            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/user/getUser", { 
                  id: location.state.list.user_id 
             }); 
             setUserData(response.data[0]);
@@ -26,7 +26,7 @@ function ShowListPage() {
     const getList = async () => { 
         setLoading(true); 
         try { 
-            const response = await axios.get("http://localhost:5000/api/getGameFromList", { 
+            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getGameFromList", { 
                 params: { listId } 
             });
             setShowList(response.data.data); 

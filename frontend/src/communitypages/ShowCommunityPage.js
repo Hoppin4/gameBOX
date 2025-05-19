@@ -17,7 +17,7 @@ function ShowCommunityPage(){
         try {  
             console.log("mylist",myCommunityList)
             setLoading(true);
-            const response = await axios.get("http://localhost:5000/com/getCommunities");
+            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/com/getCommunities");
             
             if (loggedIn && myCommunityList.length>0) {
             

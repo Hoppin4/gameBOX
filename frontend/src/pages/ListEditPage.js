@@ -35,7 +35,7 @@ function ListEditPage() {
     const getGameFromList = async () => { 
         setLoading(true);
         try { 
-            const response = await axios.get("http://localhost:5000/api/getGameFromList", { 
+            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getGameFromList", { 
                 params: { listId } 
             }); 
             setGameList(response.data.data);  
@@ -50,7 +50,7 @@ function ListEditPage() {
     } 
     const getListInfo = async () => { 
         try { 
-            const response = await axios.get("http://localhost:5000/api/getListbyId", { 
+            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getListbyId", { 
                 params: { listId } 
             }); 
             setListName(response.data.data[0].name); 
@@ -70,7 +70,7 @@ function ListEditPage() {
     const fetchGames = async (term) => {
         try {
           setSearchLoading(true);
-          const response = await axios.get("http://localhost:5000/api/getMainGames",{
+          const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getMainGames",{
             params: { search:term } 
         });  
           setSearchResults(response.data.results);
@@ -117,7 +117,7 @@ function ListEditPage() {
             return;
           }
            try{ 
-                const response = await axios.post("http://localhost:5000/api/updateList", { 
+                const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/api/updateList", { 
                     listName: listName, 
                     description: listDescription,  
                     listId: listId,
@@ -142,7 +142,7 @@ function ListEditPage() {
               if(deletedGames.length > 0 ) {
                 const deletePromises = deletedGames.map((game) => { 
                   console.log(game.game_id); 
-                        return axios.delete("http://localhost:5000/api/deleteGameFromList", { params:{ 
+                        return axios.delete("https://moviebox2-1084798053682.europe-west1.run.app/api/deleteGameFromList", { params:{ 
                             listGameId: game.id, 
                         }
                         }); 
@@ -153,7 +153,7 @@ function ListEditPage() {
                 
                 console.log(listId);
                 const gamePromises = addedGames.map((game) => { 
-                      return axios.post("http://localhost:5000/api/insertGameToList", { 
+                      return axios.post("https://moviebox2-1084798053682.europe-west1.run.app/api/insertGameToList", { 
                           listId: listId, 
                           gameId: game.game_id,   
                           gameName: game.game_name, 

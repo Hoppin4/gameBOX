@@ -33,7 +33,7 @@ import LeftLayout from './LeftLayout';
         setMoreLoading(true)
         try{  
             
-            const response = await axios.get("http://localhost:5000/api/publisher", {
+            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/publisher", {
                 params: {
                   publishers: slug, 
                   page:page,

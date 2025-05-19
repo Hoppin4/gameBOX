@@ -31,7 +31,7 @@ function PlatformsPage() {
     const fetchData = async () => {   
         try{  
             setLoading(true);
-            const response = await axios.get("http://localhost:5000/api/platforms", {
+            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/platforms", {
                 params: {
                   platforms: id, 
                   page:page,

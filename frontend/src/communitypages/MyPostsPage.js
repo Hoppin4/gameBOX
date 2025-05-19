@@ -39,7 +39,7 @@ function MyPostsPage() {
     console.log(myCommunityList);
     const getPopularPosts = async (page) => {  
         try{ 
-             const response = await axios.get('http://localhost:5000/com/getMyPosts',{ 
+             const response = await axios.get('https://moviebox2-1084798053682.europe-west1.run.app/com/getMyPosts',{ 
                 params:{  
                     userId:session.userId,
                     page:page, 
@@ -76,7 +76,7 @@ function MyPostsPage() {
     });
     if(result.isConfirmed){ 
         try{ 
-            const response = await axios.delete("http://localhost:5000/com/deletePost" ,{   
+            const response = await axios.delete("https://moviebox2-1084798053682.europe-west1.run.app/com/deletePost" ,{   
                 params:{ 
                     postId:postId }
             });
@@ -95,7 +95,7 @@ function MyPostsPage() {
         c.id === postId ? { ...c, upvotes: c.upvotes + 1 } : c
     ));
     try{ 
-        const response = await axios.post("http://localhost:5000/com/upvote" ,{
+        const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/upvote" ,{
             postId:postId
         }) 
     }catch(error){
@@ -109,7 +109,7 @@ function MyPostsPage() {
         c.id === postId ? { ...c, upvotes: c.upvotes - 1 } : c
     ));  
     try{ 
-        const response = await axios.post("http://localhost:5000/com/downvote" ,{
+        const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/downvote" ,{
             postId:postId
         }) 
     }catch(error){

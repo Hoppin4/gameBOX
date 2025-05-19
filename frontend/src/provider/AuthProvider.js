@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
 
     const addToList = async (communityId,auth) => {
       try{ 
-        const response = await axios.post("http://localhost:5000/com/joinCommunity" ,{ 
+        const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/joinCommunity" ,{ 
         
             userId:session.userId,  
             communityId:communityId, 
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
       try{  
         const targetItem = myCommunityList.find(item => item.community_id === memberId); 
         console.log("aaa",targetItem)
-        const response = await axios.delete(`http://localhost:5000/com/deleteCom`,{  
+        const response = await axios.delete(`https://moviebox2-1084798053682.europe-west1.run.app/com/deleteCom`,{  
           params:{ memberId:targetItem.id }
         }) 
         setMyCommunityList((prev) => prev.filter((item) => item.id !== targetItem.id)) 
@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
   const getMyList = async()=>{   
     setListLoading(true)
     try{ 
-      const response = await axios.get("http://localhost:5000/com/getMyCommunities" ,{ 
+      const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/com/getMyCommunities" ,{ 
         params:{ 
           userId:session.userId
         }
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(()=>{  
     const getSession = async () => { 
         try { 
-            const response = await axios.get("http://localhost:5000/user/getSession"); 
+            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/user/getSession"); 
            
             if(response.data.session){ 
                 console.log(response) 

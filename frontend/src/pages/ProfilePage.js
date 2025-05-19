@@ -21,7 +21,7 @@ import Swal from 'sweetalert2';
     const getList = async () => {   
         setListLoading(true);
         try { 
-            const response = await axios.get("http://localhost:5000/api/getList", { 
+            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getList", { 
                 params: { userId: session.userId } 
             });
             setListData(response.data.data);
@@ -36,7 +36,7 @@ import Swal from 'sweetalert2';
     
     const logOut = async () => {        
         try{ 
-            const response = await axios.post("http://localhost:5000/user/logout");  
+            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/user/logout");  
             setLoggedIn(false)
             navigate("/signup"); 
         }catch(error){ 
@@ -47,7 +47,7 @@ import Swal from 'sweetalert2';
     useEffect(() => {
         const getUserInfo = async () => {   
             try {   
-                const response = await axios.post("http://localhost:5000/user/getUser", { id: session.userId }); 
+                const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/user/getUser", { id: session.userId }); 
                 setUserData(response.data[0]);
                 
             } catch (error) {   
@@ -78,7 +78,7 @@ import Swal from 'sweetalert2';
     const handledelete = async (id) => { 
         try {  
             
-            const response = await axios.delete("http://localhost:5000/api/deleteList", { params :{listId: id }}); 
+            const response = await axios.delete("https://moviebox2-1084798053682.europe-west1.run.app/api/deleteList", { params :{listId: id }}); 
             console.log("List deleted:", response.data); 
             setListData((prevList) => prevList.filter((list) => list.id !== id)); 
         } catch (error) { 

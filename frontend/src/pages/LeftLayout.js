@@ -23,7 +23,7 @@ function LeftLayout(){
     const fetchGames = async (term) => {
       try {
         setSearchLoading(true);
-        const response = await axios.get("http://localhost:5000/api/getMainGames",{
+        const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getMainGames",{
           params: { search:term } 
       });  
         setSearchResults(response.data.results);
