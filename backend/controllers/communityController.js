@@ -422,15 +422,94 @@ const getPopularPost = async (req, res) => {
       game:Games (game_id, game_name, game_image), 
       community:Communities (id, name, icon_image)`)
     .order(order, { ascending: direction })
-    .range(from, to);
+    .range(from, to); 
    res.json({data})
   }
-
-  catch(error){
+catch(error){
     res.json(error)
   }
   
+}  
+const getPopularGames = async (req, res) => {    
+  const startDate = req.query.startDate; 
+  const endDate = req.query.endDate;
+  try{ 
+    const response = await axios.get('https://api.rawg.io/api/games', { 
+                params: {
+                    key: process.env.API_KEY, 
+                    page_size: 4, 
+                    dates:`${startDate},${endDate}`,
+                   
+                }
+            });  
+       
+  const response1 = await axios.get('https://api.rawg.io/api/games',{ 
+            params:{ 
+                key: process.env.API_KEY, 
+                page_size: 4 ,  
+                ordering:"-reviews_count", 
+            }
+        }) 
+        
+  
+    res.json({ 
+  popular: response.data, 
+  bestseller: response1.data,
+});
+  }catch(error){  
+    res.json(error)
+  }
+   
+} 
+
+const myCommunities = async (req, res) => { 
+   
+  const userId = req.query.userId; 
+  try {
+    const { data, error } = await supabase
+      .from('Community_Members')
+      .select(`
+        *,
+        community:Communities (id, name, icon_image)`) 
+      .order(order, { ascending: direction })
+      .range(from, to)
+      .eq('user_id', userId);
+    
+    return res.status(200).json({ message: "Communities fetched successfully", data });
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching communities", error: error.message });
+  } 
+} 
+const getMyPosts = async (req, res) => { 
+  const userId = req.query.userId;  
+  const page = req.query.page; 
+  const order = req.query.order; 
+  const direction = req.query.direction === 'asc'; 
+  const limit = 20; 
+  const from = (page - 1) * limit;
+  const to = from + limit - 1; 
+
+  try {
+    const { data, error } = await supabase
+      .from('Posts')
+      .select(`
+        *,
+        user:Users (id, userName, avatar_url), 
+        game:Games (game_id, game_name, game_image), 
+        community:Communities (id, name, icon_image)`) 
+      .order(order, { ascending: direction })
+      .range(from, to)
+      .eq('user_id', userId);
+    
+    return res.status(200).json({ message: "Posts fetched successfully", data });
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching posts", error: error.message });
+  } 
+} 
+const getMostPopularGames =async(req,res) =>{  
+    
 }
 module.exports = {iconUploader,createCommunity,upload,bannerUploader,getCommunities,getMyCommunities,joinCommunity 
   ,deleteMemberCommunity,checkComName,getCommunityInfo,createPost,postImageUploader,getPostbyComId,deletePost, 
-  upVote,downVote,PostInfo,createComment,deleteComment,getComments,commentUpVote,commentDownVote,updateCommunity,getPopularPost}
+  upVote,downVote,PostInfo,createComment,deleteComment,getComments,commentUpVote, 
+  commentDownVote,updateCommunity,getMyPosts,getPopularPost,myCommunities,getPopularGames}

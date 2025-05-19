@@ -18,7 +18,7 @@ const Layout = () => {
           <li > <Link style={{display:"flex",justifyContent:"center",alignItems:"center"}} to="/"><img style={{height:"40px",borderRadius:"50%",marginRight:"10px"}} src={gameboxLogo}></img>GameBOX</Link></li>
           <li><Link to="/MainGamesPage/month-trending">Games</Link></li>
          
-          <li><Link to="/community">Community</Link></li>  
+          <li><Link to="/c/popular">Community</Link></li>  
          
           {!loggedIn ? (  
             <div style={{display:"flex"}}>

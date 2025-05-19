@@ -1,16 +1,28 @@
-import React from "react";  
+import React, { use } from "react";  
 import { useState } from "react"; 
 import axios from "axios";
 import Swal from "sweetalert2"; 
 import "../styles/auth.css";  
 import myPhoto from "../images/sonic2.webp"; 
-import genshin from "../images/genshin.jpg";
- const RegisterPage = () => {    
+import genshin from "../images/genshin.jpg"; 
+import { useNavigate } from "react-router-dom"; 
+import { useEffect } from "react"; 
+import { AuthContext } from "../provider/AuthProvider"; 
+import { useContext } from "react";
+ const RegisterPage = () => {      
+const { loggedIn, setLoggedIn, session } = useContext(AuthContext);
+  const nav = useNavigate();
 const [user_email, setEmail] = useState("");
   const [user_password, setPassword] = useState(""); 
     const [userName, setUsername] = useState(""); 
     const [birthday, setBirthday] = useState("");
   const [message, setMessage] = useState("");
+  
+  useEffect(() => {  
+    if(session){ 
+      nav('/')
+    }
+  }, []);
 
     const handleRegister = async (e) => { 
         e.preventDefault();
@@ -33,6 +45,8 @@ const [user_email, setEmail] = useState("");
                 text: error.response.data.message || "Register Failed",
                 confirmButtonText: 'OK'
               });
+        }finally{ 
+          nav('/signup')
         }
     };
     return (  

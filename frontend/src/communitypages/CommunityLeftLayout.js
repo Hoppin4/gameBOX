@@ -184,12 +184,12 @@ console.log(selectedTag)
                 <h2 style={{margin:0}}>Popular</h2> 
             </Link>    
             {loggedIn && session && session.userName && ( 
-                <div> 
+                <div style={{marginTop:"10px"}}> 
                     <Link style={{textDecoration:"none",color:"white",display:"flex",alignItems:"center"}} to={`/${session.userName}`}>
                     <img  src={session.user_avatar}></img>
                     <h2 style={{fontWeight:"bold",marginLeft:"5px",marginBottom:"0"}}>{session.userName}</h2> 
                     </Link>   
-                    <Link className="link-container"  to={`/reviews/${session.userId}`} >  
+                    <Link className="link-container"  to={`/c/myposts`} >  
                         <div className="layoutIcons"> 
                             <BsFillLayersFill size={20} className="layoutI"/>
                         </div>

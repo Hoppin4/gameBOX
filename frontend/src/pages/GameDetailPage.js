@@ -659,13 +659,13 @@ import LeftLayout from "./LeftLayout";
                             {userReview.map((data,index)=>(  
                                 <div key={index} style={{display:"flex",alignItems:"center",justifyContent:"flex-start",width:"100%",borderBottom:"0.5px solid grey",marginTop:"20px"}}>  
                                     <div style={{height:"100px"}}>
-                                        <img style={{width:"60px",height:"60px",objectFit:"cover",objectPosition:"center",borderRadius:"50%"}} src={data.user_avatar?data.user_avatar:avatar  }></img>
+                                        <img style={{width:"60px",height:"60px",objectFit:"cover",objectPosition:"center",borderRadius:"50%"}} src={data.user.avatar_url?data.user.avatar_url:avatar  }></img>
                                     </div> 
                                     <div>
                                         <div style={{display:"flex",alignItems:"start",justifyContent:"center",marginLeft:"20px",width:"100%"}}>
                                             <p style={{margin:0,color:"grey"}}>Reviewed by </p>  
                                             <div style={{width:"100px"}}> 
-                                                <p style={{margin:0,color:"white",marginLeft:"5px"}}> {data.user_name}</p>
+                                                <p style={{margin:0,color:"white",marginLeft:"5px"}}> {data.user.userName}</p>
                                             </div> 
                                             
                                             <Rating  style={{marginLeft:"10px"}} size={"30px"} initialValue={data.rating} readonly={true}  />  

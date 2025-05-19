@@ -148,7 +148,8 @@ const getGamebyId = async (req, res) => {
             .limit(5);
         const { data, error } = await supabase
             .from('Reviews')
-            .select('*')
+            .select(`*, 
+                user:Users(id , userName,avatar_url)`)
             .eq('game_id', gameId)
              
             

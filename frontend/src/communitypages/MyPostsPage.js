@@ -17,40 +17,31 @@ import { GiJetPack } from "react-icons/gi";
 import { FaHotjar } from "react-icons/fa";   
 import { FaBoxArchive } from "react-icons/fa6"; 
 import { IoMdArrowDropdown } from "react-icons/io"; 
-import { MdKeyboardArrowRight } from "react-icons/md"; 
 import { useNavigate } from "react-router-dom";
 
 
-
-function PopularPostsPage() {     
-    const nav = useNavigate();
-    const { myCommunityList,removeFromList,addToList,session } = useContext(AuthContext);
+function MyPostsPage() {     
+    const nav = useNavigate()
+    const { myCommunityList,removeFromList,addToList,session,loggedIn } = useContext(AuthContext);
     const [posts, setPosts] = useState([]);  
     const [selectedSort, setSelectedSort] = useState("New");
     const [postLoading,setPostLoading] = useState(true);  
     const [votedPosts, setVotedPosts] = useState({});   
     const [hasMore, setHasMore] = useState(true);  
     const [page, setPage] = useState(1); 
-    const [games,setGameData] = useState();  
-    const [mostPopular,setMostPopular] = useState();
-    const [gameLoading, setGameLoading] = useState(true);
     const [moreLoading, setMoreLoading] = useState(false); 
-    const [order, setOrder] = useState("upvotes"); 
-    const [direction, setDirection] = useState("desc"); 
-    const today = new Date();
-    const lastMonth = new Date();   
-    lastMonth.setMonth(lastMonth.getMonth() - 1);
-    const formatDate = (date) => date.toISOString().split("T")[0];
-    const startDate = formatDate(lastMonth);
-    const endDate = formatDate(today);
-   console.log("startDate",startDate);   
-    console.log("endDate",endDate);
+    const [order, setOrder] = useState("created_at"); 
+    const [direction, setDirection] = useState("desc");
+   
     dayjs.extend(relativeTime); 
-    const timeago = (time) =>dayjs(time).fromNow() 
+    const timeago = (time) =>dayjs(time).fromNow()  
+  
+    console.log(myCommunityList);
     const getPopularPosts = async (page) => {  
         try{ 
-             const response = await axios.get('http://localhost:5000/com/getPopularPost',{ 
-                params:{ 
+             const response = await axios.get('http://localhost:5000/com/getMyPosts',{ 
+                params:{  
+                    userId:session.userId,
                     page:page, 
                     order:order, 
                     direction:direction,
@@ -124,27 +115,12 @@ function PopularPostsPage() {
     }catch(error){
         console.log(error);
     }
-   }    
-   const getPopularGames = async()=>{ 
-        try{ 
-            const response = await axios.get("http://localhost:5000/com/getPopularGames",{ 
-                params:{   
-                    startDate:startDate, 
-                    endDate:endDate,
-                }
-            });    
-            console.log("response",response)
-            setGameData(response.data.popular.results); 
-            setMostPopular(response.data.bestseller.results);
-           
-        }catch(error){ 
-            console.log(error); 
-        } finally{ 
-            setGameLoading(false);
-        }
-   }
+   }   
    const skipNextPageEffect = useRef(false);
-   useEffect(() => {  
+   useEffect(() => {   
+      if(!session){
+        return nav("/c/popular");
+    }   
         setPostLoading(true); 
         setPosts([]);  
         setPage(1); 
@@ -165,24 +141,24 @@ function PopularPostsPage() {
         if (page > 1) { 
             getPopularPosts(); 
         }
-    }, [page]); 
-    useEffect(()=>{ 
-        getPopularGames();
-    },[])
-   console.log(games);
+    }, [page]);
+  
     return(
         <div className="main">   
       
             <CommunityLeftLayout />
-            {postLoading && gameLoading ? (  
-                <div style={{display:"flex",justifyContent:"center",alignItems:"center", width:"100%",height:"100%"}}> 
+            {postLoading ? (  
+                <div style={{display:"flex",justifyContent:"center",alignItems:"center",  width:"100%",height:"100%"}}> 
                     <div className="spinner"></div>
                 </div>
                 ):(  
-                   <div style={{display:"flex",flexDirection:"row",justifyContent:"center",width:"100%",marginLeft:"10%"}}>
                     <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",width:"60%"}}>  
+                    <div style={{display:"flex",justifyContent:"flex-start",alignItems:"center",gap:"5px",width:"100%",marginTop:"20px",borderBottom:"1px solid grey"}}>  
+                        <p style={{color:"white",fontSize:"30px",margin:0,marginBottom:"10px"}}>My Posts</p>
+                    </div>  
+                    
                       <div style={{display:"flex",flexDirection:"row",width:"100%",marginTop:"20px"}}>  
-                                  <div class="dropdown2">   
+                                  <div style={{}} class="dropdown2">   
                                     <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:"5px"}}>
                                                     <p style={{margin:0,color:"white",color:"grey"}}>Sort By:</p>
                                                     <p style={{margin:0,color:"white",color:"grey"}}>{selectedSort}</p>  
@@ -205,7 +181,7 @@ function PopularPostsPage() {
                                     </div> 
                             </div> 
                      {posts.map((data,index)=>(  
-                        <Link key={index} to={`/c/comment/${data.id}`} style={{textDecoration:"none",padding:"10px",borderBottom:"1px solid grey",display:"flex",justifyContent:"center",alignItems:"center",width:"100%"}}>
+                        <Link to={`/c/comment/${data.id}`} style={{textDecoration:"none",padding:"10px",borderBottom:"1px solid grey",display:"flex",justifyContent:"center",alignItems:"center",width:"100%"}}>
                         <div key={index} className="post-con">  
                             <div className="post-username-con">
                                 {data.user.avatar_url ? ( 
@@ -275,115 +251,10 @@ function PopularPostsPage() {
                                 </div> 
                             )}
                             
-                   </div>  
-                   {gameLoading ? ( 
-                    <div></div>
-                   ) : (  
-                  <div style={{width:"20%"}}> 
-                    <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(2, 1fr)",
-                        gap: "10px",
-                        width: "100%",
-                        marginTop: "20px",
-                        padding: "20px", 
-                        justifyContent:"flex-start", 
-                        height:"250px", 
-                        backgroundColor:"#0E1113", 
-                        borderTopLeftRadius:"15px",  
-                        borderTopRightRadius:"15px",
-                        marginLeft:"20px",
-                    }}
-                    > 
-                    <div onClick={()=>nav('/MainGamesPage/month-trending')} style={{ gridColumn: "1 / -1", display: "flex", alignItems: "center", gap: "5px" ,justifyContent:"center",cursor:"pointer"}}>
-                        <h2 style={{  fontSize: "16px",color:"white" }}>
-                            Look at the Recently Popular Games
-                        </h2> 
-                        <MdKeyboardArrowRight size={20} color="white" />
- 
-                    </div>
-
-                    {games &&
-                        games.slice(0, 4).map((data, index) => (
-                        <Link
-                            key={index}
-                            to={`/GameDetailPage/${data.id}/${data.name}`} 
-                           state={{gameImage:data.background_image}}
-                            style={{ textDecoration: "none", color: "black" }}
-                        >
-                            <div style={{ textAlign: "center" }}>
-                            <img
-                                src={data.background_image}
-                                alt={data.name}
-                                style={{
-                                width: "100%",
-                                height: "80px",
-                                borderRadius: "10px",
-                                objectFit: "cover",
-                                }}
-                            />
-                           
-                            </div>
-                        </Link>
-                        ))}
-                    </div>
-                  
-                         <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(2, 1fr)",
-                        gap: "10px",
-                        width: "100%",
-                
-                        padding: "20px", 
-                        justifyContent:"flex-start", 
-                        height:"250px", 
-                        backgroundColor:"#0E1113", 
-                        borderBottomLeftRadius:"15px", 
-                        borderBottomRightRadius:"15px",
-                        marginLeft:"20px",
-                    }}
-                    > 
-                    <div onClick={()=>nav('/MainGamesPage/all-time-top')} style={{ gridColumn: "1 / -1", display: "flex", alignItems: "center", gap: "5px" ,justifyContent:"center",cursor:"pointer"}}>
-                        <h2 style={{  fontSize: "16px",color:"white" }}>
-                            Look at the All Time Best Games
-                        </h2> 
-                        <MdKeyboardArrowRight size={20} color="white" />
- 
-                    </div>
-
-                    {mostPopular &&
-                        mostPopular.map((data, index) => (
-                        <Link
-                            key={index}
-                            to={`/GameDetailPage/${data.id}/${data.name}`} 
-                           state={{gameImage:data.background_image}}
-                            style={{ textDecoration: "none", color: "black" }}
-                        >
-                            <div style={{ textAlign: "center" }}>
-                            <img
-                                src={data.background_image}
-                                alt={data.name}
-                                style={{
-                                width: "100%",
-                                height: "80px",
-                                borderRadius: "10px",
-                                objectFit: "cover",
-                                }}
-                            />
-                           
-                            </div>
-                        </Link>
-                        ))}
-                    </div> 
-                    </div>
-                   )} 
-                   
-                </div> 
+                   </div>
                 )}
           
            
         </div>
     )
-}export default PopularPostsPage;
+}export default MyPostsPage;
