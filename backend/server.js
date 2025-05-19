@@ -13,10 +13,11 @@ dotenv.config();
 const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
 
-app.use(cors({ 
-  origin: ['https://moviebox-a4351.web.app','https://moviebox2-1084798053682.europe-west1.run.app'], 
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+app.use(cors({
+  origin: 'https://moviebox-a4351.web.app',
   credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
 
 const oneWeek = 1000 * 60 * 60 * 24 * 7;
@@ -27,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set('trust proxy', 1);
 app.use(session({ 
   key: "userId", 
-  secret: "subscribe", 
+  secret: "subscribe",  
   resave: false, 
   saveUninitialized: true, 
   cookie: { 
