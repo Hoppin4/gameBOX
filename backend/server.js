@@ -14,7 +14,7 @@ const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
 
 app.use(cors({ 
-  origin: ['https://moviebox-a4351.web.app'], 
+  origin: ['https://moviebox-a4351.web.app','https://moviebox2-1084798053682.europe-west1.run.app'], 
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
   credentials: true,
 }));
