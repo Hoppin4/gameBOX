@@ -32,9 +32,9 @@ app.use(session({
   saveUninitialized: false, 
   cookie: { 
     maxAge: oneWeek,
-    httpOnly: true,
-    secure: false,
-    sameSite: 'lax'
+    httpOnly: false,
+    secure: true,
+  sameSite: 'none'
   }
 }));
 
