@@ -27,7 +27,7 @@ const [user_email, setEmail] = useState("");
     const handleRegister = async (e) => { 
         e.preventDefault();
         try { 
-            const response = await axios.post("http://localhost:5000/user/register", {userName,user_email,user_password,birthday }); 
+            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/user/register", {userName,user_email,user_password,birthday }); 
             console.log(response.data.message)
             setMessage(response.data.message);  
             Swal.fire({
