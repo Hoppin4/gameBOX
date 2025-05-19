@@ -25,10 +25,11 @@ import ShowCommunityPage from './communitypages/ShowCommunityPage';
 import MainCommunityPage from './communitypages/MainCommunityPage';   
 import PostCommentPage from './communitypages/PostCommentPage'; 
 import PopularPostsPage from './communitypages/PopularPostsPage'; 
-import MyPostsPage from './communitypages/MyPostsPage';
+import MyPostsPage from './communitypages/MyPostsPage'; 
+import axios from 'axios';
 
 function App() {
-   
+   axios.defaults.withCredentials = true;
 
   return ( 
     <AuthProvider>

@@ -8,7 +8,7 @@ import gameboxLogo from "../images/gameboxes.jpg";
 
 const Layout = () => {   
   const { loggedIn, setLoggedIn,session } = useContext(AuthContext);
- 
+ axios.defaults.withCredentials = true; 
   console.log(session)
   return ( 
     <div> 
