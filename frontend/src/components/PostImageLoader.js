@@ -4,7 +4,7 @@ import myPhoto from "../images/avatar.png";
 import "../styles/imageUploader.css";  
 import { AuthContext } from "../provider/AuthProvider"; 
 
-const PostImgageLoader = ({image_url,postId,uploadReady,dataLoading}) => {  
+const PostImgageLoader = ({image_url,postId,uploadReady,dataLoading,formdata}) => {  
   const { session } = useContext(AuthContext);
   const [image, setImage] = useState(null); 
   const [imageUrl, setImageUrl] = useState(image_url); 
@@ -37,28 +37,13 @@ const PostImgageLoader = ({image_url,postId,uploadReady,dataLoading}) => {
     const formData = new FormData();
     formData.append('image', image);
     formData.append('postId', postId);
-    try {
-      setLoading(true);
-      const response = await axios.post('https://moviebox2-1084798053682.europe-west1.run.app/com/postImageLoader', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      setImageUrl(response.data.imageUrl); 
-      setLoading(false); 
-    } catch (error) {
-      console.error('Resim yükleme hatası:', error);
-      setLoading(false);
-    }finally{ 
-        dataLoading(true);
-    }
+    formdata(formData);
   }; 
   useEffect(() => {
-    if (uploadReady&& image && postId) {
+    if (image) {
       handleImageUpload();
     }
-  }, [uploadReady,postId]);
+  }, [image]);
 
   return (
     

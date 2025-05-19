@@ -126,11 +126,7 @@ const postImageUploader = async (req, res) => {
   
       
       const imageUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/images/${filePath}`; 
-      const { error: updateError } = await supabase
-        .from('Posts')
-        .update({ post_image: imageUrl }) 
-        .eq('id', postId);
-      res.json({ postId});
+     res.json({ imageUrl });
     } catch (error) {
       res.status(500).send("Error uploading to Supabase.");
     }
@@ -158,7 +154,8 @@ const createPost = async (req,res)=>{
             ]);
             
           }
-  try{ 
+  try{  
+    
       const { data, error } = await supabase
       .from('Posts')
       .insert([{community_id: community_id,user_id: user_id,title:title,content:content,gameID:gameId}]) 

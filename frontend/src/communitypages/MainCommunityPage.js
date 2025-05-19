@@ -66,7 +66,9 @@ function MainCommunityPage(){
    const navigate = useNavigate();  
    const [isFetching, setIsFetching] = useState(false);
     const [saving, setSaving] = useState(false); 
-    const [selectedGame, setSelectedGame] = useState(null); 
+    const [selectedGame, setSelectedGame] = useState(null);  
+    const [formData, setFormdata] = useState(new FormData()); 
+    const [imageUrl, setImageUrl] = useState();
  
    dayjs.extend(relativeTime); 
     const timeago = (time) =>dayjs(time).fromNow() 
@@ -181,7 +183,14 @@ function MainCommunityPage(){
         });
         return;
     }
-    try{ 
+    try{  
+         const postResponse = await axios.post('https://moviebox2-1084798053682.europe-west1.run.app/com/postImageLoader', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });  
+        console.log("postResponse",postResponse)
+        setImageUrl(postResponse.data.imageUrl)
         const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/createPost" ,{ 
             title:postTitle, 
             content:description,  
@@ -189,10 +198,12 @@ function MainCommunityPage(){
             user_id:session.userId,   
             gameId:selectedGame.id, 
             gameName:selectedGame.name,  
-            gameImage:selectedGame.background_image,
+            gameImage:selectedGame.background_image, 
+            post_image:imageUrl, 
+
            
         })   
-        setPostId(response.data.data[0].id)  
+       
         setTimeout(()=>{ 
                     setPosts((prev) => [{...response.data.data[0],user:{id:session.userId,userName: session.userName,avatar_url: session.user_avatar,}, 
                     game:{game_id:selectedGame.id,game_name:selectedGame.name,game_image:selectedGame.background_image}}, ...prev]);
@@ -405,7 +416,7 @@ function MainCommunityPage(){
                                         <div style={{width:"100%",display:"flex",justifyContent:"flex-end"}}> 
                                             <p style={{margin:1,color:"grey"}}>{100-postTitle.length}</p> 
                                         </div>  
-                                            <PostImgageLoader postId={postId} uploadReady={ready} dataLoading={setImageLoading}/> 
+                                            <PostImgageLoader  formdata={setFormdata}/> 
                                             <p style={{fontSize:"12px",margin:0,color:"grey",marginTop:"10px"}}>Describe the topic you wanna talk about.</p>
                                             <textarea value={description} onChange={(e)=>setDescription(e.target.value)} style={{height:"150px",marginTop:2}}className="description" placeholder="Description*"/> 
                                     </div>  
