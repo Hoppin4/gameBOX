@@ -14,7 +14,7 @@ const app = express();
 
 
 app.use(cors({ 
-  origin: ['http://localhost:3000'], 
+  origin: ['http://localhost:3000', 'https://moviebox-a4351.web.app'], 
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
   credentials: true,
 }));
@@ -23,19 +23,17 @@ app.use(express.json());
 app.use(cookieParser()); 
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(session({ 
-  key:"userId", 
-  secret:"subscribe", 
+  key: "userId", 
+  secret: "subscribe", 
   resave: false, 
   saveUninitialized: false, 
-  cookie:{ 
-      
+  cookie: { 
     maxAge: oneWeek,
-    httpOnly: true,  // Tarayıcıdan JS ile erişilmesin (güvenlik için iyi)
-    secure: false,   // HTTPS'te true yapman lazım prod'da
-    sameSite: 'lax' 
-    
+    httpOnly: true,
+    secure: isProduction, // ✅ sadece production'da true
+    sameSite: isProduction ? 'none' : 'lax' // ✅ production için 'none' olmalı
   }
-}))
+}));
 
 app.get('/', (req, res) => {
   res.send('Backend is running!');
