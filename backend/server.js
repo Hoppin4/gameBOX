@@ -29,7 +29,7 @@ app.use(session({
   key: "userId", 
   secret: "subscribe", 
   resave: false, 
-  saveUninitialized: false, 
+  saveUninitialized: true, 
   cookie: { 
     maxAge: oneWeek,
     httpOnly: true,
