@@ -44,10 +44,12 @@ const SingupPage = () => {
         }
     } 
     useEffect(() => {
-        if (loggedIn && session?.userName) {
+        if (loggedIn && session?.userName) { 
+            console.log("session",session)
           navigate(`/${session.userName}`);
         }
-      }, [loggedIn, session]);
+      }, [loggedIn, session]); 
+    
     return (
         <div className="signupContainer"> 
         <img src={myPhoto} className="gImage"></img> 
