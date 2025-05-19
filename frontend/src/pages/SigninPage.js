@@ -21,7 +21,7 @@ const SingupPage = () => {
     const handleSignIn = async (e) => {  
         e.preventDefault(); 
         try { 
-            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/user/login", {user_email,user_password },{withCredentials: true}); 
+            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/user/login", {user_email: user_email, user_password: user_password},{withCredentials: true}); 
             setMessage(response.data.message);  
             Swal.fire({
                 icon: 'success',
