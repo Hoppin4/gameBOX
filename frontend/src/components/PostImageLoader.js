@@ -4,7 +4,7 @@ import myPhoto from "../images/avatar.png";
 import "../styles/imageUploader.css";  
 import { AuthContext } from "../provider/AuthProvider"; 
 
-const PostImgageLoader = ({image_url,postId,uploadReady,dataLoading,formdata}) => {  
+const PostImgageLoader = ({image_url,formdata}) => {  
   const { session } = useContext(AuthContext);
   const [image, setImage] = useState(null); 
   const [imageUrl, setImageUrl] = useState(image_url); 
@@ -33,10 +33,10 @@ const PostImgageLoader = ({image_url,postId,uploadReady,dataLoading,formdata}) =
       alert('Lütfen bir resim seçin!');
       return;
     }
-    dataLoading(false);
+
     const formData = new FormData();
     formData.append('image', image);
-    formData.append('postId', postId);
+    
     formdata(formData);
   }; 
   useEffect(() => {

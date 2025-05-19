@@ -169,7 +169,7 @@ function MainCommunityPage(){
     }
    
    const handleSavePost = async()=>{   
-   
+   console.log("formdata",formData)
     setReady(false) 
     if(!postTitle  || !selectedGame){ 
         toast.error("Please fill in all fields.", {

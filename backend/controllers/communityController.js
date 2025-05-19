@@ -111,7 +111,7 @@ const postImageUploader = async (req, res) => {
     }
   
     try { 
-      const postId  = req.body.postId; 
+     
       const filePath = `posts/${Date.now()}-${req.file.originalname}`;
       const { data, error } = await supabase.storage
         .from('images') 
@@ -136,7 +136,7 @@ const createPost = async (req,res)=>{
   const { title, 
     content,  
     community_id ,
-    user_id,gameId,gameName,gameImage } = req.body; 
+    user_id,gameId,gameName,gameImage,post_image } = req.body; 
      
     const { data: existing } = await supabase
         .from('Games')
@@ -158,7 +158,7 @@ const createPost = async (req,res)=>{
     
       const { data, error } = await supabase
       .from('Posts')
-      .insert([{community_id: community_id,user_id: user_id,title:title,content:content,gameID:gameId}]) 
+      .insert([{community_id: community_id,user_id: user_id,title:title,content:content,gameID:gameId,post_image:post_image}]) 
       .select(); 
       res.json({data})
     }catch(error){ 
