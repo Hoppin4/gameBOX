@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(()=>{  
     const getSession = async () => { 
         try { 
-            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/user/getSession",{ credentials: "include" }); 
+            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/user/getSession",{ withCredentials: true }); 
            
             if(response.data.session){ 
                 console.log(response) 
