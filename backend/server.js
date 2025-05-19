@@ -34,7 +34,7 @@ app.use(session({
     maxAge: oneWeek,
     httpOnly: true,
     secure: true,
-    sameSite: 'lax'
+    sameSite: 'none'
   }
 }));
 
