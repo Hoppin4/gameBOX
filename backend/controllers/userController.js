@@ -94,75 +94,47 @@ const registerUser = async (req, res) => {
     
 } 
  
-const userLogin = async (req, res) => {
-  const { user_email, user_password } = req.body;
-  
-  if (!user_email || !user_password) {
-    return res.status(400).json({ message: 'All fields are required!' });
-  }
-  
-  try {
-    const { data, error } = await supabase
-      .from('Users')
-      .select('*')
-      .eq('user_email', user_email)
-      .single();
-      
-    if (error) {
-      console.error('User not found:', error);
-      return res.status(404).json({ message: "User doesn't exist" });
-    }
+const userLogin = async (req, res) => {  
+  const {user_email,user_password} = req.body;
+  if (!user_email || !user_password) { 
+    return res.status(400).json({ message: 'All fields are required!' }); 
+  } 
+  try{  
+    const {data, error} = await supabase.from('Users').select('*').eq('user_email', user_email).single();
+    if (error) { 
+      console.error('Kullanıcı bulunamadı:', error); 
+      return res.status(404).json({ message: "User doesn't exist" }); 
+    }  
     
-    const passwordMatch = await bcrypt.compare(user_password, data.user_password);
-    if (!passwordMatch) {
-      return res.status(401).json({ message: 'Invalid password' });
-    }
-    
-    req.session.user = {
-      userId: data.id,
+    const passwordMatch = await bcrypt.compare(user_password, data.user_password); 
+    if(!passwordMatch) { 
+      return res.status(401).json({ message: 'Invalid password' }); 
+    } 
+    req.session.user = {  
+      userId : data.id,
       userName: data.userName,
-      user_email: data.user_email,
-      birthday: data.birthday,
-      user_avatar: data.avatar_url,
-    };
-    
-    // Important: Save the session before sending response
-    req.session.save(err => {
-      if (err) {
-        console.error('Session save error:', err);
-        return res.status(500).json({ message: 'Session save failed' });
-      }
-      
-      console.log('Session saved successfully:', req.session.id);
-      console.log('User data in session:', req.session.user);
-      
-      res.status(200).json({ 
-        message: 'Logging in!',
-        user: {
-          userId: data.id,
-          userName: data.userName,
-          user_email: data.user_email
-        } 
-      });
-    });
-  } catch (error) {
-    console.error('Login error:', error);
-    return res.status(500).json({ message: 'Server error, login failed.' });
-  }
-};
+      user_email: data.user_email, 
+      user_password: data.user_password,
+      birthday: data.birthday, 
+      user_avatar: data.avatar_url, 
+    }; 
+    console.log(req.session.user)
+    res.status(200).json({ message: 'Logging in!' });
 
-const getSession = async (req, res) => {
-  console.log('Session check - session ID:', req.session.id);
-  console.log('Session check - session data:', req.session);
-  
-  if (req.session.user) {
-    console.log('User session found:', req.session.user);
-    res.status(200).json({ loggedIn: true, session: req.session.user });
-  } else {
-    console.log('No user session found');
-    res.status(401).json({ loggedIn: false });
+  }catch(error){ 
+    return res.status(500).json({ message: 'Server error, login failed.' }); 
+    
   }
-};
+} 
+const getSession = async(req,res)=>{   
+  if(req.session.user){ 
+    res.status(200).json({loggedIn:true,session: req.session.user}); 
+  }else{ 
+    res.status(401).json({loggedIn:false}); 
+  }
+
+
+}
 const logOut = async(req,res)=>{ 
   req.session.destroy((err)=>{ 
     if(err){ 
