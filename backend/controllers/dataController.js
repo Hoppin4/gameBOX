@@ -185,7 +185,7 @@ const getReview = async (req, res) => {
 };
 const sentReview = async (req, res) => { 
 
-    const { gameId, userId, rating, review,liked,played,userName,avatar_url} = req.body; 
+    const { gameId, userId, rating, review,liked,played} = req.body; 
     const { data: existing } = await supabase
         .from('Reviews')
         .select('user_id')
@@ -205,8 +205,7 @@ const sentReview = async (req, res) => {
                         review: review, 
                         liked:liked, 
                         played:played, 
-                        user_name:userName, 
-                        user_avatar:avatar_url,
+                      
                     },
                 ]);  
                 if (error) {

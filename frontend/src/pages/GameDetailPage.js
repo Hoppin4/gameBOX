@@ -62,7 +62,8 @@ import LeftLayout from "./LeftLayout";
     const [isExist,setIsExist] = useState([]);  
     const [expand,setExpand] = useState(false) 
     const [stores,setStores] = useState([]); 
-     const [posts,setPosts] = useState([]);
+     const [posts,setPosts] = useState([]); 
+     const [reviewSending,setReviewSending] = useState(false);
   
 
       const getLists = async () => {   
@@ -198,7 +199,8 @@ import LeftLayout from "./LeftLayout";
     }
    
 
-      const sentReview = async (gameId, userId, rating, review,liked,played,userName,avatar_url) => {  
+      const sentReview = async (gameId, userId, rating, review,liked,played) => {   
+        setReviewSending(true)
         try{  
             const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/api/sentReview", { 
                 gameId: gameId, 
@@ -207,13 +209,15 @@ import LeftLayout from "./LeftLayout";
                 review: review, 
                 liked:liked, 
                 played:played,  
-                userName:userName, 
-                avatar_url:avatar_url
+                
             }); 
            
             
         }catch(error){ 
             console.error('Error sending review:', error); 
+        }finally{ 
+            setShowInput(false);
+
         }
       }  
 
@@ -410,7 +414,7 @@ import LeftLayout from "./LeftLayout";
                                 <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>  
                                     <p>Write your comment here</p>
                                     <textarea onChange={(e)=>setReviewInput(e.target.value)}style={{width:"80%",height:"150px",backgroundColor:"#171719",color:'white',fontFamily:"monospace" }}></textarea>  
-                                    <button onClick={()=>{setReview(reviewInput);setShowInput(false)}}style={{margin:10,backgroundColor:'green',border:"none",borderRadius:"10px",fontSize:"15px",color:"white",width:"80px",height:"30px "}}>Save</button>
+                                    <button onClick={()=>{setReview(reviewInput);}}style={{margin:10,backgroundColor:'green',border:"none",borderRadius:"10px",fontSize:"15px",color:"white",width:"80px",height:"30px "}}>Save</button>
                                 </div>
                                 </Modal>
                                     </div>
