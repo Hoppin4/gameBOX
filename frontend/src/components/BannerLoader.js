@@ -69,7 +69,7 @@ const BannerLoader = ({ image_url,onBannerUploadSuccess,uploadReady,dataLoading,
     formData.append('postId',postId)
         try {
             setLoading(true);
-            const response = await axios.post('http://localhost:5000/com/bannerUploader', formData, {
+            const response = await axios.post('https://moviebox2-1084798053682.europe-west1.run.app/com/bannerUploader', formData, {
               headers: {
                 'Content-Type': 'multipart/form-data',
               },

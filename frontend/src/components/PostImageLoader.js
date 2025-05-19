@@ -39,7 +39,7 @@ const PostImgageLoader = ({image_url,postId,uploadReady,dataLoading}) => {
     formData.append('postId', postId);
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:5000/com/postImageLoader', formData, {
+      const response = await axios.post('https://moviebox2-1084798053682.europe-west1.run.app/com/postImageLoader', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
