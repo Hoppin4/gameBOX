@@ -45,7 +45,7 @@ app.use('/com',communityRoutes);
 app.use('/api', dataRoutes); 
 app.use('/user', userRoutes);
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8080;
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
