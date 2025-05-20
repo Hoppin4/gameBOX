@@ -26,7 +26,7 @@ function PopularPostsPage() {
     const nav = useNavigate();
     const { myCommunityList,removeFromList,addToList,session } = useContext(AuthContext);
     const [posts, setPosts] = useState([]);  
-    const [selectedSort, setSelectedSort] = useState("New");
+    const [selectedSort, setSelectedSort] = useState("Top");
     const [postLoading,setPostLoading] = useState(true);  
     const [votedPosts, setVotedPosts] = useState({});   
     const [hasMore, setHasMore] = useState(true);  
@@ -49,7 +49,7 @@ function PopularPostsPage() {
     const timeago = (time) =>dayjs(time).fromNow() 
     const getPopularPosts = async (page) => {  
         try{ 
-             const response = await axios.get('https://moviebox2-1084798053682.europe-west1.run.app/com/getPopularPost',{ 
+             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/com/getPopularPost`,{ 
                 params:{ 
                     page:page, 
                     order:order, 
@@ -85,7 +85,7 @@ function PopularPostsPage() {
     });
     if(result.isConfirmed){ 
         try{ 
-            const response = await axios.delete("https://moviebox2-1084798053682.europe-west1.run.app/com/deletePost" ,{   
+            const response = await axios.delete(`${process.env.REACT_APP_BACKEND}/com/deletePost` ,{   
                 params:{ 
                     postId:postId }
             });
@@ -104,7 +104,7 @@ function PopularPostsPage() {
         c.id === postId ? { ...c, upvotes: c.upvotes + 1 } : c
     ));
     try{ 
-        const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/upvote" ,{
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND}/com/upvote` ,{
             postId:postId
         }) 
     }catch(error){
@@ -118,7 +118,7 @@ function PopularPostsPage() {
         c.id === postId ? { ...c, upvotes: c.upvotes - 1 } : c
     ));  
     try{ 
-        const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/downvote" ,{
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND}/com/downvote` ,{
             postId:postId
         }) 
     }catch(error){
@@ -127,7 +127,7 @@ function PopularPostsPage() {
    }    
    const getPopularGames = async()=>{ 
         try{ 
-            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/com/getPopularGames",{ 
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/com/getPopularGames`,{ 
                 params:{   
                     startDate:startDate, 
                     endDate:endDate,

@@ -21,7 +21,7 @@ import Swal from 'sweetalert2';
     const getList = async () => {   
         setListLoading(true);
         try { 
-            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getList", { 
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/getList`, { 
                 params: { userId: session.userId } 
             });
             setListData(response.data.data);
@@ -36,7 +36,7 @@ import Swal from 'sweetalert2';
     
     const logOut = async () => {        
         try{ 
-            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/user/logout");  
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND}/user/logout`);  
             setLoggedIn(false)
             navigate("/signup"); 
         }catch(error){ 
@@ -47,7 +47,7 @@ import Swal from 'sweetalert2';
     useEffect(() => {
         const getUserInfo = async () => {   
             try {   
-                const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/user/getUser", { id: session.userId }); 
+                const response = await axios.post(`${process.env.REACT_APP_BACKEND}/user/getUser`, { id: session.userId }); 
                 setUserData(response.data[0]);
                 
             } catch (error) {   
@@ -78,7 +78,7 @@ import Swal from 'sweetalert2';
     const handledelete = async (id) => { 
         try {  
             
-            const response = await axios.delete("https://moviebox2-1084798053682.europe-west1.run.app/api/deleteList", { params :{listId: id }}); 
+            const response = await axios.delete(`${process.env.REACT_APP_BACKEND}/api/deleteList`, { params :{listId: id }}); 
             console.log("List deleted:", response.data); 
             setListData((prevList) => prevList.filter((list) => list.id !== id)); 
         } catch (error) { 
@@ -134,7 +134,7 @@ import Swal from 'sweetalert2';
                                     <div key={list.id} className="listItem">  
                                      
                                          
-                                            <Link className="listImageContainer" to={`/list/${list.id}`} state={{ list: list }} style={{textDecoration:"none"}}>
+                                            <Link className="listImageContainer" to={`/list/${list.id}`} style={{textDecoration:"none"}}>
                                                 <div className="imageCover"> <img src={list.first_four_images && list.first_four_images.length > 0 ? list.first_four_images[0] : blackScreen }  /></div> 
                                                 <div className="imageCover"> <img src={list.first_four_images && list.first_four_images.length > 1 ? list.first_four_images[1] : blackScreen }  /></div> 
                                                 <div className="imageCover"><img src={list.first_four_images && list.first_four_images.length > 2 ? list.first_four_images[2] : blackScreen }  /></div> 

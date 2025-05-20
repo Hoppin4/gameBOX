@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { FaTrash } from "react-icons/fa"; 
 import { AuthContext } from "../provider/AuthProvider";
-
+import { Link } from "react-router-dom";
 
 function ReviewsPage(){    
      const { session, } = useContext(AuthContext); 
@@ -13,44 +13,19 @@ function ReviewsPage(){
     const { id } = useParams();  
     const [limit, setLimit] = useState(20) 
     const [loading,setLoading] = useState(true); 
-    const [reviews,setReviews] = useState([]); 
+    const [reviews,setReviews] = useState(); 
     const [hasMore,setHasMore] = useState(true)
      
     const getReview = async()=>{ 
         try{ 
-            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getUserReviews",{
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/getUserReviews`,{
                 params: { userId:id, limit:limit } 
             });   
-            const reviews = response.data.response.data; 
-           
-            const enrichedReviews = await Promise.all(
-                reviews.map(async (review) => {
-                  try {
-                    const gameRes = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getReviewComp", {
-                      params: { gameId: review.game_id },
-                    });
-                   
-                    const gameData = gameRes.data.response.data;
-          
-                    return {
-                      ...review,
-                      game_name: gameData.game_name,
-                      game_picture: gameData.game_image,
-                    };
-                  } catch (err) {
-                    console.log(err)
-                    return review; 
-                  }
-                })
-              );
-          
+            console.log(response.data.response.data)
+       
+          setReviews(response.data.response.data);
             
-              setReviews((prev) => {
-                const newReviews = enrichedReviews.filter(
-                  (item) => !prev.some((existing) => existing.id === item.id)
-                );
-                return [...prev, ...newReviews];
-              }); 
+            
               
         }catch(error){ 
             console.error('Error fetching session:', error);  
@@ -61,7 +36,7 @@ function ReviewsPage(){
     }   
     const deleteReview = async(reviewId) => { 
         try{ 
-            const response = await axios.delete("https://moviebox2-1084798053682.europe-west1.run.app/api/deleteReview", { 
+            const response = await axios.delete(`${process.env.REACT_APP_BACKEND}/api/deleteReview`, { 
                 params: { reviewId: reviewId } 
             }); 
           
@@ -82,7 +57,7 @@ function ReviewsPage(){
                 },0) 
                 return () => clearTimeout(timer);
     },[id])
-    console.log("reviews",reviews)
+   
     return (  
      
         <div className="main">  
@@ -96,19 +71,19 @@ function ReviewsPage(){
                 <div style={{display:"flex",flexDirection:"column",justifyContent:"center",width:"40%",height:"auto"}}> 
                      {reviews.map((data,index)=> (  
                         data.review !== "" && ( 
-                        <div style={{position:"relative",width:"100%",height:"auto",backgroundColor:"#202020",margin:"10px",borderRadius:"10px"}}>   
-                            <img style={{position:"absolute",width:"100%",height:"50%",objectFit:"cover",zIndex:1,filter: "brightness(40%)",borderTopLeftRadius:"10px",borderTopRightRadius:"10px"}} src={data.game_picture}></img> 
+                        <Link style={{position:"relative",width:"100%",height:"auto",backgroundColor:"#202020",margin:"10px",borderRadius:"10px",textDecoration:"none"}} to={`/GameDetailPage/${data.games.game_id}/${data.games.game_name}`} state={{gameImage:data.games.game_image}} key={index}>   
+                            <img style={{position:"absolute",width:"100%",height:"50%",objectFit:"cover",zIndex:1,filter: "brightness(40%)",borderTopLeftRadius:"10px",borderTopRightRadius:"10px"}} src={data.games.game_image}></img> 
                             <div style={{position: "relative",zIndex:5}}> 
-                                <h1 style={{color:"white",padding:"10px",}}>{data.game_name}</h1> 
+                                <h1 style={{color:"white",padding:"10px",}}>{data.games.game_name}</h1> 
                                 <div style={{maxWidth:"100%",overflow:"hidden"}}>  
                                     <p style={{color:"white",padding:"10px"}}>{data.review}</p>
                                 </div> 
                                    
                                 <div style={{display:"flex",padding:"10px",}}>  
-                                    <img src={data.user_avatar} style={{width:"50px",height:"50px",borderRadius:"50%",objectFit:"cover"}}></img>  
+                                    <img src={session.user_avatar} style={{width:"50px",height:"50px",borderRadius:"50%",objectFit:"cover"}}></img>  
                                     <div style={{display:"flex",justifyContent:"space-between",width:"100%"}}>
                                     <div style={{display:"flex",flexDirection:"column",marginLeft:"10px"}}> 
-                                        <p style={{margin:0,marginBottom:"6px",color:"white"}}>{data.user_name}</p> 
+                                        <p style={{margin:0,marginBottom:"6px",color:"white"}}>{session.userName}</p> 
                                         <p style={{margin:0,color:"grey"}}>{new Date(data.created_at).toLocaleDateString("en-US", {
                                                 year: "numeric",
                                                 month: "long",
@@ -117,14 +92,14 @@ function ReviewsPage(){
                                        
                                     </div>  
                                     {data.user_id === session.userId && ( 
-                                        <FaTrash onClick={()=>{deleteReview(data.id) }} style={{cursor:"pointer"}} color="red"></FaTrash> 
+                                        <FaTrash onClick={(e)=>{e.preventDefault();deleteReview(data.id) }} style={{cursor:"pointer"}} color="red"></FaTrash> 
                                     ) } 
                                     
                                     </div>
                                 </div>
                                 
                             </div> 
-                        </div>
+                        </Link>
                         )
                    
                 ))}

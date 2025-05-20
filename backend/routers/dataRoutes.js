@@ -2,8 +2,8 @@ const express = require('express');
 const { getGames,getPopularGames,getGamebyId,sentReview,getReview,searchGame,getMainGames, 
     deleteReview,publisher,platforms,createList,deleteList,getList, 
     insertGameToList,deleteGameFromList,getGameFromList,getListbyId,updateList, 
-    getGameFromListbyUserId,getMostPopularGames,getReviewComp,getUserReviews,getGamebyGenres, 
-    getGamebyGenresout,getGamebyTags,getGamebyTagsout,getGamebydeveloper,getGamebydeveloperout} = require('../controllers/dataController'); 
+    getGameFromListbyUserId,getMostPopularGames,getUserReviews,getGamebyGenres, 
+    getGamebyGenresout,getGamebyTags,getGamebyTagsout,getGamebydeveloper,getGamebydeveloperout,getUserList} = require('../controllers/dataController'); 
 
 const router = express.Router(); 
 
@@ -27,14 +27,15 @@ router.get('/getListbyId',getListbyId);
 router.post('/updateList',updateList);  
 router.get('/getGameFromListbyUserId',getGameFromListbyUserId); 
 router.get('/getMostPopular',getMostPopularGames); 
-router.get('/getReviewComp',getReviewComp); 
+
 router.get('/getUserReviews',getUserReviews);  
 router.get('/genres',getGamebyGenres); 
 router.get('/genresout',getGamebyGenresout); 
 router.get('/getTags',getGamebyTags)  
 router.get('/getTagsout',getGamebyTagsout) 
 router.get('/getdeveloper',getGamebydeveloper) 
-router.get('/getdeveloperout',getGamebydeveloperout)
+router.get('/getdeveloperout',getGamebydeveloperout) 
+router.get('/getUserList',getUserList)
 
 
 

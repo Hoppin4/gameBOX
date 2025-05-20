@@ -14,7 +14,9 @@ const app = express();
 const isProduction = process.env.NODE_ENV === 'production';
 
 app.use(cors({
-  origin: 'https://moviebox-a4351.web.app',
+  origin: isProduction 
+    ? 'https://moviebox-a4351.web.app' 
+    : 'http://localhost:3000',
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
@@ -25,7 +27,11 @@ const oneWeek = 1000 * 60 * 60 * 24 * 7;
 app.use(express.json());  
 app.use(cookieParser()); 
 app.use(bodyParser.urlencoded({ extended: true })); 
-app.set('trust proxy', 1);
+if (isProduction) {
+  app.set('trust proxy', 1);
+}
+
+
 app.use(session({ 
   key: "userId", 
   secret: "subscribe",  
@@ -34,8 +40,8 @@ app.use(session({
   cookie: { 
     maxAge: oneWeek,
     httpOnly: true,
-    secure: true,
-    sameSite: 'none'
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax' 
   }
 }));
 

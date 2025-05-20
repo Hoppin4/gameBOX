@@ -8,7 +8,7 @@ import { AuthContext } from "../provider/AuthProvider";
 import { Slider, Button, Dialog } from '@mui/material';
 import { AiOutlinePicture } from "react-icons/ai"; 
 
-const BannerLoader = ({ image_url,onBannerUploadSuccess,uploadReady,dataLoading,postId }) => {
+const BannerLoader = ({ image_url,onBannerUploadSuccess,formbannerdata}) => {
   const { session } = useContext(AuthContext);
   const [imageUrl, setImageUrl] = useState(image_url);
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ const BannerLoader = ({ image_url,onBannerUploadSuccess,uploadReady,dataLoading,
   const [openCrop, setOpenCrop] = useState(false); 
   const [file,setFile] = useState("");
   const [croppedBlob, setCroppedBlob] = useState(null);
-   dataLoading(true)
+ 
    
 
   const handleImageChange = (e) => {
@@ -57,47 +57,20 @@ const BannerLoader = ({ image_url,onBannerUploadSuccess,uploadReady,dataLoading,
     setOpenCrop(false); 
   }
     
- const handleDataSave = async () =>{  
-    if (!croppedBlob) {
+ const handleDataSave = async () =>{   
+   if (!croppedBlob) {
         alert('Lütfen bir resim seçin!');
         return;
-      }    
-    dataLoading(false);
+      }  
     const formData = new FormData(); 
-   
     formData.append('image', croppedBlob, 'avatar.jpg');
-    formData.append('postId',postId)
-        try {
-            setLoading(true);
-            const response = await axios.post('https://moviebox2-1084798053682.europe-west1.run.app/com/bannerUploader', formData, {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-              },
-            });
-
-          } catch (error) {
-            console.error('Resim yükleme hatası:', error);
-            setLoading(false);
-          }
-          finally{ 
-            setCroppedBlob(null) ;
-            setFile(""); 
-            setCroppedAreaPixels(null); 
-            setSelectedImage(null); 
-            setOpenCrop(false); 
-            setLoading(false); 
-            dataLoading(true);  
-            onBannerUploadSuccess("");
-          }
-       
+    formbannerdata(formData)     
  } 
  useEffect(()=>{  
-    
-    if(uploadReady && file && postId) { 
+    if(croppedBlob) { 
         handleDataSave();
     }
-    
- },[uploadReady,postId])
+ },[croppedBlob])
 
   return (
     <div className="bannerUploader"> 

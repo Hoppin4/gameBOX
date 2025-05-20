@@ -33,7 +33,7 @@ function PostCommentPage(){
     
     const fetchData = async()=>{ 
         try{ 
-            const response = await axios.get('https://moviebox2-1084798053682.europe-west1.run.app/com/postInfo',{  
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/com/postInfo`,{  
                 params:{ 
                     postId:id
                 }
@@ -49,7 +49,7 @@ function PostCommentPage(){
     }   
     const getComments = async()=>{ 
         try{ 
-            const response = await axios.get('https://moviebox2-1084798053682.europe-west1.run.app/com/getComments',{  
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/com/getComments`,{  
                 params:{ 
                     postId:id,
                     page:commentPage,
@@ -81,7 +81,7 @@ function PostCommentPage(){
     if(result.isConfirmed){  
         setComments((prev)=>[...prev.filter((comment)=>comment.id !== commentId)])
         try{ 
-            const response = await axios.delete("https://moviebox2-1084798053682.europe-west1.run.app/com/deleteComment" ,{   
+            const response = await axios.delete(`${process.env.REACT_APP_BACKEND}/com/deleteComment` ,{   
                 params:{ 
                     commentId:commentId }
             });
@@ -99,7 +99,7 @@ function PostCommentPage(){
            
             
             try{
-                const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/createComment" ,{ 
+                const response = await axios.post(`${process.env.REACT_APP_BACKEND}/com/createComment` ,{ 
                     postId:id, 
                     userId:session.userId,
                     content:comment
@@ -133,7 +133,7 @@ function PostCommentPage(){
         setVotedPosts((prev) => ({ ...prev, [postId]: "up" }));
         setData({ ...data, upvotes: data.upvotes + 1 });
     try{ 
-            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/upvote" ,{
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND}/com/upvote` ,{
             postId:postId
         }) 
     }catch(error){
@@ -145,7 +145,7 @@ function PostCommentPage(){
         setVotedPosts((prev) => ({ ...prev, [postId]: "down" }));
         setData({ ...data, upvotes: data.upvotes - 1 });
     try{ 
-        const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/downvote" ,{
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND}/com/downvote` ,{
             postId:postId
         }) 
     }catch(error){
@@ -161,7 +161,7 @@ function PostCommentPage(){
                 : comment
             ));
         try{ 
-                const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/commentUpVote" ,{
+                const response = await axios.post(`${process.env.REACT_APP_BACKEND}/com/commentUpVote` ,{
                 commentId:commentId
             })
         }catch(error){ 
@@ -177,7 +177,7 @@ function PostCommentPage(){
                 : comment
             ));
         try{ 
-                const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/commentDownVote" ,{
+                const response = await axios.post(`${process.env.REACT_APP_BACKEND}/com/commentDownVote` ,{
                 commentId:commentId
             })
         }catch(error){ 

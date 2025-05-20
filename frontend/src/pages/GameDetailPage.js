@@ -70,7 +70,7 @@ import LeftLayout from "./LeftLayout";
        
         setListLoading(true);
         try { 
-            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getList", { 
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/getList`, { 
                 params: { userId: session.userId } 
             }); 
             console.log("List data:", response.data);
@@ -88,7 +88,7 @@ import LeftLayout from "./LeftLayout";
     const getListGames = async (listId) => { 
        
         try { 
-            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getGameFromListbyUserId", { 
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/getGameFromListbyUserId`, { 
                 params: { listId: listId, gameId: gameId } 
             });  
            const exists = response.data.exists;  
@@ -110,7 +110,7 @@ import LeftLayout from "./LeftLayout";
     }  
     const insertGameToList = async (listId) => { 
         try {  
-            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/api/insertGameToList", { 
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND}/api/insertGameToList`, { 
                  
                     gameId: gameId,
                     listId:listId, 
@@ -135,7 +135,7 @@ import LeftLayout from "./LeftLayout";
             
             setLoading(true);       
             try{ 
-                const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/gamebyId", {
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/gamebyId`, {
                     params: { gameId: gameId , gameName: gameTitle , gameImage:image } 
                 });   
                 console.log(response)
@@ -162,7 +162,7 @@ import LeftLayout from "./LeftLayout";
         const getReview = async (gameId, userId) => {  
             setReviewLoading(true);
             try{ 
-                const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getReview", { 
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/getReview`, { 
                     params: { gameId: gameId, userId: userId } 
                 });  
                 console.log("AAAA",response) 
@@ -187,7 +187,7 @@ import LeftLayout from "./LeftLayout";
      
     const deleteReview = async(reviewId) => { 
         try{ 
-            const response = await axios.delete("https://moviebox2-1084798053682.europe-west1.run.app/api/deleteReview", { 
+            const response = await axios.delete(`${process.env.REACT_APP_BACKEND}/api/deleteReview`, { 
                 params: { reviewId: reviewId } 
             }); 
           
@@ -205,7 +205,7 @@ import LeftLayout from "./LeftLayout";
       const sentReview = async (gameId, userId, rating, review,liked,played) => {   
   
         try{  
-            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/api/sentReview", { 
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND}/api/sentReview`, { 
                 gameId: gameId, 
                 userId: userId, 
                 rating: rating, 
@@ -213,18 +213,39 @@ import LeftLayout from "./LeftLayout";
                 liked:liked, 
                 played:played,  
                 
-            }); 
-           
-      
+            });  
+            
+                 setUserReview((prev) => { 
+                    const existingReview = prev.find((item) => item.id === response.data.data[0].id);
+
+                    if (existingReview) { return prev.map((item) =>item.id === existingReview.id
+                        ? { ...response.data.data[0], user: { id: session.userId, avatar_url: session.user_avatar, userName: session.userName } }
+                                : item
+                        ); 
+                    } else { 
+                        return [
+                           
+                            {
+                                ...response.data.data[0],
+                                user: {
+                                    id: session.userId,
+                                    avatar_url: session.user_avatar,
+                                    userName: session.userName,
+                                },
+                            }, ...prev,
+                        ]; 
+                    } 
+                });
+            
+         
+            console.log("Response:", response);
         }catch(error){ 
             console.error('Error sending review:', error); 
         }
       }  
 
-      const debouncedSend = useCallback(debounce((...args) => {
-        sentReview(...args);
-    }, 1000), []);
      
+     console.log(session)
      
     useEffect(() => {  
        
@@ -238,20 +259,6 @@ import LeftLayout from "./LeftLayout";
         
     },[])
 
-    useEffect(() => {  
-        const timer = setTimeout(()=> { 
-
-        
-        if (isFirstRender.current) { 
-            isFirstRender.current = false; 
-        return; 
-        }
-        if (loggedIn  && rating !== null ) {
-            debouncedSend(gameId, session.userId, rating, review, liked, played);
-        } 
-        },0); 
-        return () => clearTimeout(timer);
-    }, [played,liked,review]);
        
       const handleRating = (rate) => {
         setRating(rate)
@@ -414,7 +421,7 @@ import LeftLayout from "./LeftLayout";
                                 <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>  
                                     <p>Write your comment here</p>
                                     <textarea onChange={(e)=>setReviewInput(e.target.value)}style={{width:"80%",height:"150px",backgroundColor:"#171719",color:'white',fontFamily:"monospace" }}></textarea>  
-                                    <button onClick={()=>{setReview(reviewInput);setShowInput(false)}}style={{margin:10,backgroundColor:'green',border:"none",borderRadius:"10px",fontSize:"15px",color:"white",width:"80px",height:"30px "}}>Save</button>
+                                    <button onClick={()=>{sentReview(gameId,session.userId,rating, reviewInput,liked,played);setShowInput(false)}}style={{margin:10,backgroundColor:'green',border:"none",borderRadius:"10px",fontSize:"15px",color:"white",width:"80px",height:"30px "}}>Save</button>
                                 </div>
                                 </Modal>
                                     </div>
@@ -657,13 +664,9 @@ import LeftLayout from "./LeftLayout";
                         </div> 
                     </div>
                     )}   
-                    {reviewsLoading ? ( 
-                        <div style={{display:"flex",justifyContent:"center",alignItems:"center",width:"100%",height:"100%"}}>
-                            <div className="spinner"></div>  
-                        </div>
-                    ) : (  
-                         userReview !== null && ( 
-                        <div style={{width:"45%",marginTop:"50px",justifyContent:"center",alignItems:"center"}}>  
+                  
+                        { userReview !== null && ( 
+                        <div style={{width:"55%",marginTop:"50px",justifyContent:"center",alignItems:"center",marginBottom:"50px"}}>  
                             <p style={{borderBottom:"2px solid grey",color:"white",fontSize:"20px"}}>Reviews</p>
                             {userReview.map((data,index)=>(  
                                 <div key={index} style={{display:"flex",alignItems:"center",justifyContent:"flex-start",width:"100%",borderBottom:"0.5px solid grey",marginTop:"20px"}}>  
@@ -671,7 +674,7 @@ import LeftLayout from "./LeftLayout";
                                         <img style={{width:"60px",height:"60px",objectFit:"cover",objectPosition:"center",borderRadius:"50%"}} src={data.user.avatar_url?data.user.avatar_url:avatar  }></img>
                                     </div> 
                                     <div>
-                                        <div style={{display:"flex",alignItems:"start",justifyContent:"center",marginLeft:"20px",width:"100%"}}>
+                                        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"flex-start",marginLeft:"30px",width:"100%"}}>
                                             <p style={{margin:0,color:"grey"}}>Reviewed by </p>  
                                             <div style={{width:"100px"}}> 
                                                 <p style={{margin:0,color:"white",marginLeft:"5px"}}> {data.user.userName}</p>
@@ -697,7 +700,7 @@ import LeftLayout from "./LeftLayout";
                         </div>
                     )
 
-                    )}
+                        }
                    
                 </div> 
                 

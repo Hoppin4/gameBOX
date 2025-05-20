@@ -24,30 +24,29 @@ import { useNavigate } from 'react-router-dom';
 
 function CommunityLeftLayout(){    
     const navigate = useNavigate();
-    const { loggedIn, setLoggedIn,session,addToList,listLoading } = useContext(AuthContext);
+    const { loggedIn,session,addToList } = useContext(AuthContext);
     const [isOpenList, setIsOpenList] = useState(false);   
-    const closeList = () => {setIsOpenList(false);setCommunityName("");setDescription("");setPage(1);setReady(false)} ;   
+    const closeList = () => {setIsOpenList(false);setCommunityName("");setDescription("");setPage(1);} ;   
     const [communityName,setCommunityName] = useState("");   
     const [description,setDescription] = useState("") 
     const [page,setPage] = useState(1); 
     const [icon,setIcon] = useState(""); 
     const [banner,setBanner]=useState(""); 
-    const [ready,setReady] = useState(false); 
-    const [imageLoading,setImageLoading] = useState(true); 
     const [nameAlert,setNameAlert] = useState(true); 
     const [checkName,setCheckName] = useState(false)  
     const [selectedTag,setSelectedTag] = useState([])  
     const [setDataTag,setSelectedDataTag] = useState([]);  
-    const [save,setSave] = useState(false); 
+     const [formIconData, setFormIconData] = useState(); 
+     const [formBannerData, setFormBannerData] = useState();
+    const [saveClicked,setSaveClicked] = useState(false); 
     const [tags,setTags] = useState([ 
         {id:1,name:"Gaming Consoles"},{id:2,name:"Adventure Games"},{id:3,name:"Gaming News"},{id:4,name:"Action Games"}, 
         {id:5,name:"Strategy Games"},{id:6,name:"Simulation Games"},{id:7,name:"Role-Playing Games"},{id:8,name:"Game Discussion"}, 
         {id:9,name:"Esports"},{id:10,name:"Mobile Games"},{id:11,name:"Racing Games"},{id:12,name:"Other Games"},{id:13,name:"Online Games"}
     ])  
     const [message,setMessage] = useState("");
-    const [postId,setPostId] = useState(); 
-    const [createLoading,setCreateLoading]=useState(true); 
-    const[bannerLoading,setBannerLoading]=useState(true);
+   
+   
     
      
     useEffect(()=>{  
@@ -81,7 +80,7 @@ function CommunityLeftLayout(){
     },[communityName]) 
     const check = async () =>{ 
         try{ 
-            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/com/check", {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/com/check`, {
                 params:{ 
                     comName:communityName
                 }          
@@ -100,77 +99,72 @@ function CommunityLeftLayout(){
 
     }
    const handleAdd = (id,name) =>{  
-    if(selectedTag.length<3) {  
-        setSelectedDataTag((prev)=>[...prev,id])
-        setTags((prev)=>prev.filter((tag) => tag.id !== id));
-    setSelectedTag((prev) => [...prev, { id: id, name: name }]);
-    }  
+        if(selectedTag.length<3) {  
+            setSelectedDataTag((prev)=>[...prev,id])
+            setTags((prev)=>prev.filter((tag) => tag.id !== id));
+        setSelectedTag((prev) => [...prev, { id: id, name: name }]);
+        }  
    } 
    const handleCancel = (id,name)=>{  
-    setSelectedDataTag((prev) => prev.filter(item => item !== id));
-    setSelectedTag((prev)=>prev.filter((tag) => tag.id !== id));
-    setTags((prev) => [...prev, { id: id, name: name }]);
+        setSelectedDataTag((prev) => prev.filter(item => item !== id));
+        setSelectedTag((prev)=>prev.filter((tag) => tag.id !== id));
+        setTags((prev) => [...prev, { id: id, name: name }]);
    }
     console.log(setDataTag)
    const createCommunity = async()=>{  
-    setCreateLoading(true)
-        try{ 
-            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/createCommunity", {
+        setSaveClicked(true)
+        let iconurl = null; 
+        let bannerurl= null;
+        let postid1=null;
+        try{  
+            if(formIconData) {  
+                const postResponse = await axios.post(`${process.env.REACT_APP_BACKEND}/com/iconUploader`, formIconData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    },
+                }); 
+               
+                iconurl = postResponse.data.imageUrl;
+                console.log("imageurl",postResponse.data.imageUrl)
+            } 
+            if(formBannerData){ 
+                 const postResponse = await axios.post(`${process.env.REACT_APP_BACKEND}/com/bannerUploader`, formBannerData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    },
+                }); 
+               
+                bannerurl = postResponse.data.imageUrl;
+                console.log("imageurl",postResponse.data.imageUrl)
+            }
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND}/com/createCommunity`, {
                 communityName: communityName, 
                 description: description,    
                 userId: session.userId,     
-                tags: setDataTag            
+                tags: setDataTag, 
+                icon_image:iconurl, 
+                banner_image:bannerurl      
               })  
               console.log(response) 
               if(response.status === 201){ 
                 toast.success(response.data.message);
               }
-            setPostId(response.data.data[0].id)
+           
+            postid1=response.data.data[0].id
         }catch(error){ 
             console.log(error) 
             toast.error("Error creating Community");
         }finally{  
-           
-            setCreateLoading(false); 
-             
+            const ready = await addToList(postid1, "Admin");
+            navigate(`/c/${postid1}`)  
+            setSaveClicked(false);
+            closeList(); 
+    
         }
    }  
-  useEffect(() => {  
-    const run = async () => {
-        if (postId && !createLoading) {
-            const ready = await addToList(postId, "Admin");  
-            if (ready===true) { 
-                setTimeout(()=>{ 
-                    navigate(`/c/${postId}`);
-                },1000)
-                
-            }
-        }
-    };
+  
 
-    run(); 
-}, [postId, createLoading]);
-   useEffect(()=>{  
-    if(save) { 
-        createCommunity();  
-        setSave(false);
-    }
-        
-   },[ready]) 
-   const handleSaveClick = () => {
-    setReady(true); 
-    setImageLoading(false); 
-    setSave(true); 
-   
-    if (imageLoading) { 
-        
-      setTimeout(() => { 
-        closeList(); 
-      
-      
-      }, 1000); 
-    }
-  };
+
 console.log(selectedTag)
     return( 
         <div className="main-container1">  
@@ -257,8 +251,8 @@ console.log(selectedTag)
                         <p style={{margin:0,color:"grey"}}>Visual elements help attract new members and showcase your community’s vibe. Feel free to update them whenever you like!</p> 
                         <div className="modalcont"> 
                             <div className="modalcont-input"> 
-                            <IconLoader postId={postId} uploadReady={ready} dataLoading={setImageLoading} onUploadSuccess={(url)=>setIcon(url)}/>  
-                            <BannerLoader postId={postId} uploadReady={ready} dataLoading={setBannerLoading} onBannerUploadSuccess={(url)=>setBanner(url)}/>  
+                            <IconLoader formicondata={setFormIconData} onUploadSuccess={(url)=>setIcon(url)}/>  
+                            <BannerLoader formbannerdata={setFormBannerData}  onBannerUploadSuccess={(url)=>setBanner(url)}/>  
                                 
                             </div> 
                        
@@ -311,8 +305,33 @@ console.log(selectedTag)
                         </div>  
                         <div className="cancelnextButton"> 
                             <button onClick={()=>setPage((prev)=>prev-1)} style={{backgroundColor:"grey"}}>Back</button>  
-                            {!imageLoading ? <button style={{backgroundColor:"blue"}}>Loading...</button> : 
-                             <button  onClick={() => {handleSaveClick();}} style={{backgroundColor:"blue"}}>Save</button> }
+                       
+                            <button
+                                disabled={saveClicked} 
+                                onClick={createCommunity}
+                                style={{
+                                    backgroundColor: "blue",
+                                    color: "white",
+                                    border: "none",
+                                    padding: "10px 20px",
+                                    borderRadius: "5px",
+                                    cursor: saveClicked ? "not-allowed" : "pointer",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    height: "40px"
+                                }}
+                                >
+                                {saveClicked ? (
+                                    <div style={{display: "flex",justifyContent: "center",alignItems: "center",width: "100%",height: "30px",}}>
+                                        <div className="spinner" style={{ height: "30px", width: "30px" }}></div>
+                                    </div>
+                                    ) : (
+                                        "Save"
+                                    )}
+                                </button>
+                        
+                            
                            
                         </div>
                         

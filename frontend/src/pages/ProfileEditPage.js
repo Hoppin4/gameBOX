@@ -45,7 +45,7 @@ function ProfileEditPage() {
     useEffect(()=>{  
       const getUserInfo = async () => {   
           try{  
-            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/user/getUser", { id: id });   
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND}/user/getUser`, { id: id });   
             console.log("aaaaaaa",response.data[0]); 
             setUserName(response.data[0].userName); 
             setFirstName(response.data[0].firstName); 
@@ -69,7 +69,7 @@ function ProfileEditPage() {
     const handleUpdate = async (e) => { 
         e.preventDefault(); 
         try { 
-            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/user/updateProfile", {id,user_email,userName,firstName,lastName,bio,birthday,gender});  
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND}/user/updateProfile`, {id,user_email,userName,firstName,lastName,bio,birthday,gender});  
             alert("Profile updated successfully!")
         } catch (error) { 
             console.log(error.response.data.message)

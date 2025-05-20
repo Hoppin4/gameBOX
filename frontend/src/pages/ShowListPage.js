@@ -1,36 +1,26 @@
 import React from 'react';  
 import { useContext, useEffect, useState } from "react";
-import { Link, useLocation } from 'react-router-dom'; 
+import { Link, useLocation,useParams } from 'react-router-dom'; 
 import axios from 'axios'; 
 import "../styles/showlist.css";
 function ShowListPage() {  
     axios.defaults.withCredentials = true;
-    const location = useLocation();  
-    console.log(location.state)
-    const  listId  = location.state.list.id ; 
+    const {id}=useParams(); 
     const [showList, setShowList] = useState([]); 
-    const [loading, setLoading] = useState(false);  
-    const [userData, setUserData] = useState("");
-    const getUser = async () => { 
-        try { 
-            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/user/getUser", { 
-                 id: location.state.list.user_id 
-            }); 
-            setUserData(response.data[0]);
-            console.log("User data:", response.data); 
-        } catch (error) { 
-            console.error('Error fetching user:', error); 
-        } 
-    } 
+    const [loading, setLoading] = useState(true);  
+
 
     const getList = async () => { 
         setLoading(true); 
         try { 
-            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getGameFromList", { 
-                params: { listId } 
-            });
-            setShowList(response.data.data); 
-            console.log("List data:", response.data); 
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/getUserList`, { 
+                params: { 
+                    listId:id
+                }
+            }); 
+
+            setShowList(response.data.data[0]); 
+            console.log("List dataaaa:", response); 
         } catch (error) { 
             console.error('Error fetching list:', error); 
         } finally { 
@@ -38,12 +28,12 @@ function ShowListPage() {
         } 
     } 
     useEffect(() => { 
-        if (listId) { 
+        if (id) { 
             getList();  
-            getUser();
+          
         } 
-    }, [listId]); 
-   
+    }, [id]); 
+   console.log("dsadasda",showList)
   return (
     <div className="showlist-container"> 
         {loading ? (
@@ -56,38 +46,34 @@ function ShowListPage() {
                     <div style={{ display: "flex", alignItems: "center",width: "70%" }}> 
 
                     
-                        {userData.avatar_url && ( 
-                            <img src={userData.avatar_url} alt="User Avatar" className="avatar" /> 
+                        {showList.user.avatar_url && ( 
+                            <img src={showList.user.avatar_url} alt="User Avatar" className="avatar" /> 
                         )}
-                        { userData && (  
+                         
                             <div style={{ display: "flex",  marginLeft: "3px" }}> 
                                 <p> List by</p>  
-                                <p style={{fontWeight:"bold"}}>{userData.userName}</p>
+                                <p style={{fontWeight:"bold"}}>{showList.user.userName}</p>
                             </div>
                             
-                        )}  
+                        
                     </div> 
-                    { location.state.list.created_at && ( 
-                        <p>Created at: {new Date(location.state.list.created_at).toLocaleDateString()}</p> 
-                    )} 
+                    
+                        <p>Created at: {new Date(showList.created_at).toLocaleDateString()}</p> 
+                
                 </div>
                 
                 
               <div className="list-info"> 
-                <h1>{location.state.list.name}</h1>  
-                { location.state.list.description && ( 
-                        <h2>{location.state.list.description}</h2> 
+                <h1>{showList.name}</h1>  
+                { showList.description && ( 
+                        <h2>{showList.description}</h2> 
                     )} 
               </div>
-               
-              
-                
-              
                 <div className="game-grid">
-                    {showList.map((game) => (
+                    {showList.gameList.map((game) => (
                         <div key={game.id} className="game-item"> 
-                        <Link to={`/GameDetailPage/${game.game_id}`} state={{ gameId: game.game_id }}>  
-                            <img src={game.game_picture} alt={game.game_name} />
+                        <Link to={`/GameDetailPage/${game.Games.game_id}/${game.Games.game_name}`} state={{gameImage:game.Games.game_picture}}>  
+                            <img src={game.Games.game_image} alt={game.Games.game_name} />
                         </Link>
                         
                         </div>

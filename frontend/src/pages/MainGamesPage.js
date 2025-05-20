@@ -79,23 +79,23 @@ const fetchData = async (currentPage, currentSlug, currentOrder) => {
     
     let response;
     if (currentSlug === 'month-trending') {
-      response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/popularGames", {
+      response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/popularGames`, {
         params: { startDate, endDate, search: null, page: currentPage, order: currentOrder }
       });
     } else if (currentSlug === 'best-of-the-year') {
-      response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/popularGames", {
+      response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/popularGames`, {
         params: { startDate: "2025-01-01", endDate: "2025-12-31", search: null, page: currentPage, order: currentOrder }
       });
     } else if (currentSlug === 'this-week') {
-      response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/popularGames", {
+      response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/popularGames`, {
         params: { startDate: endDate, endDate: startWeek, search: null, page: currentPage, order: currentOrder }
       });
     } else if (currentSlug === 'all-time-top') {
-      response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getMostPopular", {
+      response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/getMostPopular`, {
         params: { page: currentPage }
       });
     } else if (currentSlug === 'next-week') {
-      response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/popularGames", {
+      response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/popularGames`, {
         params: { startDate: startWeek, endDate: nextWeek, search: null, page: currentPage, order: currentOrder }
       });
     } else if (supportedSlugs.includes(currentSlug)) {
@@ -120,7 +120,7 @@ const fetchData = async (currentPage, currentSlug, currentOrder) => {
         platform =5;
       }
       
-      response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/platforms", {
+      response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/platforms`, {
         params: { platforms: platform, page: currentPage, order: currentOrder }
       });
     } else {

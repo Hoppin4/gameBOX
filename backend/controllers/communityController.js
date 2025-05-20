@@ -22,7 +22,6 @@ const iconUploader = async (req, res) => {
     }
   
     try { 
-      const postId  = req.body.postId; 
       const filePath = `icons/${Date.now()}-${req.file.originalname}`;
       const { data, error } = await supabase.storage
         .from('images') 
@@ -35,13 +34,8 @@ const iconUploader = async (req, res) => {
         return res.status(500).send(error.message);
       }
   
-      
       const imageUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/images/${filePath}`; 
-      const { error: updateError } = await supabase
-        .from('Communities')
-        .update({ icon_image: imageUrl }) 
-        .eq('id', postId);
-      res.json({ postId});
+      res.json({imageUrl})
     } catch (error) {
       res.status(500).send("Error uploading to Supabase.");
     }
@@ -49,7 +43,7 @@ const iconUploader = async (req, res) => {
 };  
  
 const createCommunity = async(req,res)=>{ 
-    const { communityName, description, userId, tags } = req.body;   
+    const { communityName, description, userId, tags,icon_image,banner_image } = req.body;   
     const numericTags = tags.map(tag => parseInt(tag, 10)); 
     try{
         const { data, error } = await supabase
@@ -59,7 +53,9 @@ const createCommunity = async(req,res)=>{
               name:communityName, 
               description:description, 
               tag:numericTags, 
-              creator_user_id:userId, 
+              creator_user_id:userId,  
+              icon_image:icon_image, 
+              banner_image:banner_image
           }
         ]).select()
         
@@ -95,11 +91,7 @@ const bannerUploader = async (req, res) => {
   
       
       const imageUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/images/${filePath}`; 
-      const { error: updateError } = await supabase
-        .from('Communities')
-        .update({ banner_image: imageUrl }) 
-        .eq('id', postId);
-      res.json({ postId});
+      res.json({imageUrl})
     } catch (error) {
       res.status(500).send("Error uploading to Supabase.");
     }

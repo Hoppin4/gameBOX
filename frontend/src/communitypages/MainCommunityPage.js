@@ -67,8 +67,9 @@ function MainCommunityPage(){
    const [isFetching, setIsFetching] = useState(false);
     const [saving, setSaving] = useState(false); 
     const [selectedGame, setSelectedGame] = useState(null);  
-    const [formData, setFormdata] = useState(new FormData()); 
-    const [imageUrl, setImageUrl] = useState();
+    const [formData, setFormdata] = useState(); 
+    const [imageUrl, setImageUrl] = useState(null); 
+    const [saveClicked,setSaveClicked] = useState(false);
  
    dayjs.extend(relativeTime); 
     const timeago = (time) =>dayjs(time).fromNow() 
@@ -78,7 +79,7 @@ function MainCommunityPage(){
     setLoading(true)
     try{   
         console.log("mylist",myCommunityList)
-        const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/com/getCommunityInfo" ,{ 
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND}/com/getCommunityInfo` ,{ 
             params:{ 
                 comId:id
             }
@@ -119,7 +120,7 @@ function MainCommunityPage(){
      const fetchGames = async (term) => {
       try {
         setSearchLoading(true);
-        const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getMainGames",{
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/getMainGames`,{
           params: { search:term } 
       });  
         setSearchResults(response.data.results);
@@ -156,7 +157,7 @@ function MainCommunityPage(){
     });
     if(result.isConfirmed){ 
         try{ 
-            const response = await axios.delete("https://moviebox2-1084798053682.europe-west1.run.app/com/deletePost" ,{   
+            const response = await axios.delete(`${process.env.REACT_APP_BACKEND}/com/deletePost` ,{   
                 params:{ 
                     postId:postId }
             });
@@ -168,7 +169,8 @@ function MainCommunityPage(){
     }
     }
    
-   const handleSavePost = async()=>{   
+   const handleSavePost = async()=>{  
+    let uploadedImageUrl = null;  
    console.log("formdata",formData)
     setReady(false) 
     if(!postTitle  || !selectedGame){ 
@@ -182,16 +184,23 @@ function MainCommunityPage(){
             progress: undefined,
         });
         return;
-    }
-    try{  
-         const postResponse = await axios.post('https://moviebox2-1084798053682.europe-west1.run.app/com/postImageLoader', formData, {
-            headers: {
+    } 
+    setSaveClicked(true);
+    try{   
+        if(formData) {  
+            const postResponse = await axios.post(`${process.env.REACT_APP_BACKEND}/com/postImageLoader`, formData, {
+             headers: {
                 'Content-Type': 'multipart/form-data',
-            },
-        });  
-        console.log("postResponse",postResponse)
-        setImageUrl(postResponse.data.imageUrl)
-        const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/createPost" ,{ 
+                },
+            }); 
+            setImageUrl(postResponse.data.imageUrl)  
+            uploadedImageUrl = postResponse.data.imageUrl;
+            console.log("imageurl",postResponse.data.imageUrl)
+        }
+          
+       
+        
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND}/com/createPost` ,{ 
             title:postTitle, 
             content:description,  
             community_id:comData.id, 
@@ -199,7 +208,7 @@ function MainCommunityPage(){
             gameId:selectedGame.id, 
             gameName:selectedGame.name,  
             gameImage:selectedGame.background_image, 
-            post_image:imageUrl, 
+            post_image:uploadedImageUrl, 
 
            
         })   
@@ -212,7 +221,13 @@ function MainCommunityPage(){
     }catch(error){ 
         console.log(error)
     }finally{ 
-        setReady(true); 
+        setReady(true);  
+        setSaveClicked(false); 
+        setDescription(""); 
+        setFormdata();  
+        setSelectedGame("");
+        setSearchTerm(""); 
+        setPostTitle(""); 
         closeList();
     }
        
@@ -224,7 +239,7 @@ function MainCommunityPage(){
 
         console.log("aaaaaa",page)
         try{ 
-            const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/com/getPosts" ,{ 
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/com/getPosts` ,{ 
                 params:{
                     comId:comId,
                     page:page ,
@@ -254,7 +269,7 @@ function MainCommunityPage(){
         }finally{ 
          setPostLoading(false); 
          setMoreLoading(false);  
-         setIsFetching(false);
+         setIsFetching(false); 
         }
        
    }  
@@ -296,7 +311,7 @@ function MainCommunityPage(){
         c.id === postId ? { ...c, upvotes: c.upvotes + 1 } : c
     ));
     try{ 
-        const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/upvote" ,{
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND}/com/upvote` ,{
             postId:postId
         }) 
     }catch(error){
@@ -310,7 +325,7 @@ function MainCommunityPage(){
         c.id === postId ? { ...c, upvotes: c.upvotes - 1 } : c
     ));  
     try{ 
-        const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/downvote" ,{
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND}/com/downvote` ,{
             postId:postId
         }) 
     }catch(error){
@@ -322,7 +337,7 @@ function MainCommunityPage(){
         setcomDescription(updateDescription);
         
         try{ 
-            const response = await axios.post("https://moviebox2-1084798053682.europe-west1.run.app/com/updateComm" ,{ 
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND}/com/updateComm` ,{ 
                 communityId:comData.id, 
                 name:updateName, 
                 description:updateDescription, 
@@ -392,7 +407,7 @@ function MainCommunityPage(){
                                                             <p style={{fontSize:"12px",margin:0,color:"grey"}}>You can select the game you wanna talk about.</p>
                                                             <input className="input3" style={{width:"50%",height:"10px",marginTop:2}}  onFocus={() => setOpen(true)} value={searchTerm} onChange={(e)=>setSearchTerm(e.target.value)} placeholder="Search for games..."></input>   
                                                             {open && ( 
-                                                            <div ref={ref} className="searchContainer2" style={{position:"absolute",backgroundColor:"black",width:"20%",maxHeight:"50%",overflowX:"hidden",overflow:"auto",overflowY:"scroll"}}> 
+                                                            <div ref={ref} className="searchContainer2" style={{position:"absolute",backgroundColor:"black",width:"20%",maxHeight:"50%",overflowX:"hidden",overflow:"auto",overflowY:"scroll",zIndex:999}}> 
                                                                 {searchResults.map((data,index)=>( 
                                                                 <div onClick={()=>{setSelectedGame(data);setOpen(false)}} key={index}  className="searchContainer3" style={{width:"100%",display:"flex",marginBottom:"10px",alignItems:"center",cursor:"pointer",textDecoration:"none"}}> 
                                                                     <img style={{width:"30%",height:"60px",borderRadius:"8px",objectFit:"cover"}} src={data.background_image}></img> 
@@ -424,8 +439,17 @@ function MainCommunityPage(){
                                 
                                 
                                 <div className="cancelnextButton"> 
-                                    <button onClick={()=>closeList()} style={{backgroundColor:"grey"}}>Cancel</button>  
-                                    <button onClick={()=>handleSavePost()} style={{backgroundColor:"blue"}}>Save</button>
+                                    <button onClick={()=>closeList()} style={{backgroundColor:"grey"}}>Cancel</button>   
+                                    {saveClicked ? ( 
+                                        <button disabled={true} style={{backgroundColor:"grey"}}> 
+                                            <div style={{display:"flex",justifyContent:"center",alignItems:"center",  width:"100%",height:"30px"}}> 
+                                                <div className="spinner" style={{height:"30px",width:"30px"}}></div>
+                                            </div> 
+                                        </button>
+                                    ) : ( 
+                                        <button onClick={()=>handleSavePost()} style={{backgroundColor:"blue"}}>Save</button>
+                                    )}
+                                    
                                 </div> 
                             </div>  
                      </Modal> 

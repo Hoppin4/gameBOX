@@ -39,7 +39,7 @@ import LeftLayout from './LeftLayout';
         setMoreLoading(true) 
         try{  
             if(platform !== null){ 
-                const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getdeveloper", {
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/getdeveloper`, {
                     params: {
                       slug:slug, 
                       page:page, 
@@ -52,7 +52,7 @@ import LeftLayout from './LeftLayout';
                     setData(prevData => [...prevData,...response.data.results]); 
                   }
             }else{ 
-                const response = await axios.get("https://moviebox2-1084798053682.europe-west1.run.app/api/getdeveloperout", {
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/getdeveloperout`, {
                     params: {
                       slug:slug, 
                       page:page, 

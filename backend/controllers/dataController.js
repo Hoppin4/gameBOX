@@ -207,7 +207,8 @@ const sentReview = async (req, res) => {
                         played:played, 
                       
                     },
-                ]);  
+                ]) 
+                .select();  
                 if (error) {
                     console.error('Error inserting data:', error);
                     res.status(500).json({ message: 'Error inserting data', error });
@@ -230,7 +231,8 @@ const sentReview = async (req, res) => {
                     played:played,
                 })
                 .eq('user_id', userId)
-                .eq('game_id', gameId); 
+                .eq('game_id', gameId) 
+                .select(); 
                 if (error) {
                     console.error('Error inserting data:', error);
                     res.status(500).json({ message: 'Error updated data', error });
@@ -543,7 +545,7 @@ const getUserReviews = async(req,res) =>{
     try{ 
         const response = await supabase 
         .from('Reviews')  
-        .select('*') 
+        .select('*,games:Games(game_id,game_name,game_image)') 
         .eq('user_id',userId) 
         .limit(limit) 
          
@@ -553,21 +555,7 @@ const getUserReviews = async(req,res) =>{
     }
     
 } 
-const getReviewComp = async(req,res)=>{ 
-    const gameId = req.query.gameId; 
-    try{
-        const response = await supabase 
-        .from('Games') 
-        .select('game_name,game_image') 
-        .eq('game_id',gameId) 
-        .limit(1) 
-        .single(); 
 
-        res.status(200).json({ message: 'Data sent successfully', response });
-    }catch(error){ 
-        res.status(500).json({ message: 'Error fetching data', error: response.error });
-    }
-} 
 const getGamebyGenres = async(req,res) => { 
     const genre = req.query.genre; 
     const platform = req.query.platform;  
@@ -685,10 +673,46 @@ const getGamebydeveloperout = async(req,res) => {
     } catch (error) { 
         res.status(500).json({ message: 'Veri çekme hatası', error: error.message });
     }
-}
+} 
+const getUserList = async(req,res)=>{ 
+     const listId = req.query.listId;  
+    try {
+        const response = await supabase
+            .from('GameLists')
+            .select(`
+                *,
+                user:Users (
+                    id,
+                    userName,
+                    avatar_url
+                ),
+                gameList:GameListItems ( 
+                    id,
+                    game_id,
+                    Games (
+                        game_id,
+                        game_name,
+                        game_image
+                    )
+                )
+                `)
+            .eq('id', listId);
+        if (response.error) { 
+            console.error('Error getting list:', response.error);
+            res.status(500).json({ message: 'Error getting list', error: response.error });
+        } 
+        else {
+            res.status(200).json({ message: 'Review sent successfully', data:response.data });
+        }
+
+    }catch(error){ 
+        console.error('Error fetching session:', error);
+    }  
+} 
+
 module.exports = { getGames,getPopularGames,getGamebyId,sentReview, 
     getReview,searchGame,getMainGames,deleteReview,publisher, 
     platforms,createList,deleteList,getList,insertGameToList 
     ,deleteGameFromList,getGameFromList,getListbyId,updateList 
-,getGameFromListbyUserId,getMostPopularGames,getUserReviews,getReviewComp,  
-getGamebyGenres,getGamebyGenresout,getGamebyTags,getGamebyTagsout,getGamebydeveloper,getGamebydeveloperout }; 
+,getGameFromListbyUserId,getMostPopularGames,getUserReviews,  
+getGamebyGenres,getGamebyGenresout,getGamebyTags,getGamebyTagsout,getGamebydeveloper,getGamebydeveloperout,getUserList }; 
