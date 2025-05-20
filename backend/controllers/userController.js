@@ -70,7 +70,7 @@ const registerUser = async (req, res) => {
     } 
     try{ 
         const hashedPassword = await bcrypt.hash(user_password, saltRounds); 
-        const { data, error } = await supabase.from('Users').insert([{userName,user_email, user_password: hashedPassword,birthday }]);  
+        const { data, error } = await supabase.from('Users').insert([{userName,user_email, user_password: hashedPassword,birthday,avatar_url:"https://npwzobqbmzgdelhofxum.supabase.co/storage/v1/object/public/images/images/avatar.png" }]);  
         
     if (error) { 
         console.error(error)
