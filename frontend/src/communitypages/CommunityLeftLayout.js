@@ -190,7 +190,7 @@ console.log(selectedTag)
                         
                         <p>My Posts</p>  
                     </Link> 
-                    <Link className="link-container" to={`/${session.userName}`}>  
+                    <Link className="link-container" to={`/mycommunities`}>  
                     <div className="layoutIcons"> 
                         <BsCollection size={20} className="layoutI"/>   
                     </div>
@@ -309,19 +309,7 @@ console.log(selectedTag)
                             <button
                                 disabled={saveClicked} 
                                 onClick={createCommunity}
-                                style={{
-                                    backgroundColor: "blue",
-                                    color: "white",
-                                    border: "none",
-                                    padding: "10px 20px",
-                                    borderRadius: "5px",
-                                    cursor: saveClicked ? "not-allowed" : "pointer",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    height: "40px"
-                                }}
-                                >
+                                style={{backgroundColor: "blue",color: "white",border: "none",padding: "10px 20px",borderRadius: "5px",cursor: saveClicked ? "not-allowed" : "pointer",display: "flex",justifyContent: "center",alignItems: "center",height: "40px"}}>
                                 {saveClicked ? (
                                     <div style={{display: "flex",justifyContent: "center",alignItems: "center",width: "100%",height: "30px",}}>
                                         <div className="spinner" style={{ height: "30px", width: "30px" }}></div>
@@ -330,11 +318,7 @@ console.log(selectedTag)
                                         "Save"
                                     )}
                                 </button>
-                        
-                            
-                           
-                        </div>
-                        
+                        </div> 
                     </div> 
 
                     )}

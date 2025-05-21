@@ -190,7 +190,7 @@ const getMyCommunities = async (req,res) =>{
   try{ 
     const{ data, error } = await supabase 
     .from('Community_Members')  
-    .select('*')
+     .select('*, community:Communities(*)')
     .eq('user_id',userId);  
 
     res.json({data})
@@ -495,9 +495,7 @@ const getMyPosts = async (req, res) => {
     return res.status(500).json({ message: "Error fetching posts", error: error.message });
   } 
 } 
-const getMostPopularGames =async(req,res) =>{  
-    
-}
+
 module.exports = {iconUploader,createCommunity,upload,bannerUploader,getCommunities,getMyCommunities,joinCommunity 
   ,deleteMemberCommunity,checkComName,getCommunityInfo,createPost,postImageUploader,getPostbyComId,deletePost, 
   upVote,downVote,PostInfo,createComment,deleteComment,getComments,commentUpVote, 

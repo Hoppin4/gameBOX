@@ -669,21 +669,21 @@ import LeftLayout from "./LeftLayout";
                         <div style={{width:"55%",marginTop:"50px",justifyContent:"center",alignItems:"center",marginBottom:"50px"}}>  
                             <p style={{borderBottom:"2px solid grey",color:"white",fontSize:"20px"}}>Reviews</p>
                             {userReview.map((data,index)=>(  
-                                <div key={index} style={{display:"flex",alignItems:"center",justifyContent:"flex-start",width:"100%",borderBottom:"0.5px solid grey",marginTop:"20px"}}>  
-                                    <div style={{height:"100px"}}>
+                                <div key={index} style={{display:"flex",alignItems:"center",justifyContent:"flex-start",width:"100%",borderBottom:"0.5px solid grey",marginTop:"20px",paddingBottom:"20px"}}>  
+                                    <Link to={`/user/${data.user.userName}`} style={{width:"100px",textDecoration:"none"}}>
                                         <img style={{width:"60px",height:"60px",objectFit:"cover",objectPosition:"center",borderRadius:"50%"}} src={data.user.avatar_url?data.user.avatar_url:avatar  }></img>
-                                    </div> 
+                                    </Link> 
                                     <div>
-                                        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"flex-start",marginLeft:"30px",width:"100%"}}>
+                                        <div style={{display:"flex",alignItems:"center",justifyContent:"flex-start",width:"100%",marginBottom:"10px"}}>
                                             <p style={{margin:0,color:"grey"}}>Reviewed by </p>  
-                                            <div style={{width:"100px"}}> 
+                                            <Link to={`/user/${data.user.userName}`} style={{textDecoration:"none",marginRight:"10px"}}> 
                                                 <p style={{margin:0,color:"white",marginLeft:"5px"}}> {data.user.userName}</p>
-                                            </div> 
+                                            </Link> 
                                             
-                                            <Rating  style={{marginLeft:"10px"}} size={"30px"} initialValue={data.rating} readonly={true}  />  
+                                            <Rating  size={"30px"} initialValue={data.rating} readonly={true}  />  
                                         </div>  
                                         
-                                        <p style={{margin:0,color:"#99c9c9",marginLeft:"30px"}}>{data.review}</p> 
+                                        <p style={{margin:0,color:"#99c9c9"}}>{data.review}</p> 
                                        
                                     </div>  
                                      <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",width:"100px",marginLeft:"auto"}}>   

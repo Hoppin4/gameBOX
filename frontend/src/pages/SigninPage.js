@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../provider/AuthProvider";
 import { useContext } from "react"; 
+import { FaEye } from "react-icons/fa";
 
 const SingupPage = () => {    
     const { loggedIn, setLoggedIn,session } = useContext(AuthContext);
@@ -15,7 +16,8 @@ const SingupPage = () => {
     axios.defaults.withCredentials = true;
     const [user_email, setEmail] = useState(""); 
     const [user_password, setPassword] = useState("");
-    const [message, setMessage] = useState(""); 
+    const [message, setMessage] = useState("");  
+     const [showPassword, setShowPassword] = useState(false);
  
  
     const handleSignIn = async (e) => {  
@@ -54,10 +56,15 @@ const SingupPage = () => {
         <div className="signupContainer"> 
         <img src={myPhoto} className="gImage"></img> 
         <div className="overlay2">  
-            <a>Sign In</a>
-            <input type="text" value={user_email} onChange={(e)=>setEmail(e.target.value)}placeholder="Email" className="input"></input>
-            <input type="password" value={user_password} onChange={(e)=>setPassword(e.target.value)}placeholder="Password" className="input"></input>  
-            <span>You're new? <Link to="/register"><span className="cNavi">Create An Account</span></Link></span>
+            <a>Sign In</a> 
+            <div className="input-signin">
+            <input type="text" value={user_email} onChange={(e)=>setEmail(e.target.value)}placeholder="Email" className="input"></input> 
+            </div>
+             <div className="input-signin">
+            <input type={showPassword ? "text" : "password"} value={user_password} onChange={(e)=>setPassword(e.target.value)}placeholder="Password" className="input"></input>    
+            <FaEye size={20} className={!showPassword ? "eye" : "eye2"} onClick={()=>setShowPassword(prev => !prev)}/>
+             </div>
+             <span>You're new? <Link to="/register"><span className="cNavi">Create An Account</span></Link></span>
             <button onClick={handleSignIn}>SIGN IN</button>
         </div>
             

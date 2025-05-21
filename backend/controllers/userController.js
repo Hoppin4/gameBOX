@@ -3,7 +3,9 @@ const axios = require('axios');
 const dotenv = require('dotenv'); 
 const bcrypt = require('bcrypt'); 
 const session = require('express-session'); 
-const multer = require('multer');
+const multer = require('multer');  
+const nodemailer = require('nodemailer')
+const { v4: uuidv4 } = require('uuid');
 dotenv.config();
  
 
@@ -12,7 +14,8 @@ dotenv.config();
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);   
 const saltRounds = 10;  
 const storage = multer.memoryStorage(); 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage }); 
+const token = uuidv4();
  
 const uploadImage = async (req, res) => {
   if (!req.file) {
@@ -43,7 +46,17 @@ const uploadImage = async (req, res) => {
   } catch (error) {
     res.status(500).send("Error uploading to Supabase.");
   }
-};
+}; 
+const getUser2 = async (req, res) => {    
+  const  userName  = req.query.userName;  
+    const { data, error } = await supabase.from('Users').select('*').eq('userName', userName); 
+    if (error) {
+      console.error('Veri çekme hatası:', error);
+    } else {
+      console.log('Kullanıcılar:', data); 
+      res.json(data);
+    }
+} 
 const getUser = async (req, res) => {    
   const { id } = req.body;  
     const { data, error } = await supabase.from('Users').select('*').eq('id', id); 
@@ -70,7 +83,7 @@ const registerUser = async (req, res) => {
     } 
     try{ 
         const hashedPassword = await bcrypt.hash(user_password, saltRounds); 
-        const { data, error } = await supabase.from('Users').insert([{userName,user_email, user_password: hashedPassword,birthday,avatar_url:"https://npwzobqbmzgdelhofxum.supabase.co/storage/v1/object/public/images/images/avatar.png" }]);  
+        const { data, error } = await supabase.from('Users').insert([{userName,user_email, user_password: hashedPassword,birthday,avatar_url:"https://npwzobqbmzgdelhofxum.supabase.co/storage/v1/object/public/images/images/avatar.png",is_verified: false,verification_token: token, }]);  
         
     if (error) { 
         console.error(error)
@@ -81,18 +94,49 @@ const registerUser = async (req, res) => {
         }
         console.error('Kullanıcı kaydetme hatası:', error);
         return res.status(500).json({ message: 'An error occurred while saving the user.' });
-      } else  {
-        console.log('Kullanıcı başarıyla kaydedildi:');
-        return res.status(201).json({ message: 'User registered', user: data });
+      } else  { 
+        const link = `http://localhost:3000/verify?token=${token}`; 
+        const transporter = nodemailer.createTransport({
+          service: 'Gmail',
+          auth: {
+            user: process.env.EMAIL_FROM,
+            pass: process.env.EMAIL_PASSWORD,
+          },
+        });
+
+        await transporter.sendMail({
+          from: process.env.EMAIL_FROM,
+          to: user_email,
+          subject: 'Email Verification',
+          html: `<p>Hello! Verify your email by clicking the link below:</p>
+                <a href="${link}">${link}</a>`,
+        });
+        
+        return res.status(201).json({ message: 'User registered,Please confirm your email!', user: data });
       }
     }catch(error){ 
-        console.error('Kayıt işlemi sırasında bir hata oluştu:', err); 
+        console.error('Kayıt işlemi sırasında bir hata oluştu:', error); 
         
         return res.status(500).json({ message: 'Server error, registration failed.' }); 
         
     }
     
-} 
+}  
+const verify = async(req,res)=>{ 
+   const { token } = req.query;
+try{
+  const { data, error } = await supabase 
+    .from('Users')
+    .update({ is_verified: true, verification_token: null })
+    .eq('verification_token', token);  
+     res.send("Email verified successfully!");
+}
+  catch(error){
+    res.send(error)
+  }
+
+ 
+}
  
 const userLogin = async (req, res) => {  
   const {user_email,user_password} = req.body;
@@ -109,7 +153,10 @@ const userLogin = async (req, res) => {
     const passwordMatch = await bcrypt.compare(user_password, data.user_password); 
     if(!passwordMatch) { 
       return res.status(401).json({ message: 'Invalid password' }); 
-    } 
+    }  
+    if(data.is_verified === false){ 
+      return res.status(401).json({ message: 'Please confirm your email!' });
+    }
     req.session.user = {  
       userId : data.id,
       userName: data.userName,
@@ -163,4 +210,4 @@ const updateProfile = async (req, res) => {
   }
 }
 
-module.exports = { getUser,registerUser,userLogin,getSession,logOut,updateProfile,upload, uploadImage }; 
+module.exports = { getUser,registerUser,userLogin,getSession,logOut,updateProfile,upload, uploadImage,verify,getUser2 }; 

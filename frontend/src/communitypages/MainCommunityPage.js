@@ -260,9 +260,7 @@ function MainCommunityPage(){
                 );
                 return [...prev, ...newPosts];
             });  
-           
-           
-    }
+           }
         }catch(error){ 
             console.log(error) 
             setIsFetching(false);
@@ -488,14 +486,11 @@ function MainCommunityPage(){
                         <Link to={`/c/comment/${data.id}`} style={{textDecoration:"none",padding:"10px",borderBottom:"1px solid grey",display:"flex",justifyContent:"center",alignItems:"center"}}>
                         <div key={index} className="post-con">  
                             <div className="post-username-con">
-                                {data.user.avatar_url ? ( 
+                                <Link style={{display:"flex",alignItems:"center",textDecoration:"none"}} to={`/user/${data.user.userName}`}>
                                     <img className="post-con-avatar" src={data.user.avatar_url}></img>
-                                ) : ( 
-                                    <div style={{display:"flex",backgroundColor:"yellow",justifyContent:"center",alignItems:"center",width:"40px",height:"40px"}}>   
-                                        <p>{data.user.userName.charAt(0)}</p>
-                                    </div>
-                                )} 
-                                <p>{data.user.userName}</p>  
+                                                                    
+                                    <p>{data.user.userName}</p>  
+                                </Link>  
                                 <p>-</p>
                                 <p style={{fontWeight:"100",color:"grey"}}>{timeago(data.created_at)}</p> 
                                 {data.game&& ( 

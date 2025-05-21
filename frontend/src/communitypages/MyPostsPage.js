@@ -139,7 +139,7 @@ function MyPostsPage() {
         return; 
   }
         if (page > 1) { 
-            getPopularPosts(); 
+            getPopularPosts(page); 
         }
     }, [page]);
   

@@ -26,7 +26,10 @@ import MainCommunityPage from './communitypages/MainCommunityPage';
 import PostCommentPage from './communitypages/PostCommentPage'; 
 import PopularPostsPage from './communitypages/PopularPostsPage'; 
 import MyPostsPage from './communitypages/MyPostsPage'; 
-import axios from 'axios';
+import axios from 'axios'; 
+import VerifyPage from './pages/VerifyPage'; 
+import MyCommunitiesPage from './communitypages/MyCommunitiesPage'; 
+import UserPage from './pages/UserPage';
 
 function App() {
    axios.defaults.withCredentials = true;
@@ -58,7 +61,10 @@ function App() {
             <Route path='/c/:id' element={<MainCommunityPage/>}/> 
             <Route path='/c/comment/:id' element={<PostCommentPage/>}/> 
             <Route path='/c/popular' element={<PopularPostsPage/>}/> 
-            <Route path='/c/myposts' element={<MyPostsPage/>}/>
+            <Route path='/c/myposts' element={<MyPostsPage/>}/> 
+            <Route path='/verify' element={<VerifyPage/>}/> 
+            <Route path='/mycommunities' element={<MyCommunitiesPage/>}/> 
+            <Route path='/user/:userName' element={<UserPage/>}/>
             
           </Route> 
           

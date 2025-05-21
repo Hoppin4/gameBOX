@@ -57,7 +57,7 @@ function PopularPostsPage() {
                 }
              });  
              
-            if (response.data.data.length < 19) { 
+            if (response.data.data.length < 20) { 
                 setHasMore(false); 
             } 
             if (page === 1) {  
@@ -146,7 +146,7 @@ function PopularPostsPage() {
    const skipNextPageEffect = useRef(false);
    useEffect(() => {  
         setPostLoading(true); 
-        setPosts([]);  
+        setPosts([]);   
         setPage(1); 
         setHasMore(true);
         const timer = setTimeout(() => {  
@@ -163,7 +163,7 @@ function PopularPostsPage() {
         return; 
   }
         if (page > 1) { 
-            getPopularPosts(); 
+            getPopularPosts(page); 
         }
     }, [page]); 
     useEffect(()=>{ 
@@ -208,14 +208,11 @@ function PopularPostsPage() {
                         <Link key={index} to={`/c/comment/${data.id}`} style={{textDecoration:"none",padding:"10px",borderBottom:"1px solid grey",display:"flex",justifyContent:"center",alignItems:"center",width:"100%"}}>
                         <div key={index} className="post-con">  
                             <div className="post-username-con">
-                                {data.user.avatar_url ? ( 
-                                    <img className="post-con-avatar" src={data.user.avatar_url}></img>
-                                ) : ( 
-                                    <div style={{display:"flex",backgroundColor:"yellow",justifyContent:"center",alignItems:"center",width:"40px",height:"40px"}}>   
-                                        <p>{data.user.userName.charAt(0)}</p>
-                                    </div>
-                                )} 
-                                <p>{data.user.userName}</p>  
+                                <Link style={{display:"flex",alignItems:"center",textDecoration:"none"}} to={`/user/${data.user.userName}`}>
+                                        <img className="post-con-avatar" src={data.user.avatar_url}></img>
+                                    
+                                    <p>{data.user.userName}</p>  
+                                </Link> 
                                 <p>-</p>
                                 <p style={{fontWeight:"100",color:"grey"}}>{timeago(data.created_at)}</p> 
                                 {data.game&& ( 
@@ -264,16 +261,21 @@ function PopularPostsPage() {
                             
                         </div> 
                     </Link>
-                   ))}    {hasMore && (  
-                            <div className="post-loadmore"> 
-                                            <button onClick={() => {
-                                            setPage((prev) => prev + 1);
-                                            setMoreLoading(true);
-                                        }}>
-                                            Load More
-                                        </button>
-                                </div> 
-                            )}
+                   ))}    {moreLoading ? (
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%", height: "100%" }}>
+                            <div className="spinner"></div>
+                        </div>
+                        ) : hasMore && ( 
+                        <div className="post-loadmore"> 
+                                <button onClick={() => {
+                                setPage((prev) => prev + 1);
+                                setMoreLoading(true);
+                            }}>
+                                Load More
+                            </button>
+                        </div>
+                        
+                    )} 
                             
                    </div>  
                    {gameLoading ? ( 
@@ -330,21 +332,7 @@ function PopularPostsPage() {
                     </div>
                   
                          <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(2, 1fr)",
-                        gap: "10px",
-                        width: "100%",
-                
-                        padding: "20px", 
-                        justifyContent:"flex-start", 
-                        height:"250px", 
-                        backgroundColor:"#0E1113", 
-                        borderBottomLeftRadius:"15px", 
-                        borderBottomRightRadius:"15px",
-                        marginLeft:"20px",
-                    }}
-                    > 
+                    style={{display: "grid",gridTemplateColumns: "repeat(2, 1fr)",gap: "10px",width: "100%", padding: "20px", justifyContent:"flex-start", height:"250px", backgroundColor:"#0E1113", borderBottomLeftRadius:"15px", borderBottomRightRadius:"15px",marginLeft:"20px",}}> 
                     <div onClick={()=>nav('/MainGamesPage/all-time-top')} style={{ gridColumn: "1 / -1", display: "flex", alignItems: "center", gap: "5px" ,justifyContent:"center",cursor:"pointer"}}>
                         <h2 style={{  fontSize: "16px",color:"white" }}>
                             Look at the All Time Best Games

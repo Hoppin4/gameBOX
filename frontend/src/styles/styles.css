@@ -93,8 +93,7 @@
     object-fit: cover;
     filter: brightness(30%);
   } 
-  .overlay2 input{  
-    padding: 10px 20px; 
+  .overlay2 input{   
     background-color: #32353C; 
     border: none; 
     color: white; 
@@ -105,7 +104,11 @@
     width: 400px; 
     height: 25px; 
     
-  } 
+  }  
+  .overlay2 input:focus{ 
+    outline: none;
+    box-shadow: none;
+  }
   .overlay2 button{ 
     padding: 10px 20px; 
     background-color: #f8b400; 
@@ -134,4 +137,58 @@
     font-size: 17px !important; 
     color: yellow;
   } 
+  .eye{ 
+    color: black; 
+    right: 0; 
+    size: 50px; 
+    margin-left: 10px;  
+    margin-top: 3px;
+  } 
+  .eye2{ 
+    color: white; 
+    right: 0; 
+    size: 50px; 
+    margin-left: 10px; 
+    margin-top: 3px;
+  } 
+  .input-signin{  
+    display: flex; 
+    
+  
+      padding: 10px 20px; 
+    background-color: #32353C; 
+    border: none; 
+    color: white; 
+    font-size: 15px; 
+    cursor: pointer;  
+    border-radius: 3px; 
+    margin-bottom: 20px; 
+    width: 400px; 
+    height: 25px; 
+
+  } 
+  .users-button{ 
+ 
+        background-color: #101517; 
+    border: 0; 
+    padding: 10px; 
+    margin-left: 10px; 
+    border-radius: 15px; 
+     font-weight: 600; 
+     color: rgb(162, 159, 159);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  }  
+  .users-button:hover{ 
+     background-color: #586d77; 
+  } 
+  .users-button-active{ 
+    background-color: #3D494E; 
+    border: 0; 
+    padding: 10px; 
+    margin-left: 10px; 
+    border-radius: 15px; 
+     font-weight: 600; 
+     color: rgb(162, 159, 159);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  }
   

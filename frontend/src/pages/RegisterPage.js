@@ -8,7 +8,8 @@ import genshin from "../images/genshin.jpg";
 import { useNavigate } from "react-router-dom"; 
 import { useEffect } from "react"; 
 import { AuthContext } from "../provider/AuthProvider"; 
-import { useContext } from "react";
+import { useContext } from "react"; 
+import { FaEye } from "react-icons/fa";
  const RegisterPage = () => {      
 const { loggedIn, setLoggedIn, session } = useContext(AuthContext);
   const nav = useNavigate();
@@ -16,26 +17,31 @@ const [user_email, setEmail] = useState("");
   const [user_password, setPassword] = useState(""); 
     const [userName, setUsername] = useState(""); 
     const [birthday, setBirthday] = useState("");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(""); 
+   const [showPassword, setShowPassword] = useState(false); 
+   const [saving,setSaving] = useState(false);
   
   useEffect(() => {  
-    if(session){ 
+    if(loggedIn){ 
       nav('/')
     }
   }, []);
 
-    const handleRegister = async (e) => { 
+    const handleRegister = async (e) => {  
+      setSaving(true)
         e.preventDefault();
         try { 
             const response = await axios.post(`${process.env.REACT_APP_BACKEND}/user/register`, {userName,user_email,user_password,birthday }); 
-            console.log(response.data.message)
+           
             setMessage(response.data.message);  
             Swal.fire({
                 icon: 'success',
                 title: 'Successfully Saved!',
                 text: response.data.message,
                 confirmButtonText: 'OK'
-              });
+              }); 
+            nav('/signup')
+
         } catch (error) { 
             console.log(error.response.data.message)
             setMessage(error.response.data.message || "Register Failed");  
@@ -45,8 +51,8 @@ const [user_email, setEmail] = useState("");
                 text: error.response.data.message || "Register Failed",
                 confirmButtonText: 'OK'
               });
-        }finally{ 
-          nav('/signup')
+        }finally{  
+          setSaving(false);
         }
     };
     return (  
@@ -59,21 +65,27 @@ const [user_email, setEmail] = useState("");
             <div> 
           <div className="form-group">  
             <label htmlFor="username">Username</label>  
-            <input type="text" value={userName} onChange={(e) => setUsername(e.target.value)} id="username" name="username" required />  
+            <input type="text" value={userName} onChange={(e) => setUsername(e.target.value.trim())} id="username" name="username" required />  
           </div>  
           <div className="form-group">  
             <label htmlFor="email">Email</label>  
-            <input type="email" value={user_email} onChange={(e) => setEmail(e.target.value)} id="email" name="email" required />  
+            <input type="email" value={user_email} onChange={(e) => setEmail(e.target.value.trim())} id="email" name="email" required />  
           </div>  
           <div className="form-group">  
-            <label htmlFor="password">Password</label> 
-            <input type="password" value={user_password} onChange={(e) => setPassword(e.target.value)} id="password" name="password" required />  
+            <label htmlFor="password">Password</label>   
+            <div style={{position:"relative"}}> 
+                <input type={showPassword ? "text" : "password"} value={user_password} onChange={(e) => setPassword(e.target.value)} id="password" name="password" required />   
+                <FaEye style={{position:"absolute",marginTop:"10px",right:20}} size={15} className={!showPassword ? "eye" : "eye2"} onClick={()=>setShowPassword(prev => !prev)}/>
+            </div>
+            
           </div>  
           <div className="form-group"> 
             <label htmlFor="birthday">Birthday</label>
             <input type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} id="birthday" name="birthday" required /> 
           </div> 
-          <button type="submit" onClick={handleRegister} className="auth-button">Register</button>  
+          <button disabled={saving} type="submit" onClick={handleRegister} className="auth-button">{saving ? <div style={{display: "flex",justifyContent: "center",alignItems: "center",width: "100%",height: "30px",}}>
+                                        <div className="spinner" style={{ height: "30px", width: "30px" }}></div>
+                                    </div> : "Register"}</button>  
           </div> 
           <div>
            <img src={myPhoto} alt="my photo" className="sonicImg"/>  

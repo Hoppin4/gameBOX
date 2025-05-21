@@ -37,10 +37,12 @@ import Swal from 'sweetalert2';
     const logOut = async () => {        
         try{ 
             const response = await axios.post(`${process.env.REACT_APP_BACKEND}/user/logout`);  
-            setLoggedIn(false)
-            navigate("/signup"); 
+            
         }catch(error){ 
             console.error('Error fetching session:', error); 
+        }finally{
+            setLoggedIn(false)
+            navigate("/signup"); 
         }
         console.log("User logged out");     
     };   
@@ -74,7 +76,8 @@ import Swal from 'sweetalert2';
             handledelete(id);
           } 
         }); 
-    }
+    }  
+   
     const handledelete = async (id) => { 
         try {  
             
@@ -114,7 +117,9 @@ import Swal from 'sweetalert2';
                         <button>
                             <Link to={`/${session.userName}/edit`} state={{ userData: userData }}>EDIT PROFILE</Link>
                         </button>   
-                        
+                        <button onClick={()=>logOut()}> 
+                            logout
+                        </button>
                     </div>               
                      
                      <div className="listContainer" style={{marginTop:"20px",display:"flex",flexDirection:"column",width:"100%",height:"100%"}}>   
