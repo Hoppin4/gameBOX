@@ -1,16 +1,22 @@
 import { useState,useEffect } from 'react';
 import { createContext } from 'react'; 
-import axios from 'axios';
+import axios from 'axios';  
+import { createClient } from '@supabase/supabase-js'; 
+import { Toaster, toast } from 'react-hot-toast';  
+import { useNavigate } from 'react-router-dom';
 export const AuthContext = createContext(); 
 
-export const AuthProvider = ({ children }) => {  
+export const AuthProvider = ({ children }) => {   
+  const nav = useNavigate();  
   axios.defaults.withCredentials = true; 
   const [session, setSession] = useState(null); 
   const [loading, setLoading] = useState(true); 
   const [loggedIn, setLoggedIn] = useState();  
   const [myCommunityList, setMyCommunityList] = useState([]); 
-  const [listLoading,setListLoading] = useState(false)
-
+  const [listLoading,setListLoading] = useState(false) 
+  const [notifications, setNotifications] = useState([]);
+  const supabase = createClient(process.env.REACT_APP_SUPABASE_URL, process.env.REACT_APP_SUPABASE_ANON_KEY);  
+  
     const addToList = async (communityId,auth) => {
       try{ 
         const response = await axios.post(`${process.env.REACT_APP_BACKEND}/com/joinCommunity` ,{ 
@@ -58,7 +64,8 @@ export const AuthProvider = ({ children }) => {
     }finally{ 
       setListLoading(false)
     }
-  } 
+  }  
+
   useEffect(()=>{  
     if(loggedIn === true){ 
       getMyList();
@@ -86,7 +93,37 @@ export const AuthProvider = ({ children }) => {
 
     getSession();
 
-},[loggedIn]); 
+},[loggedIn]);  
+useEffect(() => {
+    if (!session) return;
+
+    const channel = supabase
+      .channel('Notifications')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'Notifications',
+          filter: `receiver_id=eq.${session.userId}`,
+        },
+        (payload) => { 
+          setNotifications((prev) => [payload.new, ...prev]);  
+          toast((t)=>(<div style={{cursor:"pointer"}} onClick={()=>{toast.dismiss(t.id);nav(`/c/comment/${payload.new.post_id}`)}}>{payload.new.message}</div>), {
+                        position: 'top-left', 
+                        duration: 4000, 
+                        style: {
+                          background: 'white', 
+                          color: 'black', 
+                        }, });
+        })
+        .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [session]); 
+  console.log(notifications)
 if (loading) {
   return <div style={{display:"flex",justifyContent:"center",alignItems:"center",  width:"100%",height:"100%"}}> 
   <div className="spinner"></div>
@@ -103,7 +140,8 @@ if(session){
 
  
   return (
-    <AuthContext.Provider value={{myCommunityList,getMyList,removeFromList,addToList,listLoading , loggedIn, setLoggedIn,loading,session}}>
+    <AuthContext.Provider value={{myCommunityList,getMyList,removeFromList,addToList,listLoading , loggedIn, setLoggedIn,loading,session,notifications}}> 
+    <Toaster position="top-left" />
       {children}
     </AuthContext.Provider>
   );

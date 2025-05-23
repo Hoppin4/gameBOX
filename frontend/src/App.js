@@ -30,13 +30,18 @@ import axios from 'axios';
 import VerifyPage from './pages/VerifyPage'; 
 import MyCommunitiesPage from './communitypages/MyCommunitiesPage'; 
 import UserPage from './pages/UserPage';
+import NotificationPage from './pages/NotificationPage';  
+import { Toaster } from 'react-hot-toast';
+
 
 function App() {
    axios.defaults.withCredentials = true;
 
   return ( 
-    <AuthProvider>
-      <BrowserRouter>
+  
+      <BrowserRouter> 
+        <AuthProvider>
+            <Toaster/>   
         <Routes>
           <Route path="/" element={<Layout />}> 
             
@@ -64,13 +69,16 @@ function App() {
             <Route path='/c/myposts' element={<MyPostsPage/>}/> 
             <Route path='/verify' element={<VerifyPage/>}/> 
             <Route path='/mycommunities' element={<MyCommunitiesPage/>}/> 
-            <Route path='/user/:userName' element={<UserPage/>}/>
+            <Route path='/user/:userName' element={<UserPage/>}/> 
+            <Route path='/notifications' element={<NotificationPage/>}/> 
+          
             
           </Route> 
           
-        </Routes>
+        </Routes> 
+        </AuthProvider>
       </BrowserRouter> 
-    </AuthProvider>
+
   );
 }
 

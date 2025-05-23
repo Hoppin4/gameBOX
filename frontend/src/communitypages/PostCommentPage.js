@@ -102,7 +102,8 @@ function PostCommentPage(){
                 const response = await axios.post(`${process.env.REACT_APP_BACKEND}/com/createComment` ,{ 
                     postId:id, 
                     userId:session.userId,
-                    content:comment
+                    content:comment ,
+                    receiver_id:data.user_id
                 }) 
                 setComments((prev) => [
                     {

@@ -312,16 +312,24 @@ const PostInfo = async(req,res) =>{
   }
 }
 const createComment = async(req,res)=>{  
-  const { postId, userId, content } = req.body; 
+  const { postId, userId, content, receiver_id } = req.body; 
   try{ 
     const { data, error } = await supabase
   .from('Post_Comments')
   .insert([{post_id: postId,user_id: userId,content:content}]) 
-  .select(); 
+  .select();  
+    
+  if(userId !== receiver_id){
+    const response = await supabase 
+    .from('Notifications') 
+    .insert([{receiver_id:receiver_id,sender_id:userId,post_id:postId,message:"commented on your post"}])
+  }
+  
   res.json({data})
   }catch(error){ 
     res.json(500).send("error joining communities")
-  }
+  } 
+
 } 
 const deleteComment = async(req,res)=>{ 
   const commentId = req.query.commentId; 

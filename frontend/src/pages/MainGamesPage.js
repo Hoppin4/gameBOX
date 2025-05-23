@@ -46,90 +46,64 @@ lastWeek.setDate(today.getDate() + 7);
 nextWeek1.setDate(today.getDate() + 14);
 const startWeek = formatDate(lastWeek);
 const nextWeek = formatDate(nextWeek1);
-const [sliderRef, setSliderRef] = useState(null);
-
-const settings = {
-  dots: true,
-  infinite: true,
-  speed: 500,
-  arrows: false,
-  slidesToShow: 1,
-  slidesToScroll: 1,
-  lazy: true,
-  appendDots: dots => <ul style={{ color: "white" }}>{dots}</ul>,
-  customPaging: i => (
-    <div
-      onMouseEnter={() => sliderRef?.slickGoTo(i)}
-      style={{
-        width: "10px",
-        height: "10px",
-        background: "#fff",
-        cursor: "pointer",
-      }}
-    />
-  )
-};
 
 const fetchData = async (currentPage, currentSlug, currentOrder) => {
   if (isFetching) return;
   setIsFetching(true);
   setMoreLoading(true);
   
-  try {
-    
-    let response;
-    if (currentSlug === 'month-trending') {
-      response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/popularGames`, {
-        params: { startDate, endDate, search: null, page: currentPage, order: currentOrder }
-      });
-    } else if (currentSlug === 'best-of-the-year') {
-      response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/popularGames`, {
-        params: { startDate: "2025-01-01", endDate: "2025-12-31", search: null, page: currentPage, order: currentOrder }
-      });
-    } else if (currentSlug === 'this-week') {
-      response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/popularGames`, {
-        params: { startDate: endDate, endDate: startWeek, search: null, page: currentPage, order: currentOrder }
-      });
-    } else if (currentSlug === 'all-time-top') {
-      response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/getMostPopular`, {
-        params: { page: currentPage }
-      });
-    } else if (currentSlug === 'next-week') {
-      response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/popularGames`, {
-        params: { startDate: startWeek, endDate: nextWeek, search: null, page: currentPage, order: currentOrder }
-      });
-    } else if (supportedSlugs.includes(currentSlug)) {
-      let platform = 0;
-      if (currentSlug === 'pc') {
-        platform = 4;
-      } else if (currentSlug === 'playstation5') {
-        platform = 187;
-      } else if (currentSlug === 'xbox-series-x') {
-        platform = 186;
-      } else if (currentSlug === 'nintendo-switch') {
-        platform = 7;
-      } else if (currentSlug === 'ios') {
-        platform = 3;
-      } else if (currentSlug === 'android') {
-        platform = 21;
-      }else if(currentSlug === 'xbox-one'){ 
-        platform = 1;
-      }else if(currentSlug === 'playstation4'){ 
-        platform =18;
-      }else if(currentSlug === 'macos'){ 
-        platform =5;
+      try {
+      const platformMap = {
+        pc: 4,
+        playstation5: 187,
+        'xbox-series-x': 186,
+        'nintendo-switch': 7,
+        ios: 3,
+        android: 21,
+        'xbox-one': 1,
+        playstation4: 18,
+        macos: 5,
+      };
+
+    const slugConfigs = {
+      'month-trending': {
+        url: '/api/popularGames',
+        params: { startDate, endDate, search: null, page: currentPage, order: currentOrder },
+      },
+      'best-of-the-year': {
+        url: '/api/popularGames',
+        params: { startDate: '2025-01-01', endDate: '2025-12-31', search: null, page: currentPage, order: currentOrder },
+      },
+      'this-week': {
+        url: '/api/popularGames',
+        params: { startDate: endDate, endDate: startWeek, search: null, page: currentPage, order: currentOrder },
+      },
+      'next-week': {
+        url: '/api/popularGames',
+        params: { startDate: startWeek, endDate: nextWeek, search: null, page: currentPage, order: currentOrder },
+      },
+      'all-time-top': {
+        url: '/api/getMostPopular',
+        params: { page: currentPage },
       }
-      
+    };
+
+    let response;
+
+    if (slugConfigs[currentSlug]) {
+      const { url, params } = slugConfigs[currentSlug];
+      response = await axios.get(`${process.env.REACT_APP_BACKEND}${url}`, { params });
+    } else if (platformMap[currentSlug]) {
       response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/platforms`, {
-        params: { platforms: platform, page: currentPage, order: currentOrder }
+        params: { platforms: platformMap[currentSlug], page: currentPage, order: currentOrder }
       });
     } else {
-     
       setIsFetching(false);
       setMoreLoading(false);
       setLoading(false);
       return;
     }
+
     
     if (response.data.count < 20) {
       setHasMore(false);
@@ -278,20 +252,7 @@ useEffect(() => {
                                         <div >
                                         {item.metacritic !== null && (  
                                            <div
-                                           style={{
-                                                        backgroundColor: item.metacritic > 75 
-                                                        ? "#008000"  
-                                                        : (item.metacritic >= 50 && item.metacritic <= 75) 
-                                                        ? "#FFFF00" 
-                                                        : "#FF0000" , 
-                                                        paddingBottom:"1px", 
-                                                        paddingTop:"1px",
-                                                        borderRadius: "5px",
-                                                        paddingLeft: "7px",
-                                                        paddingRight: "7px", 
-                                                        marginTop:"5px"
-                                                    }}
-                                                    > 
+                                           style={{backgroundColor: item.metacritic > 75 ? "#008000"  : (item.metacritic >= 50 && item.metacritic <= 75) ? "#FFFF00" : "#FF0000" , paddingBottom:"1px", paddingTop:"1px",borderRadius: "5px",paddingLeft: "7px",paddingRight: "7px", marginTop:"5px"}}> 
                                                 <p style={{
                                                 color: "white",padding:0,margin:4
                                               }}>{item.metacritic}</p>
