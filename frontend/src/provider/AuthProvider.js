@@ -14,7 +14,8 @@ export const AuthProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState();  
   const [myCommunityList, setMyCommunityList] = useState([]); 
   const [listLoading,setListLoading] = useState(false) 
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState([]); 
+  const [notificationLoading,setNotificationLoading] = useState(false)
   const supabase = createClient(process.env.REACT_APP_SUPABASE_URL, process.env.REACT_APP_SUPABASE_ANON_KEY);  
   
     const addToList = async (communityId,auth) => {
@@ -95,8 +96,27 @@ export const AuthProvider = ({ children }) => {
 
 },[loggedIn]);  
 useEffect(() => {
-    if (!session) return;
-
+    if (!session) return; 
+     
+    const getNotifications = async()=> {  
+      try{
+         const response  = await axios.get(`${process.env.REACT_APP_BACKEND}/user/getNotifications`,{ 
+          params:{ 
+            userId:session.userId ,
+            page:1, 
+     
+          } 
+      })   
+      setNotifications(response.data.response.data) 
+      console.log(response)
+      }catch(error){
+        console.log(error)
+      }finally{ 
+         setNotificationLoading(false);
+      }
+     
+    } 
+    getNotifications();
     const channel = supabase
       .channel('Notifications')
       .on(
@@ -107,9 +127,18 @@ useEffect(() => {
           table: 'Notifications',
           filter: `receiver_id=eq.${session.userId}`,
         },
-        (payload) => { 
-          setNotifications((prev) => [payload.new, ...prev]);  
-          toast((t)=>(<div style={{cursor:"pointer"}} onClick={()=>{toast.dismiss(t.id);nav(`/c/comment/${payload.new.post_id}`)}}>{payload.new.message}</div>), {
+         async (payload) => {  
+           const res = await axios.post(`${process.env.REACT_APP_BACKEND}/user/getUser`, {
+            id: payload.new.sender_id,
+          });  
+
+          const User = { userName: res.data[0]?.userName || "Unknown" };
+          const enriched = {
+            ...payload.new,
+            user:User
+          };
+          setNotifications((prev) => [enriched, ...prev]);  
+          toast((t)=>(<div style={{cursor:"pointer"}} onClick={()=>{toast.dismiss(t.id);nav(`/c/comment/${payload.new.post_id}`)}}>{res.data[0]?.userName} { payload.new.message}</div>), {
                         position: 'top-left', 
                         duration: 4000, 
                         style: {
@@ -121,7 +150,8 @@ useEffect(() => {
       
     return () => {
       supabase.removeChannel(channel);
-    };
+    }; 
+   
   }, [session]); 
   console.log(notifications)
 if (loading) {
@@ -136,7 +166,11 @@ if(session){
 </div>
   }
 }
-
+if (notificationLoading) {
+  return <div style={{display:"flex",justifyContent:"center",alignItems:"center",  width:"100%",height:"100%"}}> 
+  <div className="spinner"></div>
+</div>; 
+}  
 
  
   return (

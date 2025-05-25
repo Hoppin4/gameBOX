@@ -1,5 +1,5 @@
 const express = require('express');
-const {registerUser,userLogin,getSession,logOut,updateProfile,getUser,upload,uploadImage,verify,getUser2} = require('../controllers/userController');
+const {registerUser,userLogin,getSession,logOut,updateProfile,getUser,upload,uploadImage,verify,getUser2,getNotifications,handleread} = require('../controllers/userController');
 const router = express.Router();
 
 router.post('/upload', upload.single('image'), uploadImage);
@@ -10,5 +10,7 @@ router.get('/getSession',getSession)
 router.post('/logout', logOut) 
 router.post('/updateProfile',updateProfile) 
 router.get('/verify',verify) 
-router.get('/getUser2',getUser2)
+router.get('/getUser2',getUser2) 
+router.get('/getNotifications',getNotifications) 
+router.post('/handleread',handleread)
 module.exports = router;

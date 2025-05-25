@@ -209,5 +209,36 @@ const updateProfile = async (req, res) => {
     
   }
 }
+const getNotifications = async(req,res)=>{  
+  const userId =req.query.userId  
+  const page = req.query.page 
+  const limit = 20; 
+  const from = (page - 1) * limit;
+  const to = from + limit - 1; 
+  try{
+    const response = await supabase.from('Notifications') 
+    .select('*,user:Users!sender_id(userName)')  
+    .order("created_at", { ascending: false }) 
+    .range(from, to)
+    .eq('receiver_id',userId) 
+    .eq('is_read',false) 
+    .eq('is_read', false);
+    
+    res.json({response}) 
 
-module.exports = { getUser,registerUser,userLogin,getSession,logOut,updateProfile,upload, uploadImage,verify,getUser2 }; 
+  }catch(error){
+    console.log(error)
+  }
+} 
+const handleread = async(req,res)=>{ 
+  const {userId} = req.body
+  try{ 
+    const response = await supabase.from('Notifications') 
+    .update({is_read:true}) 
+    .eq('receiver_id', userId)
+    .eq('is_read', false);
+  }catch(error){
+    res.json(error)
+  }
+}
+module.exports = { getUser,registerUser,userLogin,getSession,logOut,updateProfile,upload, uploadImage,verify,getUser2,getNotifications,handleread }; 

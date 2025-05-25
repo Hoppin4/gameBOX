@@ -5,33 +5,28 @@ import axios from "axios";
 import { AuthContext } from "../provider/AuthProvider"; 
 import gameboxLogo from "../images/gameboxes.jpg"; 
 import { IoIosNotifications } from "react-icons/io"; 
-import myPhoto from "../images/cat.png";
+import myPhoto from "../images/cat.png"; 
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';  
 
 
 
 const Layout = () => {   
-  const { loggedIn, setLoggedIn,session,notifications } = useContext(AuthContext);   
-  const [Notification,setNotification] = useState([]);
+  const { loggedIn, setLoggedIn,session,notifications } = useContext(AuthContext);    
+  dayjs.extend(relativeTime);  
+const timeago = (time) =>dayjs(time).fromNow() 
 console.log(notifications)
  axios.defaults.withCredentials = true; 
-  useEffect(()=>{  
-    if(notifications){ 
-      const getUser = async()=>{
-       try{
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND}/user/getUser`,{
-          id:notifications[0].sender_id
-        })  
-        setNotification((prev)=>[{...notifications[0],user:response.data[0].userName},...prev])
-        console.log(response)
-      }catch(error){
-        console.log(error)
-      }
+  const handleread = async()=>{ 
+    try{ 
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND}/user/handleread`,{
+        userId:session.userId
+      })
+    }catch(error){
+      console.log(error)
     }
-     getUser();
-    }
-    
-  },[notifications]) 
-  console.log(Notification)
+
+  }
   return ( 
     <div> 
       <nav className="nav">    
@@ -51,13 +46,14 @@ console.log(notifications)
                 <li><Link to={`/${session.userName}`}>Profile</Link></li> 
    
                     <div class="dropdown-notifications">  
-                            <IoIosNotifications className="notifications" color="gold" size={25}/> 
+                            <IoIosNotifications onClick={()=>handleread()} className="notifications" color="gold" size={25}/> 
                             <div class="dropdown-notifications-content" > 
-                              {Notification.length>0 ? ( 
-                                Notification.map((data,index)=>(
-                                  <Link className="notifications" style={{textDecoration:"none"}} to={(`/c/comment/${data.post_id}`)} key={index}>   
-                                    <p style={{color:"white",fontSize:"bold",marginRight:"5px"}}>{data.user}</p>  
-                                    <p style={{color:"grey"}}>{data.message}.</p>
+                              {notifications.length>0 ? ( 
+                                notifications.map((data,index)=>(
+                                  <Link className="notifications"  style={{textDecoration:"none"}} to={(`/c/comment/${data.post_id}`)} key={index}>   
+                                    <p style={{color:"white",fontSize:"bold",marginRight:"5px",fontSize:"12px"}}>{data.user.userName}</p>  
+                                    <p style={{color:"grey",fontSize:"12px"}}>{data.message}.</p> 
+                                    <p style={{fontSize:"12px",marginLeft:"5px"}}>{timeago(data.created_at)}</p>
                                   </Link>
 
                                 ))
