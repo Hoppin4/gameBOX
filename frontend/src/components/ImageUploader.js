@@ -37,7 +37,7 @@ const ImageUploader = ({image_url}) => {
     formData.append('userId', session.userId);
     try {
       setLoading(true);
-      const response = await axios.post('https://moviebox2-1084798053682.europe-west1.run.app/user/upload', formData, {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND}/user/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

@@ -19,8 +19,8 @@ const PostImgageLoader = ({image_url,formdata}) => {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
-      const tempUrl = URL.createObjectURL(file); // Geçici bir blob URL'si oluştur
-      setImageUrl(tempUrl); // Önizleme olarak göster
+      const tempUrl = URL.createObjectURL(file); 
+      setImageUrl(tempUrl); 
     }
   };
 

@@ -197,7 +197,8 @@ function PostCommentPage(){
                 <div style={{display:"flex",width:"70%",height:"100%"}}>   
                    <div style={{width:"80%",height:"100%"}}> 
                     <div className="post-con">
-                     <div className="post-username-con">
+                     <div className="post-username-con"> 
+                        <Link style={{textDecoration:"none",color:"black",display:"flex",alignItems:"center"}} to={`/user/${data.creator.userName}`}>
                             {data.creator.avatar_url ? ( 
                                 <img className="post-con-avatar" src={data.creator.avatar_url}></img>
                                 ) : ( 
@@ -205,7 +206,8 @@ function PostCommentPage(){
                                     <p>{data.creator.userName.charAt(0)}</p>
                                 </div>
                             )} 
-                            <p>{data.creator.userName}</p>  
+                            <p>{data.creator.userName}</p> 
+                        </Link>  
                             <p>-</p>
                             <p style={{fontWeight:"100",color:"grey"}}>{timeago(data.created_at)}</p>  
                         {session && myCommunityList && ( 

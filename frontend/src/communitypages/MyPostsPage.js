@@ -210,9 +210,11 @@ function MyPostsPage() {
                                 )} 
                                
                             </div>    
-                            <Link to={`/c/${data.community.id}`} style={{textDecoration:"none"}}>
-                                <p style={{color:"blue",fontSize:"13px",margin:0}}>c/{data.community.name}</p>  
-                            </Link>
+                            <p style={{color:"blue",fontSize:"13px",margin:0}}> 
+                                <Link to={`/c/${data.community.id}`} style={{textDecoration:"none", color: "inherit"}}>
+                                    c/{data.community.name}  
+                                </Link>  
+                            </p>
                             <div className="post-title-con"> 
                                 <p>{data.title}</p>
                             </div> 

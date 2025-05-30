@@ -1,6 +1,6 @@
 import React from "react"; 
 import { useState, useEffect,useContext,useRef } from "react"; 
-import { useParams } from "react-router-dom";  
+import { useParams,useLocation } from "react-router-dom";  
 import axios from "axios"; 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';   
@@ -18,8 +18,9 @@ import { FaHotjar } from "react-icons/fa";
 import { FaBoxArchive } from "react-icons/fa6"; 
 import { IoMdArrowDropdown } from "react-icons/io"; 
 import { useNavigate } from "react-router-dom"; 
-import { FaBirthdayCake } from "react-icons/fa"; 
-import blackScreen from "../images/black.jpg";
+import { FaBirthdayCake } from "react-icons/fa";  
+import blackScreen from "../images/black.jpg"; 
+import Modal from 'react-modal';
 
 
 
@@ -40,14 +41,24 @@ function UserPage() {
     const [userData,setUserData] = useState();
    const [listData, setListData] = useState([]);
     const [listLoading, setListLoading] = useState(true);  
-    const [selectedButton,SetSelectedButton] = useState(1)
-    
+    const [selectedButton,SetSelectedButton] = useState(1) 
+    const [followStatus,setFollowStatus] = useState(null) 
+    const [followers,setFollowers]=useState();    
+     const closeList = () => setIsOpenList(false) ;   
+     const [followerPage,setFollowerPage]=useState(1); 
+     const [followerLoading,setFollowerLoading]=useState(true)  
+     const[fstatus,setFstatus]=useState() 
+     const [followersCount,setFollowersCount] = useState(); 
+     const [followingCount,setFollowingCount] = useState(); 
+    const [userLoading,setUserLoading]=useState(true);
+    const [isOpenList, setIsOpenList] = useState(false); 
     dayjs.extend(relativeTime); 
     const timeago = (time) =>dayjs(time).fromNow()  
   
     console.log(userName); 
      
-    const getUser = async()=>{ 
+    const getUser = async()=>{  
+        let userid;
         try{ 
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/user/getUser2`,{ 
                 params:{ 
@@ -55,11 +66,38 @@ function UserPage() {
                 }
                 
             })  
-            console.log(response) 
+            console.log(response)  
+            userid=response.data[0].id
             setUserData(response.data[0])
-            setUserId(response.data[0].id)
+            setUserId(response.data[0].id)   
+            setFollowersCount(response.data[0].follower_count) 
+            setFollowingCount(response.data[0].following_count)
+            if(session?.userId === userid || !loggedIn){ 
+                return;
+            }else{ 
+                try{
+                    const response = await axios.get(`${process.env.REACT_APP_BACKEND}/user/checkfollows`,{
+                        params:{ 
+                            followerId:session.userId, 
+                            followingId:userid
+                        } 
+                    })    
+                    if(response.data !== null){  
+                       
+                        setFollowStatus(response.data)
+                    }
+                    
+                    console.log(response)
+                }catch(error){ 
+                    console.log(error)
+                }
+            }
+            
+           
         }catch(error){
             console.log(error)
+        }finally{ 
+            setUserLoading(false)
         }
     }
     const getPopularPosts = async (page) => {  
@@ -100,7 +138,6 @@ function UserPage() {
                 params: { userId: userId } 
             });
             setListData(response.data.data);
-            console.log("List data:", response);
         }catch(error) { 
             console.error('Error fetching list:', error); 
         }  
@@ -134,8 +171,8 @@ function UserPage() {
     const upvote = async(postId)=>{  
     if (votedPosts[postId]) return;   
         setVotedPosts((prev) => ({ ...prev, [postId]: "up" }));
-        setPosts(posts.map(c =>
-        c.id === postId ? { ...c, upvotes: c.upvotes + 1 } : c
+        setPosts(posts.map(post =>
+        post.id === postId ? { ...post, upvotes: post.upvotes + 1 } : post
     ));
     try{ 
         const response = await axios.post(`${process.env.REACT_APP_BACKEND}/com/upvote` ,{
@@ -148,8 +185,8 @@ function UserPage() {
     const downvote = async(postId)=>{  
         if (votedPosts[postId]) return;   
         setVotedPosts((prev) => ({ ...prev, [postId]: "down" }));
-        setPosts(posts.map(c =>
-        c.id === postId ? { ...c, upvotes: c.upvotes - 1 } : c
+        setPosts(posts.map(post =>
+        post.id === postId ? { ...post, upvotes: post.upvotes - 1 } : post
     ));  
     try{ 
         const response = await axios.post(`${process.env.REACT_APP_BACKEND}/com/downvote`,{
@@ -158,7 +195,74 @@ function UserPage() {
     }catch(error){
         console.log(error);
     }
-   }   
+   }    
+   const handlefollow = async()=>{  
+    if(!session){ 
+        return nav("/signup")
+    }  
+        setFollowersCount((prev)=>prev+1)
+        try{
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND}/user/handlefollow`,{ 
+                followerId:session.userId,
+                followingId:userId
+        })  
+            console.log(response.data.data[0]) 
+            setFollowStatus(response.data.data[0])
+        }catch(error){ 
+            console.log(error);
+        }
+   } 
+   const handleunfollow = async()=>{ 
+          console.log(followStatus.id)
+        setFollowStatus(null) 
+        setFollowersCount((prev)=>prev-1)
+       try{
+            const response = await axios.delete(`${process.env.REACT_APP_BACKEND}/user/handleunfollow`,{   
+                params:{
+                     id:followStatus.id
+                }
+               
+        })
+        }catch(error){ 
+            console.log(error);
+        }
+   } 
+   const openmodal = async()=>{  
+    setFollowerLoading(true)
+    setIsOpenList(true) 
+    try{ 
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND}/user/getFollowers`,{
+            params:{ 
+                followingId:userId ,
+                page:followerPage,
+            }
+        })  
+        setFollowers(response.data)
+        
+    }catch(error){ 
+        console.log(error)
+    }finally{
+        setFollowerLoading(false)
+    }
+   } 
+   const openmodal2 = async()=>{  
+    setFollowerLoading(true)
+    setIsOpenList(true) 
+    try{ 
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND}/user/getFollowings`,{
+            params:{ 
+                followingId:userId ,
+                page:followerPage,
+            }
+        })  
+        setFollowers(response.data)
+        
+    }catch(error){ 
+        console.log(error)
+    }finally{
+        setFollowerLoading(false)
+    }
+   }
    const skipNextPageEffect = useRef(false);
    useEffect(() => {  
     if(userId){  
@@ -176,7 +280,8 @@ function UserPage() {
 
     }  
         
-    }, [selectedSort,userId]);  
+    }, [selectedSort,userId]);   
+
     useEffect(() => {   
         if (skipNextPageEffect.current) {
         skipNextPageEffect.current = false;
@@ -189,12 +294,13 @@ function UserPage() {
 
     useEffect(()=>{ 
         getUser();
-    },[userName])
+    },[userName]) 
+    console.log(followers)
     return(
         <div className="main">   
       
             <CommunityLeftLayout />
-            {postLoading ? (  
+            {postLoading && userLoading ? (  
                 <div style={{display:"flex",justifyContent:"center",alignItems:"center",  width:"100%",height:"100%"}}> 
                     <div className="spinner"></div>
                 </div>
@@ -202,24 +308,67 @@ function UserPage() {
                     <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",width:"60%"}}>  
                     <div style={{display:"flex",justifyContent:"flex-start",alignItems:"center",gap:"5px",width:"100%",marginTop:"20px",borderBottom:"1px solid grey",padding:"10px",position:"relative",paddingBottom:"30px"}}>  
                         <img style={{width:"80px",height:"80px",borderRadius:"50%",objectFit:"fill"}} src={userData.avatar_url}></img> 
-                        <div style={{display:"flex",flexDirection:"column"}}>  
-                            <p style={{color:"white",margin:0,marginLeft:"10px",marginBottom:"10px",fontSize:"20px"}}>{userData.userName}</p>  
-                            <p style={{color:"grey",margin:0,marginLeft:"10px"}}>{userData?.firstName}{userData?.lastName}</p>  
+                        <div style={{display:"flex",flexDirection:"column"}}>   
+                            <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:"10px"}}>
+                                <p style={{color:"white",margin:0,marginLeft:"10px",marginBottom:"10px",fontSize:"20px"}}>{userData.userName}</p>     
+                                {session?.userId !== userId && (  
+                                    followStatus === null ? ( 
+                                        <button className="followbutton" onClick={()=>handlefollow()}>Follow</button>
+                                    ) : ( 
+                                        <button className="unfollowbutton" onClick={()=>handleunfollow()}>Unfollow</button>
+                                    )   
+                                ) }
+                            </div>
+                          
+                            <p style={{color:"grey",margin:0,marginLeft:"10px"}}>{userData?.firstName} {userData?.lastName}</p>  
                             <p>{userData?.bio}</p> 
                         </div>   
-                        <div style={{position:"absolute",display:"flex",right:0,justifyContent:"center",alignItems:"center"}}>
+                        <div style={{marginLeft:"150px",display:"flex"}}>  
+                            <p style={{color:"grey",cursor:"pointer"}} onClick={()=>{setFstatus("Followers");openmodal2()}}>{followersCount} Followers</p> 
+                            <p style={{color:"grey",marginLeft:"10px",cursor:"pointer"}}onClick={()=>{setFstatus("Following");openmodal()}}>{followingCount} Following</p> 
+                            <Modal 
+                                    isOpen={isOpenList} 
+                                    onRequestClose={closeList} 
+                                    contentLabel="Information Modal"
+                                    ariaHideApp={false} 
+                                    className="follower_modal-content"
+                                    overlayClassName="follower_modal-overlay" 
+                                    >  
+                                    <div style={{width:"100%",display:"flex",justifyContent:"center",alignItems:"center",borderBottom:"1px solid grey"}}> 
+                                        <p style={{margin:0,marginTop:"10px",marginBottom:"10px"}}>{fstatus}</p> 
+                                    </div>  
+                                {followerLoading ? (  
+                                    <div style={{display:"flex",justifyContent:"center",alignItems:"center",  width:"100%",height:"100%"}}> 
+                                        <div className="spinner"></div>
+                                    </div>
+
+                                ) : (  
+                                    <div className="followers_container_up">
+                                     {followers.map((data,index)=>( 
+                                        <Link key={index} className="followers_container" onClick={()=>closeList()} to={`/user/${data.user.userName}`}>   
+                                            <img src={data.user.avatar_url} style={{width:"50px",height:"50px",borderRadius:"50%"}}></img>
+                                            <p style={{marginLeft:"10px",fontSize:"16px",fontWeight:"600"}}>{data.user.userName}</p>
+                                        </Link>
+                                     ))} 
+                                     </div>
+                                )}  
+                                
+                            </Modal> 
+                        </div> 
+                        <div style={{position:"absolute",display:"flex",right:0,justifyContent:"center",alignItems:"center"}}> 
+                        
                         <FaBirthdayCake color="grey" />
-                            <p style={{color:"white",color:"grey",margin:0,marginLeft:"10px"}}>{new Date(userData.created_at).toLocaleDateString("en-US", {
+                            <p style={{color:"white",color:"grey",margin:0,marginLeft:"10px"}}>{new Date(userData.birthday).toLocaleDateString("en-US", {
                                             year: "numeric",
                                             month: "long",
                                             day: "numeric",})}
-                                    </p>  
+                            </p>  
                         </div>  
                        
                     </div>  
                     <div style={{display:"flex",justifyContent:"flex-start",alignItems:"center",width:"100%",padding:"10px"}}>
-                        <button className={selectedButton === 1 ? "users-button-active": "users-button"} onClick={()=>SetSelectedButton(1)}>Posts</button> 
-                        <button className={selectedButton === 2 ? "users-button-active": "users-button"} onClick={()=>{SetSelectedButton(2);getList();}}>Lists</button> 
+                        <button style={{cursor:"pointer"}} className={selectedButton === 1 ? "users-button-active": "users-button"} onClick={()=>SetSelectedButton(1)}>Posts</button> 
+                        <button style={{cursor:"pointer"}} className={selectedButton === 2 ? "users-button-active": "users-button"} onClick={()=>{SetSelectedButton(2);getList();}}>Lists</button> 
                      </div> 
                      {selectedButton === 1 && ( 
                         <div>
@@ -278,10 +427,12 @@ function UserPage() {
                                                     ) 
                                             )} 
                                         
-                                        </div>    
-                                        <Link to={`/c/${data.community.id}`} style={{textDecoration:"none"}}>
-                                            <p style={{color:"blue",fontSize:"13px",margin:0}}>c/{data.community.name}</p>  
-                                        </Link>
+                                        </div>  
+                                        <p style={{color:"blue",fontSize:"13px",margin:0}}>   
+                                            <Link to={`/c/${data.community.id}`} style={{textDecoration:"none",color:"blue"}}>
+                                                c/{data.community.name}
+                                            </Link> 
+                                        </p>  
                                         <div className="post-title-con"> 
                                             <p>{data.title}</p>
                                         </div> 

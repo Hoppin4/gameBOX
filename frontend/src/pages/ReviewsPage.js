@@ -72,18 +72,21 @@ function ReviewsPage(){
                      {reviews.map((data,index)=> (  
                         data.review !== "" && ( 
                         <Link style={{position:"relative",width:"100%",height:"auto",backgroundColor:"#202020",margin:"10px",borderRadius:"10px",textDecoration:"none"}} to={`/GameDetailPage/${data.games.game_id}/${data.games.game_name}`} state={{gameImage:data.games.game_image}} key={index}>   
-                            <img style={{position:"absolute",width:"100%",height:"50%",objectFit:"cover",zIndex:1,filter: "brightness(40%)",borderTopLeftRadius:"10px",borderTopRightRadius:"10px"}} src={data.games.game_image}></img> 
-                            <div style={{position: "relative",zIndex:5}}> 
-                                <h1 style={{color:"white",padding:"10px",}}>{data.games.game_name}</h1> 
+                            <img style={{position:"absolute",width:"100%",height:"100%",objectFit:"cover",zIndex:1,filter: "brightness(30%)",borderTopLeftRadius:"10px",borderTopRightRadius:"10px"}} src={data.games.game_image}></img> 
+                            <div style={{position: "relative",zIndex:5}}>  
+                                
+                                 <h1 style={{color:"white",padding:"10px"}}>{data.games.game_name}</h1> 
+                              
                                 <div style={{maxWidth:"100%",overflow:"hidden"}}>  
-                                    <p style={{color:"white",padding:"10px"}}>{data.review}</p>
+                                    <p style={{color:"white",padding:"10px",margin:0,marginTop:"20px"}}>{data.review}</p> 
+                                    <p style={{margin:0,color:"grey",marginLeft:"10px"}}>{data.like_count} Likes</p>
                                 </div> 
                                    
                                 <div style={{display:"flex",padding:"10px",}}>  
                                     <img src={session.user_avatar} style={{width:"50px",height:"50px",borderRadius:"50%",objectFit:"cover"}}></img>  
                                     <div style={{display:"flex",justifyContent:"space-between",width:"100%"}}>
                                     <div style={{display:"flex",flexDirection:"column",marginLeft:"10px"}}> 
-                                        <p style={{margin:0,marginBottom:"6px",color:"white"}}>{session.userName}</p> 
+                                        <p style={{margin:0,marginBottom:"6px",color:"white"}}>{session.userName}</p>  
                                         <p style={{margin:0,color:"grey"}}>{new Date(data.created_at).toLocaleDateString("en-US", {
                                                 year: "numeric",
                                                 month: "long",
@@ -91,7 +94,8 @@ function ReviewsPage(){
                                                 })}</p> 
                                        
                                     </div>  
-                                    {data.user_id === session.userId && ( 
+                                    {data.user_id === session.userId && (   
+                                        
                                         <FaTrash onClick={(e)=>{e.preventDefault();deleteReview(data.id) }} style={{cursor:"pointer"}} color="red"></FaTrash> 
                                     ) } 
                                     

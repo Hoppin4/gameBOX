@@ -1,6 +1,6 @@
 import React from "react"; 
 import { useState, useEffect,useContext,useRef } from "react"; 
-import { useParams } from "react-router-dom";  
+import { useParams,useLocation } from "react-router-dom";  
 import axios from "axios"; 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';   
@@ -19,10 +19,15 @@ import { FaBoxArchive } from "react-icons/fa6";
 import { IoMdArrowDropdown } from "react-icons/io"; 
 import { MdKeyboardArrowRight } from "react-icons/md"; 
 import { useNavigate } from "react-router-dom";
+import { saveScrollPosition, getScrollPosition } from '../provider/ScrollProvider.js';
 
 
-
-function PopularPostsPage() {     
+function PopularPostsPage() {   
+     const location = useLocation();  
+    const path = location.pathname; 
+    const y = getScrollPosition(path);  
+    window.scrollTo(0, y);  
+   
     const nav = useNavigate();
     const { myCommunityList,removeFromList,addToList,session } = useContext(AuthContext);
     const [posts, setPosts] = useState([]);  
@@ -43,8 +48,6 @@ function PopularPostsPage() {
     const formatDate = (date) => date.toISOString().split("T")[0];
     const startDate = formatDate(lastMonth);
     const endDate = formatDate(today);
-   console.log("startDate",startDate);   
-    console.log("endDate",endDate);
     dayjs.extend(relativeTime); 
     const timeago = (time) =>dayjs(time).fromNow() 
     const getPopularPosts = async (page) => {  
@@ -133,7 +136,6 @@ function PopularPostsPage() {
                     endDate:endDate,
                 }
             });    
-            console.log("response",response)
             setGameData(response.data.popular.results); 
             setMostPopular(response.data.bestseller.results);
            
@@ -169,12 +171,12 @@ function PopularPostsPage() {
     useEffect(()=>{ 
         getPopularGames();
     },[])
-   console.log(games);
+
     return(
         <div className="main">   
       
             <CommunityLeftLayout />
-            {postLoading && gameLoading ? (  
+            {postLoading && gameLoading && y ? (  
                 <div style={{display:"flex",justifyContent:"center",alignItems:"center", width:"100%",height:"100%"}}> 
                     <div className="spinner"></div>
                 </div>
@@ -205,10 +207,10 @@ function PopularPostsPage() {
                                     </div> 
                             </div> 
                      {posts.map((data,index)=>(  
-                        <Link key={index} to={`/c/comment/${data.id}`} style={{textDecoration:"none",padding:"10px",borderBottom:"1px solid grey",display:"flex",justifyContent:"center",alignItems:"center",width:"100%"}}>
+                        <Link key={index} onClick={() => saveScrollPosition(location.pathname, window.scrollY)} to={`/c/comment/${data.id}`} style={{textDecoration:"none",padding:"10px",borderBottom:"1px solid grey",display:"flex",justifyContent:"center",alignItems:"center",width:"100%"}}>
                         <div key={index} className="post-con">  
                             <div className="post-username-con">
-                                <Link style={{display:"flex",alignItems:"center",textDecoration:"none"}} to={`/user/${data.user.userName}`}>
+                                <Link style={{display:"flex",alignItems:"center",textDecoration:"none"}} onClick={() => saveScrollPosition(location.pathname, window.scrollY)} to={`/user/${data.user.userName}`}>
                                         <img className="post-con-avatar" src={data.user.avatar_url}></img>
                                     
                                     <p>{data.user.userName}</p>  
@@ -231,9 +233,11 @@ function PopularPostsPage() {
                                 )} 
                                
                             </div>    
-                            <Link to={`/c/${data.community.id}`} style={{textDecoration:"none"}}>
-                                <p style={{color:"blue",fontSize:"13px",margin:0}}>c/{data.community.name}</p>  
-                            </Link>
+                            <p style={{ color: "blue", fontSize: "13px", margin: 0, width: "fit-content" }}>
+                                <Link to={`/c/${data.community.id}`} onClick={() => saveScrollPosition(location.pathname, window.scrollY)} style={{ textDecoration: "none", color: "inherit" }}>
+                                    c/{data.community.name}
+                                </Link>
+                            </p>
                             <div className="post-title-con"> 
                                 <p>{data.title}</p>
                             </div> 

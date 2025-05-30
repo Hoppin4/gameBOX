@@ -7,11 +7,11 @@ import gameboxLogo from "../images/gameboxes.jpg";
 import { IoIosNotifications } from "react-icons/io"; 
 import myPhoto from "../images/cat.png"; 
 import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';  
+import relativeTime from 'dayjs/plugin/relativeTime';   
 
 
+const Layout = () => {    
 
-const Layout = () => {   
   const { loggedIn, setLoggedIn,session,notifications } = useContext(AuthContext);    
   dayjs.extend(relativeTime);  
 const timeago = (time) =>dayjs(time).fromNow() 

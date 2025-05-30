@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
             Authorization:auth,
          
         })  
-        console.log(response) 
+     
         const { id, community_id, user_id, joined_at } = response.data.data[0];
         setMyCommunityList(prev => [...prev, { id, community_id, user_id, joined_at }]); 
         return true
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
           params:{ memberId:targetItem.id }
         }) 
         setMyCommunityList((prev) => prev.filter((item) => item.id !== targetItem.id)) 
-        console.log(response)
+    
       }catch(error){ 
         console.log(error);
       }
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
           userId:session.userId
         }
       })  
-      console.log("responseaaaaa",response.data.data)
+
       setMyCommunityList(response.data.data)
     }catch(error){ 
       console.log(error); 
@@ -108,7 +108,7 @@ useEffect(() => {
           } 
       })   
       setNotifications(response.data.response.data) 
-      console.log(response)
+
       }catch(error){
         console.log(error)
       }finally{ 
@@ -153,7 +153,7 @@ useEffect(() => {
     }; 
    
   }, [session]); 
-  console.log(notifications)
+ 
 if (loading) {
   return <div style={{display:"flex",justifyContent:"center",alignItems:"center",  width:"100%",height:"100%"}}> 
   <div className="spinner"></div>

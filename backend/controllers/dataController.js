@@ -152,7 +152,7 @@ const getGamebyId = async (req, res) => {
                 user:Users(id , userName,avatar_url)`)
             .eq('game_id', gameId)
              
-            
+      
         res.json({
             game: response1.data,
             reviews : response2.data, 
@@ -177,8 +177,13 @@ const getReview = async (req, res) => {
             .select('*')
             .eq('user_id', userId)
             .eq('game_id', gameId)
-            .maybeSingle();
-            return res.status(200).json({ review: data });
+            .maybeSingle(); 
+     const {data:user}= await supabase 
+            .from('reviews_like') 
+            .select(`*`)
+            .eq('game_id', gameId) 
+            .eq('user_id',userId)
+            return res.status(200).json({ review: data , userLike:user });
     } catch (error) { 
         res.status(500).json({ message: 'Veri çekme hatası', error: error.message });
     }
@@ -709,10 +714,38 @@ const getUserList = async(req,res)=>{
         console.error('Error fetching session:', error);
     }  
 } 
-
+ 
+const handlereviewlike = async(req,res)=>{ 
+    const user_id = req.query.userId; 
+    const reviewId = req.query.reviewId  
+    const gameId = req.query.gameId
+    try{
+        const response = await supabase.from('reviews_like') 
+        .insert([{ user_id: user_id, review_id: reviewId ,game_id:gameId}]) 
+        .select('*');  
+         
+        res.json(response)
+    }catch(error){ 
+        res.json(error)
+    }
+} 
+const unreviewlike = async(req,res)=>{ 
+    const like_id = req.query.like_id; 
+    
+    try{
+        const response = await supabase.from('reviews_like') 
+        .delete()
+        .eq('id',like_id) 
+         
+        res.json(response)
+    }catch(error){ 
+        res.json(error)
+    }
+}
 module.exports = { getGames,getPopularGames,getGamebyId,sentReview, 
     getReview,searchGame,getMainGames,deleteReview,publisher, 
     platforms,createList,deleteList,getList,insertGameToList 
     ,deleteGameFromList,getGameFromList,getListbyId,updateList 
 ,getGameFromListbyUserId,getMostPopularGames,getUserReviews,  
-getGamebyGenres,getGamebyGenresout,getGamebyTags,getGamebyTagsout,getGamebydeveloper,getGamebydeveloperout,getUserList }; 
+getGamebyGenres,getGamebyGenresout,getGamebyTags,getGamebyTagsout, 
+getGamebydeveloper,getGamebydeveloperout,getUserList,handlereviewlike,unreviewlike }; 

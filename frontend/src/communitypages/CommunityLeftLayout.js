@@ -58,7 +58,7 @@ function CommunityLeftLayout(){
                 const timer = setTimeout(() => {
                     const runCheck = async () => {
                       const exists = await check(); 
-                      console.log("exists", exists);
+                  
                 
                       if (!exists) {
                         setMessage("This Community name already taken");
@@ -85,7 +85,7 @@ function CommunityLeftLayout(){
                     comName:communityName
                 }          
               })  
-              console.log(response) 
+        
               if(response.status === 201){ 
                 return false
               }else{ 
@@ -110,7 +110,7 @@ function CommunityLeftLayout(){
         setSelectedTag((prev)=>prev.filter((tag) => tag.id !== id));
         setTags((prev) => [...prev, { id: id, name: name }]);
    }
-    console.log(setDataTag)
+
    const createCommunity = async()=>{  
         setSaveClicked(true)
         let iconurl = null; 
@@ -145,7 +145,7 @@ function CommunityLeftLayout(){
                 icon_image:iconurl, 
                 banner_image:bannerurl      
               })  
-              console.log(response) 
+          
               if(response.status === 201){ 
                 toast.success(response.data.message);
               }
@@ -165,7 +165,6 @@ function CommunityLeftLayout(){
   
 
 
-console.log(selectedTag)
     return( 
         <div className="main-container1">  
         <ToastContainer position="top-left" autoClose={3000} />

@@ -53,7 +53,6 @@ const getUser2 = async (req, res) => {
     if (error) {
       console.error('Veri çekme hatası:', error);
     } else {
-      console.log('Kullanıcılar:', data); 
       res.json(data);
     }
 } 
@@ -240,5 +239,82 @@ const handleread = async(req,res)=>{
   }catch(error){
     res.json(error)
   }
-}
-module.exports = { getUser,registerUser,userLogin,getSession,logOut,updateProfile,upload, uploadImage,verify,getUser2,getNotifications,handleread }; 
+} 
+const handlefollow = async (req, res) => {  
+  const {followerId,followingId} = req.body; 
+  try{
+    const response = await supabase.from('Followers') 
+    .insert([{ follower_id: followerId, following_id: followingId }]) 
+    .select('*'); 
+     
+    res.json(response);
+  }catch(error){ 
+    res.status(500).json(error)
+  }
+} 
+const handleunfollow = async (req, res) => {  
+  const id = req.query.id; 
+  try{ 
+    const response = await supabase.from('Followers') 
+    .delete()
+    .eq('id', id); 
+
+  }catch(Error){ 
+    res.status(500).json(Error)
+  }
+} 
+const checkfollows = async (req,res)=>{ 
+  const follower_id = req.query.followerId 
+  const following_id = req.query.followingId 
+   
+  try{
+    const {data,error} = await supabase.from('Followers') 
+    .select('*') 
+    .eq('follower_id',follower_id) 
+    .eq('following_id',following_id) 
+     .maybeSingle(); 
+    res.json(data)
+  }catch(error){  
+    res.json(error)
+  }
+}  
+const getFollowers = async (req,res)=>{ 
+ 
+  const follower_id = req.query.followingId
+  const page = req.query.page 
+  const limit = 20; 
+  const from = (page - 1) * limit;
+  const to = from + limit - 1; 
+   
+  try{
+    const {data,error} = await supabase.from('Followers') 
+    .select('*,user:Users!following_id(id,userName,avatar_url)')  
+    .range(from, to)
+    .eq('follower_id',follower_id) 
+   
+    res.json(data)
+  }catch(error){  
+    res.json(error)
+  }
+} 
+const getFollowings = async (req,res)=>{ 
+ 
+  const following_id = req.query.followingId
+  const page = req.query.page 
+  const limit = 20; 
+  const from = (page - 1) * limit;
+  const to = from + limit - 1; 
+   
+  try{
+    const {data,error} = await supabase.from('Followers') 
+    .select('*,user:Users!follower_id(id,userName,avatar_url)')  
+    .range(from, to)
+    .eq('following_id',following_id) 
+   
+    res.json(data)
+  }catch(error){  
+    res.json(error)
+  }
+}  
+module.exports = { getUser,registerUser,userLogin,getSession,logOut,updateProfile,upload, 
+   uploadImage,verify,getUser2,getNotifications,handleread ,handlefollow,handleunfollow,checkfollows,getFollowers,getFollowings}; 

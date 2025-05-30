@@ -225,4 +225,36 @@
 }
 .clock:hover{ 
   color:rgb(150, 150, 62);
+} 
+.review-hearth-container{  
+  display: flex; 
+  align-items:"center";
+  cursor: pointer; 
+} 
+.review-hearth-container-liked{  
+  display: flex; 
+  align-items:"center";
+  cursor: pointer; 
+} 
+.review-hearth-container-liked p:hover{  
+  color: grey;
+} 
+.review-hearth-container-liked p {
+  margin: 0;
+  color: orange;
+  font-size: 14px;
+  margin-top: 3px;
+  margin-left: 5px;
+  font-weight: bold;
+}
+.review-hearth-container p {
+  margin: 0;
+  color: grey;
+  font-size: 14px;
+  margin-top: 3px;
+  margin-left: 5px;
+  font-weight: bold;
+} 
+.review-hearth-container p:hover {
+ color: gainsboro;
 }

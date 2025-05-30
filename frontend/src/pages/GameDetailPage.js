@@ -29,7 +29,7 @@ import LeftLayout from "./LeftLayout";
  function GameDetailPage() {  
     
     const { gameId,gameTitle } = useParams();   
-    console.log(gameId)
+  
     const navigate = useNavigate();  
     const { loggedIn,session } = useContext(AuthContext);   
     const [isOpen, setIsOpen] = useState(false); 
@@ -42,8 +42,7 @@ import LeftLayout from "./LeftLayout";
     const image = location.state.gameImage
    
     axios.defaults.withCredentials = true;
-   
-    console.log("aaa",location)  
+ 
     const [reviewInput, setReviewInput] = useState();
     const [showInput, setShowInput] = useState(false);
     const [gameData, setGameData] = useState(null);  
@@ -51,20 +50,21 @@ import LeftLayout from "./LeftLayout";
     const [loading, setLoading] = useState(true); 
     const [liked, setLiked] = useState(false); 
     const [played, setPlayed] = useState(false); 
-    const [rating, setRating] = useState(null); 
-    const [review, setReview] = useState("");   
+    const [rating, setRating] = useState(null);  
+    const [count,setCount]= useState(0);
+ 
     const [slider,setSlider] = useState();
     const isFirstRender = useRef(true); 
     const [series, setSeries] = useState(null);  
-    const [userReview,setUserReview] = useState(null);
+    const [userReview,setUserReview] = useState([]);
     const [listData, setListData] = useState([]); 
     const [listLoading, setListLoading] = useState(false); 
     const [isExist,setIsExist] = useState([]);  
     const [expand,setExpand] = useState(false) 
     const [stores,setStores] = useState([]); 
      const [posts,setPosts] = useState([]); 
-     const [reviewsLoading,setReviewLoading] = useState(true);
-  
+     const [reviewsLoading,setReviewLoading] = useState(false);
+  const hasFetched = useRef(false);
 
       const getLists = async () => {   
        
@@ -73,13 +73,13 @@ import LeftLayout from "./LeftLayout";
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/getList`, { 
                 params: { userId: session.userId } 
             }); 
-            console.log("List data:", response.data);
+         
             setListData(response.data.data); 
             for (let list of response.data.data) {
                
                 await getListGames(list.id); 
             }
-            console.log("List data:", response.data);
+         
         }catch(error) { 
             console.error('Error fetching list:', error); 
         }  
@@ -98,7 +98,7 @@ import LeftLayout from "./LeftLayout";
                 if (alreadyExists) return prev; 
                 else return [...prev, { listId: listId, existing: exists }];
             } );
-            console.log("List dataaaaa:", response.data);  
+           
             
         }catch(error) { 
             console.error('Error fetching list:', error); 
@@ -124,7 +124,7 @@ import LeftLayout from "./LeftLayout";
         
                 
 
-   console.log("isExist",stores)
+   
   
     useEffect(()=>{ 
         setRating("") 
@@ -133,12 +133,16 @@ import LeftLayout from "./LeftLayout";
         setLoading(true);
         const getGamebyId = async () => {  
             
+
+            if (hasFetched.current) return; 
+                hasFetched.current = true; 
+     
             setLoading(true);       
             try{ 
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/gamebyId`, {
                     params: { gameId: gameId , gameName: gameTitle , gameImage:image } 
                 });   
-                console.log(response)
+           
                 setGameData(response.data.game); 
                 setReviews(response.data.reviews); 
                 setSlider(response.data.screenshots); 
@@ -154,10 +158,13 @@ import LeftLayout from "./LeftLayout";
             }finally{ 
                 setLoading(false)
             }
-        };  
-        getGamebyId();
+        };   
+        if(gameId !== null){
+               getGamebyId();
+        }
+     
     },[gameId]) 
-     console.log("posts",posts)
+ 
     useEffect(()=>{ 
         const getReview = async (gameId, userId) => {  
             setReviewLoading(true);
@@ -165,25 +172,36 @@ import LeftLayout from "./LeftLayout";
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/getReview`, { 
                     params: { gameId: gameId, userId: userId } 
                 });  
-                console.log("AAAA",response) 
+              
                 if(response.data.review !== null){ 
         
                     setRating(response.data.review.rating);
-                    setReview(response.data.review.review); 
                     setLiked(response.data.review.liked); 
                     setPlayed(response.data.review.played); 
-                } 
+                }   
+                 
+                const likeMap = new Map(); 
+                    response.data.userLike.forEach(like => {
+                    likeMap.set(like.review_id, like.id);
+                    });
+
+                    setUserReview(userReview.map(comment => ({
+                    ...comment,
+                    liked_by_me: likeMap.has(comment.id),
+                    likeid: likeMap.get(comment.id) || null,
+                })));
+                console.log(response)
             }catch(error){ 
                 console.error('Error getting review:', error); 
             }  finally{ 
                 setReviewLoading(false);
             }
         } 
-        if(loggedIn){
+        if(loggedIn && userReview.length>0){
             getReview(gameId,session.userId);
         }
         
-    },[loggedIn]);
+    },[loggedIn,loading]);
      
     const deleteReview = async(reviewId) => { 
         try{ 
@@ -238,14 +256,51 @@ import LeftLayout from "./LeftLayout";
                 });
             
          
-            console.log("Response:", response);
+          
         }catch(error){ 
             console.error('Error sending review:', error); 
         }
       }  
 
      
-     console.log(session)
+    const handlereviewlike= async(reviewId)=>{  
+        if(!session){ 
+            return navigate('/signup');
+        }  
+        let id;
+        try{ 
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/reviewlike`,{ 
+                params:{ 
+                    userId:session.userId, 
+                    reviewId:reviewId, 
+                    gameId:gameId
+                }
+            }) 
+            console.log(response) 
+            id =response.data.data[0].id 
+            console.log(id)
+        }catch(error){ 
+            console.log(error)
+        }finally{ 
+            setUserReview((prev)=>prev.map((r)=>(r.id===reviewId ? {...r,liked_by_me:true,likeid:id,like_count:r.like_count+1} : r )))
+        }
+    } 
+    const handlereviewunlike = async(reviewId,likeId)=>{ 
+          if(!session){ 
+            return navigate('/signup');
+        } 
+        try{ 
+            const response = await axios.delete(`${process.env.REACT_APP_BACKEND}/api/unreviewlike`,{ 
+                params:{ 
+                    like_id:likeId
+                }
+            })
+        }catch(error){ 
+            console.log(error)
+        }finally{ 
+            setUserReview((prev)=>prev.map((r)=>(r.id===reviewId ? {...r,liked_by_me:false,like_count:r.like_count-1} : r )))
+        }
+    }
      
     useEffect(() => {  
        
@@ -254,16 +309,13 @@ import LeftLayout from "./LeftLayout";
               getLists();
             }
           }, 0);
-            console.log("aaa",timer)
-         
-        
     },[])
 
        
-      const handleRating = (rate) => {
+    const handleRating = (rate) => {
         setRating(rate)
-      }
-     console.log(gameData)
+    }
+    console.log(userReview)
   return (
     <div className="gameDetailPage">   
         <div style={{marginTop:"90px"}}>
@@ -310,7 +362,7 @@ import LeftLayout from "./LeftLayout";
                       
                             <p style={{fontSize:"40px",margin:"20px 0px 10px 0px"}}>{gameData.name}</p>    
                             {gameData.publishers.length > 0 && ( 
-                                <Link to={`/PublisherPage/${encodeURIComponent(gameData.publishers[0].slug)}`} state={{id:gameData.publishers[0].id,name:gameData.publishers[0].name}} style={{textDecoration:"none",color:"white",display:"flex",flexWrap:"wrap"}}>
+                                <Link to={`/publishers/${encodeURIComponent(gameData.publishers[0].slug)}`} state={{id:gameData.publishers[0].id,name:gameData.publishers[0].name}} style={{textDecoration:"none",color:"white",display:"flex",flexWrap:"wrap"}}>
                                     <p style={{ margin: 0, fontWeight: "bold" }}>{gameData.publishers[0].name}</p>
                                 </Link> 
                             )}
@@ -665,26 +717,41 @@ import LeftLayout from "./LeftLayout";
                     </div>
                     )}   
                   
-                        { userReview !== null && ( 
+                        {userReview.length>0 && !reviewsLoading && ( 
                         <div style={{width:"55%",marginTop:"50px",justifyContent:"center",alignItems:"center",marginBottom:"50px"}}>  
                             <p style={{borderBottom:"2px solid grey",color:"white",fontSize:"20px"}}>Reviews</p>
                             {userReview.map((data,index)=>(  
-                                <div key={index} style={{display:"flex",alignItems:"center",justifyContent:"flex-start",width:"100%",borderBottom:"0.5px solid grey",marginTop:"20px",paddingBottom:"20px"}}>  
-                                    <Link to={`/user/${data.user.userName}`} style={{width:"100px",textDecoration:"none"}}>
-                                        <img style={{width:"60px",height:"60px",objectFit:"cover",objectPosition:"center",borderRadius:"50%"}} src={data.user.avatar_url?data.user.avatar_url:avatar  }></img>
-                                    </Link> 
+                                <div key={index} style={{display:"flex",alignItems:"center",justifyContent:"flex-start",width:"100%",borderBottom:"0.5px solid grey",paddingBottom:"20px",marginTop:"20px"}}>   
+
+                                        <Link to={`/user/${data.user.userName}`} style={{width:"60px",textDecoration:"none",display:"flex",justifyContent:"flex-start",marginRight:"10px"}}>
+                                            <img style={{width:"40px",height:"40px",objectFit:"cover",objectPosition:"center",borderRadius:"50%"}} src={data.user.avatar_url?data.user.avatar_url:avatar  }></img>
+                                        </Link>  
+                               
                                     <div>
-                                        <div style={{display:"flex",alignItems:"center",justifyContent:"flex-start",width:"100%",marginBottom:"10px"}}>
-                                            <p style={{margin:0,color:"grey"}}>Reviewed by </p>  
-                                            <Link to={`/user/${data.user.userName}`} style={{textDecoration:"none",marginRight:"10px"}}> 
-                                                <p style={{margin:0,color:"white",marginLeft:"5px"}}> {data.user.userName}</p>
+                                        <div style={{display:"flex",alignItems:"center",justifyContent:"flex-start",width:"100%"}}>
+                                            <p style={{margin:0,color:"grey",fontSize:"14px"}}>Reviewed by </p>  
+                                            <Link to={`/user/${data.user.userName}`} style={{textDecoration:"none",marginRight:"10px"}}>  
+                                                <p style={{margin:0,color:"white",marginLeft:"5px",fontSize:"14px"}}> {data.user.userName}</p>
                                             </Link> 
                                             
-                                            <Rating  size={"30px"} initialValue={data.rating} readonly={true}  />  
+                                            <Rating  size={"20px"} initialValue={data.rating} readonly={true}  />  
                                         </div>  
                                         
-                                        <p style={{margin:0,color:"#99c9c9"}}>{data.review}</p> 
-                                       
+                                        <p style={{margin:0,color:"#99c9c9",fontSize:"15px",marginTop:"5px"}}>{data.review}</p>  
+                                        <div style={{display:"flex",alignItems:"center",marginTop:"10px"}}> 
+                                            {data.liked_by_me ?   
+                                            <div  className="review-hearth-container-liked" onClick={()=>handlereviewunlike(data.id,data.likeid)}>
+                                                <FaHeart className="hearth-review" style={{marginTop:"3px"}} size={15} color="red"  /> 
+                                                <p>Liked</p>   
+                                             </div>
+                                             :     
+                                             <div className="review-hearth-container" onClick={()=>handlereviewlike(data.id)}>
+                                                <FaHeart  style={{marginTop:"3px"}}  size={15} color="grey" />  
+                                                <p>Like Review</p>
+                                             </div>  }  
+                                        
+                                            <p style={{margin:0,color:"grey",fontSize:"14px",marginTop:"3px",marginLeft:"5px"}}>{data.like_count} likes</p> 
+                                        </div> 
                                     </div>  
                                      <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",width:"100px",marginLeft:"auto"}}>   
                                      
