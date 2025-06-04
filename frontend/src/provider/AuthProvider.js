@@ -138,7 +138,7 @@ useEffect(() => {
             user:User
           };
           setNotifications((prev) => [enriched, ...prev]);  
-          toast((t)=>(<div style={{cursor:"pointer"}} onClick={()=>{toast.dismiss(t.id);nav(`/c/comment/${payload.new.post_id}`)}}>{res.data[0]?.userName} { payload.new.message}</div>), {
+          toast((t)=>(<div style={{cursor:"pointer"}} onClick={()=>{toast.dismiss(t.id);nav( payload.new.type === "comment" ? `/c/comment/${payload.new.reference_id}` : ``)}}>{res.data[0]?.userName} { payload.new.message}</div>), {
                         position: 'top-left', 
                         duration: 4000, 
                         style: {

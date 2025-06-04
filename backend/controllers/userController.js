@@ -315,6 +315,40 @@ const getFollowings = async (req,res)=>{
   }catch(error){  
     res.json(error)
   }
-}  
+}   
+const getLikedGames = async (req,res)=>{  
+    const userId = req.query.userId
+      try{ 
+        const {data,error}= await supabase.from('LikedGames') 
+        .select('*,game:Games(*)') 
+        .eq('user_id',userId)
+        res.json(data)
+      }catch(error){
+        res.json(error)
+      }
+} 
+const likeList = async(req,res)=>{ 
+  const {userId,listId} = req.body 
+      try{ 
+        const {data,error}= await supabase.from('lists_like') 
+        .insert([{userId,listId}]) 
+
+      }catch(error){
+        res.json(error)
+      }
+} 
+const unlikeList = async(req,res)=>{ 
+  const userId = req.query.userId 
+  const listId = req.query.listId
+      try{ 
+        const {data,error}= await supabase.from('lists_like') 
+        .delete() 
+        .eq("list_id",listId) 
+        .eq('user_id',userId)
+      }catch(error){
+        res.json(error)
+      }
+}
 module.exports = { getUser,registerUser,userLogin,getSession,logOut,updateProfile,upload, 
-   uploadImage,verify,getUser2,getNotifications,handleread ,handlefollow,handleunfollow,checkfollows,getFollowers,getFollowings}; 
+   uploadImage,verify,getUser2,getNotifications,handleread ,handlefollow,handleunfollow, 
+   checkfollows,getFollowers,getFollowings,getLikedGames,likeList,unlikeList}; 

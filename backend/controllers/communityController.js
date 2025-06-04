@@ -322,7 +322,7 @@ const createComment = async(req,res)=>{
   if(userId !== receiver_id){
     const response = await supabase 
     .from('Notifications') 
-    .insert([{receiver_id:receiver_id,sender_id:userId,post_id:postId,message:"commented on your post"}])
+    .insert([{receiver_id:receiver_id,sender_id:userId,reference_id:postId,type:"comment",message:"commented on your post"}])
   }
   
   res.json({data})

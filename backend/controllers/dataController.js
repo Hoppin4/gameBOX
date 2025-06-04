@@ -182,15 +182,22 @@ const getReview = async (req, res) => {
             .from('reviews_like') 
             .select(`*`)
             .eq('game_id', gameId) 
-            .eq('user_id',userId)
-            return res.status(200).json({ review: data , userLike:user });
+            .eq('user_id',userId) 
+    const {data:liked} = await supabase 
+            .from('LikedGames') 
+            .select('*') 
+            .eq('game_id', gameId) 
+            .eq('user_id',userId)  
+            .maybeSingle(); 
+
+            return res.status(200).json({ review: data , userLike:user,liked:liked });
     } catch (error) { 
         res.status(500).json({ message: 'Veri çekme hatası', error: error.message });
     }
 };
 const sentReview = async (req, res) => { 
 
-    const { gameId, userId, rating, review,liked,played} = req.body; 
+    const { gameId, userId, rating, review,played} = req.body; 
     const { data: existing } = await supabase
         .from('Reviews')
         .select('user_id')
@@ -207,8 +214,7 @@ const sentReview = async (req, res) => {
                         game_id: gameId,
                         user_id: userId,
                         rating: rating,
-                        review: review, 
-                        liked:liked, 
+                        review: review,
                         played:played, 
                       
                     },
@@ -232,7 +238,6 @@ const sentReview = async (req, res) => {
                 .update({
                     rating: rating,
                     review: review, 
-                    liked:liked, 
                     played:played,
                 })
                 .eq('user_id', userId)
@@ -678,7 +683,30 @@ const getGamebydeveloperout = async(req,res) => {
     } catch (error) { 
         res.status(500).json({ message: 'Veri çekme hatası', error: error.message });
     }
+}  
+const setLike = async(req,res)=>{  
+    const {userId,gameId} = req.body
+    try{ 
+        const response = await supabase.from('LikedGames') 
+         .insert([{  game_id: gameId,user_id:userId,},]) 
+         res.json(response)
+    }catch(error){ 
+        res.json(error)
+    }
 } 
+const setunLike = async(req,res)=>{  
+    const userId = req.query.userId 
+    const gameId = req.query.gameId
+    try{ 
+        const response = await supabase.from('LikedGames') 
+         .delete() 
+        .eq('user_id', userId) 
+        .eq('game_id', gameId)
+        
+    }catch(error){ 
+        res.json(error)
+    }
+}
 const getUserList = async(req,res)=>{ 
      const listId = req.query.listId;  
     try {
@@ -718,12 +746,18 @@ const getUserList = async(req,res)=>{
 const handlereviewlike = async(req,res)=>{ 
     const user_id = req.query.userId; 
     const reviewId = req.query.reviewId  
-    const gameId = req.query.gameId
+    const gameId = req.query.gameId 
+    const creator_id = req.query.creator_id 
+     
     try{
         const response = await supabase.from('reviews_like') 
         .insert([{ user_id: user_id, review_id: reviewId ,game_id:gameId}]) 
         .select('*');  
-         
+          if(user_id !== creator_id){
+            const response = await supabase 
+            .from('Notifications') 
+            .insert([{receiver_id:creator_id,sender_id:user_id,type:"review",message:"liked your review"}])
+        }
         res.json(response)
     }catch(error){ 
         res.json(error)
@@ -748,4 +782,4 @@ module.exports = { getGames,getPopularGames,getGamebyId,sentReview,
     ,deleteGameFromList,getGameFromList,getListbyId,updateList 
 ,getGameFromListbyUserId,getMostPopularGames,getUserReviews,  
 getGamebyGenres,getGamebyGenresout,getGamebyTags,getGamebyTagsout, 
-getGamebydeveloper,getGamebydeveloperout,getUserList,handlereviewlike,unreviewlike }; 
+getGamebydeveloper,getGamebydeveloperout,getUserList,handlereviewlike,unreviewlike,setLike,setunLike }; 

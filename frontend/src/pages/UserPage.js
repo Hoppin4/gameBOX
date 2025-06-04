@@ -49,7 +49,9 @@ function UserPage() {
      const [followerLoading,setFollowerLoading]=useState(true)  
      const[fstatus,setFstatus]=useState() 
      const [followersCount,setFollowersCount] = useState(); 
-     const [followingCount,setFollowingCount] = useState(); 
+     const [followingCount,setFollowingCount] = useState();  
+     const [likedGames,setLikedGames] = useState([]); 
+     const [likedGamesLoading,setLikedGamesLoading]= useState(true)
     const [userLoading,setUserLoading]=useState(true);
     const [isOpenList, setIsOpenList] = useState(false); 
     dayjs.extend(relativeTime); 
@@ -99,7 +101,24 @@ function UserPage() {
         }finally{ 
             setUserLoading(false)
         }
-    }
+    } 
+     const getGames = async()=>{   
+        setLikedGamesLoading(true);
+        try{ 
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/user/getLikedGames`,{ 
+                params:{
+                    userId:userId
+                }
+            })  
+            console.log(response)
+            setLikedGames(response.data)
+        }catch(error){ 
+            console.log(error)
+        }finally{ 
+              setLikedGamesLoading(false);
+        }
+    }  
+    console.log(likedGames)
     const getPopularPosts = async (page) => {  
         try{ 
              const response = await axios.get(`${process.env.REACT_APP_BACKEND}/com/getMyPosts`,{ 
@@ -295,7 +314,7 @@ function UserPage() {
     useEffect(()=>{ 
         getUser();
     },[userName]) 
-    console.log(followers)
+   
     return(
         <div className="main">   
       
@@ -369,6 +388,7 @@ function UserPage() {
                     <div style={{display:"flex",justifyContent:"flex-start",alignItems:"center",width:"100%",padding:"10px"}}>
                         <button style={{cursor:"pointer"}} className={selectedButton === 1 ? "users-button-active": "users-button"} onClick={()=>SetSelectedButton(1)}>Posts</button> 
                         <button style={{cursor:"pointer"}} className={selectedButton === 2 ? "users-button-active": "users-button"} onClick={()=>{SetSelectedButton(2);getList();}}>Lists</button> 
+                        <button style={{cursor:"pointer"}} className={selectedButton === 3 ? "users-button-active": "users-button"} onClick={()=>{SetSelectedButton(3);getGames();}}>Likes</button>  
                      </div> 
                      {selectedButton === 1 && ( 
                         <div>
@@ -513,7 +533,23 @@ function UserPage() {
                         )
                         
                     )}
-                            
+                    {selectedButton === 3 && (  
+                        likedGamesLoading ? ( 
+                            <div style={{display:"flex",justifyContent:"center",alignItems:"center",  width:"100%",height:"100%"}}> 
+                                <div className="spinner"></div>
+                            </div>
+                        ): ( 
+                            <div className="likedgamecontainer">  
+                                {likedGames.map((data,index)=>( 
+                                    <Link to={`/GameDetailPage/${data.game.game_id}/${data.game.game_name}`} state={{gameImage:data.game.game_image}}>
+                                        <img className="likedgame-img" src={data.game.game_image}></img> 
+                                    </Link>
+                                ))}
+                                
+                            </div>
+                        )
+                        
+                    )}    
                    </div>
                 )}
           

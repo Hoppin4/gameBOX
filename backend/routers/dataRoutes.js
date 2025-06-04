@@ -4,7 +4,9 @@ const { getGames,getPopularGames,getGamebyId,sentReview,getReview,searchGame,get
     insertGameToList,deleteGameFromList,getGameFromList,getListbyId,updateList, 
     getGameFromListbyUserId,getMostPopularGames,getUserReviews,getGamebyGenres, 
     getGamebyGenresout,getGamebyTags,getGamebyTagsout,getGamebydeveloper,getGamebydeveloperout,getUserList,handlereviewlike,
-    unreviewlike} = require('../controllers/dataController'); 
+    unreviewlike,
+    setLike,
+    setunLike} = require('../controllers/dataController'); 
 
 const router = express.Router(); 
 
@@ -38,7 +40,9 @@ router.get('/getdeveloper',getGamebydeveloper)
 router.get('/getdeveloperout',getGamebydeveloperout) 
 router.get('/getUserList',getUserList) 
 router.get('/reviewlike',handlereviewlike) 
-router.delete('/unreviewlike',unreviewlike)
+router.delete('/unreviewlike',unreviewlike) 
+router.post('/setLike',setLike) 
+router.delete('/setUnlike',setunLike)
 
 
 

@@ -30,7 +30,8 @@ import axios from 'axios';
 import VerifyPage from './pages/VerifyPage'; 
 import MyCommunitiesPage from './communitypages/MyCommunitiesPage'; 
 import UserPage from './pages/UserPage';
-import NotificationPage from './pages/NotificationPage';  
+import NotificationPage from './pages/NotificationPage';   
+import LikesPage from './pages/LikesPage';
 import { Toaster } from 'react-hot-toast';
 
 
@@ -70,7 +71,8 @@ function App() {
             <Route path='/verify' element={<VerifyPage/>}/> 
             <Route path='/mycommunities' element={<MyCommunitiesPage/>}/> 
             <Route path='/user/:userName' element={<UserPage/>}/> 
-            <Route path='/notifications' element={<NotificationPage/>}/> 
+            <Route path='/notifications' element={<NotificationPage/>}/>  
+            <Route path='/:userName/likes' element={<LikesPage/>}/>
           
             
           </Route> 

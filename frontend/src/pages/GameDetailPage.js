@@ -43,7 +43,7 @@ import LeftLayout from "./LeftLayout";
    
     axios.defaults.withCredentials = true;
  
-    const [reviewInput, setReviewInput] = useState();
+    const [reviewInput, setReviewInput] = useState(null);
     const [showInput, setShowInput] = useState(false);
     const [gameData, setGameData] = useState(null);  
     const [reviews, setReviews] = useState(null);
@@ -172,11 +172,13 @@ import LeftLayout from "./LeftLayout";
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/getReview`, { 
                     params: { gameId: gameId, userId: userId } 
                 });  
-              
+              console.log(response) 
+               if(response.data.liked !== null){  
+                         setLiked(true); 
+                }
                 if(response.data.review !== null){ 
-        
-                    setRating(response.data.review.rating);
-                    setLiked(response.data.review.liked); 
+                    
+                    setRating(response.data.review.rating); 
                     setPlayed(response.data.review.played); 
                 }   
                  
@@ -197,7 +199,7 @@ import LeftLayout from "./LeftLayout";
                 setReviewLoading(false);
             }
         } 
-        if(loggedIn && userReview.length>0){
+        if(loggedIn ){
             getReview(gameId,session.userId);
         }
         
@@ -219,8 +221,32 @@ import LeftLayout from "./LeftLayout";
         } 
     }
    
-
-      const sentReview = async (gameId, userId, rating, review,liked,played) => {   
+    const setLike = async(gameId,userId)=>{  
+        if(!liked){ 
+            try{
+                const response = axios.post(`${process.env.REACT_APP_BACKEND}/api/setLike`,{ 
+                    userId:userId, 
+                    gameId:gameId
+                })
+            } catch(error){ 
+                console.log(error)
+            }
+        }else{  
+            try{
+                const response = axios.delete(`${process.env.REACT_APP_BACKEND}/api/setUnLike`,{  
+                    params:{ 
+                        userId:userId, 
+                        gameId:gameId
+                    } 
+                })
+            } catch(error){ 
+                console.log(error)
+            }
+            
+        }
+        
+    }
+      const sentReview = async (gameId, userId, rating, review,played) => {   
   
         try{  
             const response = await axios.post(`${process.env.REACT_APP_BACKEND}/api/sentReview`, { 
@@ -228,7 +254,6 @@ import LeftLayout from "./LeftLayout";
                 userId: userId, 
                 rating: rating, 
                 review: review, 
-                liked:liked, 
                 played:played,  
                 
             });  
@@ -262,8 +287,8 @@ import LeftLayout from "./LeftLayout";
         }
       }  
 
-     
-    const handlereviewlike= async(reviewId)=>{  
+  
+    const handlereviewlike= async(reviewId,creator_id)=>{  
         if(!session){ 
             return navigate('/signup');
         }  
@@ -273,7 +298,9 @@ import LeftLayout from "./LeftLayout";
                 params:{ 
                     userId:session.userId, 
                     reviewId:reviewId, 
-                    gameId:gameId
+                    gameId:gameId, 
+                    creator_id:creator_id, 
+                    
                 }
             }) 
             console.log(response) 
@@ -389,8 +416,8 @@ import LeftLayout from "./LeftLayout";
                                         <p>Played</p>
                                     </div>
                                     <div>
-                                        <button style={{cursor:"pointer"}} onClick={()=>setLiked(!liked)}>  
-                                            {liked ? <FaHeart size={50} color="red"  /> : <FaHeart size={50} color="white" />}
+                                        <button style={{cursor:"pointer"}} onClick={()=>{setLiked(!liked);setLike(gameId,session.userId)}}>  
+                                            {liked ? <FaHeart size={50} color="red"   /> : <FaHeart size={50} color="white" />}
                                         </button>   
                                         <p>Liked</p>
                                     </div> 
@@ -745,7 +772,7 @@ import LeftLayout from "./LeftLayout";
                                                 <p>Liked</p>   
                                              </div>
                                              :     
-                                             <div className="review-hearth-container" onClick={()=>handlereviewlike(data.id)}>
+                                             <div className="review-hearth-container" onClick={()=>handlereviewlike(data.id,data.user_id)}>
                                                 <FaHeart  style={{marginTop:"3px"}}  size={15} color="grey" />  
                                                 <p>Like Review</p>
                                              </div>  }  

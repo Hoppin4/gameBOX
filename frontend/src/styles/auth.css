@@ -221,4 +221,23 @@
 .followers_container_up{ 
   max-height: 300px;
   overflow-y: scroll;
+} 
+.likedgamecontainer{ 
+  display: grid; 
+  flex-direction: column; 
+  width: 100%; 
+  margin-top: 20px;
+    grid-template-columns: repeat(5, 1fr); 
+} 
+.likedgame-img{ 
+  width: 170px; 
+  height: 100px; 
+  object-fit: cover; 
+  border-radius: 15px; 
+  transition: 100ms; 
+  margin-bottom: 10px;
+}  
+.likedgame-img:hover{
+  transform: scale(1.1); 
+  
 }

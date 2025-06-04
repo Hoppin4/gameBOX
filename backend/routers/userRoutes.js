@@ -1,6 +1,8 @@
 const express = require('express');
 const {registerUser,userLogin,getSession,logOut,updateProfile,getUser,upload,uploadImage, 
-    verify,getUser2,getNotifications,handleread,handlefollow,handleunfollow,checkfollows,getFollowers,getFollowings} = require('../controllers/userController');
+    verify,getUser2,getNotifications,handleread,handlefollow,handleunfollow,checkfollows,getFollowers,getFollowings,
+    getLikedGames,likeList,
+    unlikeList} = require('../controllers/userController');
 const router = express.Router();
 
 router.post('/upload', upload.single('image'), uploadImage);
@@ -18,5 +20,8 @@ router.post('/handlefollow', handlefollow);
 router.delete('/handleunfollow', handleunfollow); 
 router.get('/checkfollows',checkfollows); 
 router.get('/getFollowers',getFollowers);
-router.get('/getFollowings',getFollowings)
+router.get('/getFollowings',getFollowings) 
+router.get('/getLikedGames',getLikedGames) 
+router.post("/likeList",likeList) 
+router.post("/unlikeList",unlikeList)
 module.exports = router;

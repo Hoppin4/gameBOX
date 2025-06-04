@@ -50,7 +50,7 @@ console.log(notifications)
                             <div class="dropdown-notifications-content" > 
                               {notifications.length>0 ? ( 
                                 notifications.map((data,index)=>(
-                                  <Link className="notifications"  style={{textDecoration:"none"}} to={(`/c/comment/${data.post_id}`)} key={index}>   
+                                  <Link className="notifications"  style={{textDecoration:"none"}} to={data.type==="comment" ? (`/c/comment/${data.reference_id}`) :(``) } key={index}>   
                                     <p style={{color:"white",fontSize:"bold",marginRight:"5px",fontSize:"12px"}}>{data.user.userName}</p>  
                                     <p style={{color:"grey",fontSize:"12px"}}>{data.message}.</p> 
                                     <p style={{fontSize:"12px",marginLeft:"5px"}}>{timeago(data.created_at)}</p>
