@@ -15,7 +15,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 app.use(cors({
   origin: isProduction 
-    ? 'https://moviebox-a4351.web.app' 
+    ? 'https://gamebox-2ccdf.web.app' 
     : 'http://localhost:3000',
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
