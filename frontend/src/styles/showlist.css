@@ -24,8 +24,8 @@
   }
   .game-item {
     width: 100%;
-    aspect-ratio: 2 / 1.5; /* Kutu kare olsun: en = boy */
-    overflow: hidden; /* Taşan kısmı gizle */
+    aspect-ratio: 2 / 1.5;
+    overflow: hidden; 
     border-radius: 8px;
   }
   .game-item img {
@@ -79,4 +79,35 @@
     cursor: pointer; 
     transform: scale(1.05); 
     transition: transform 0.2s; 
+  } 
+  .list-hearth-container{ 
+    position: absolute;
+    right: 0; 
+    display: flex; 
+    align-items: center;
+  } 
+  .p-list{
+    color: grey;
+    font-weight: 600;  
+    font-size: 14px; 
+    margin-left: 5px; 
+    cursor: pointer;
+  } 
+  .hearth-list{ 
+    color: grey; 
+    size: 30px;
+  } 
+  .liked-hearth-list{ 
+    color: orange; 
+    size: 30px;
+  } 
+  .p-list:hover {
+    color: white;
+  }  
+  .liked-p-list{ 
+       color: white;
+    font-weight: 600;  
+    font-size: 14px; 
+    margin-left: 5px; 
+    cursor: pointer;
   }

@@ -37,7 +37,7 @@ console.log(notifications)
           <li><Link to="/c/popular">Community</Link></li>  
           {!loggedIn ? (  
             <div style={{display:"flex"}}>
-              <li><Link to="/signup">Sign Up</Link></li>
+              <li><Link to="/signup">Sign In</Link></li>
               <li><Link to="/register">Register</Link></li> 
             </div>
            ) : (

@@ -117,7 +117,7 @@ import Swal from 'sweetalert2';
                         <button>
                             <Link to={`/${session.userName}/edit`} state={{ userData: userData }}>EDIT PROFILE</Link>
                         </button>   
-                        <button onClick={()=>logOut()}> 
+                        <button style={{marginLeft:"20px"}} onClick={()=>logOut()}> 
                             logout
                         </button>
                     </div>               

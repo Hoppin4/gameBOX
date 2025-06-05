@@ -2,12 +2,18 @@ import React from 'react';
 import { useContext, useEffect, useState } from "react";
 import { Link, useLocation,useParams } from 'react-router-dom'; 
 import axios from 'axios'; 
-import "../styles/showlist.css";
-function ShowListPage() {  
+import "../styles/showlist.css"; 
+import { FaHeart } from "react-icons/fa";  
+import { AuthContext } from '../provider/AuthProvider'; 
+import { useNavigate } from 'react-router-dom';
+function ShowListPage() {    
+    const nav = useNavigate();
+     const {session } = useContext(AuthContext);
     axios.defaults.withCredentials = true;
     const {id}=useParams(); 
     const [showList, setShowList] = useState([]); 
-    const [loading, setLoading] = useState(true);  
+    const [loading, setLoading] = useState(true);   
+    const [liked,setLiked] = useState(false);
 
 
     const getList = async () => { 
@@ -26,14 +32,65 @@ function ShowListPage() {
         } finally { 
             setLoading(false); 
         } 
+    }  
+    const handleLike = async ()=>{   
+        
+     
+        if(!session){ 
+           return nav('/signup')
+         }
+           console.log(liked)
+       if(!liked){  
+            setLiked(prev => !prev);
+            try{ 
+                const response = await axios.post(`${process.env.REACT_APP_BACKEND}/user/likeList`,{  
+                    listId:id, 
+                    userId:session.userId
+                })
+            }catch(error){ 
+                console.log(error)
+            }
+       }else{  
+            setLiked(prev => !prev);
+            try{ 
+                const response = await axios.delete(`${process.env.REACT_APP_BACKEND}/user/unlikeList`,{   
+                   params:{ 
+                        listId:id, 
+                        userId:session.userId
+                   }
+                })
+            }catch(error){ 
+                console.log(error)
+            }
+       }
+       
     } 
+    const checkLikedList = async()=>{ 
+        try{ 
+            const response =await axios.get(`${process.env.REACT_APP_BACKEND}/user/checkLikedList`,{
+                params:{ 
+                    listId:id, 
+                    userId:session.userId
+                }
+            })  
+            if(response.data.data){ 
+                setLiked(true)
+            }
+        }catch(error){ 
+            console.log(error)
+        }
+    }
     useEffect(() => { 
         if (id) { 
-            getList();  
+            if(session?.userId){ 
+                checkLikedList()
+            }  
+            getList();   
+           
           
         } 
-    }, [id]); 
-   console.log("dsadasda",showList)
+    }, [id,session]); 
+
   return (
     <div className="showlist-container"> 
         {loading ? (
@@ -63,11 +120,16 @@ function ShowListPage() {
                 </div>
                 
                 
-              <div className="list-info"> 
+              <div className="list-info" style={{position:"relative"}}> 
                 <h1>{showList.name}</h1>  
                 { showList.description && ( 
                         <h2>{showList.description}</h2> 
-                    )} 
+                    )}  
+                
+                <div className='list-hearth-container'> 
+                    <FaHeart  className={!liked ?'hearth-list' : 'liked-hearth-list'} />
+                    <p  className={!liked ?'p-list' : 'liked-p-list'}onClick={()=>{handleLike()}}>{!liked ? "Like this list?" : "You liked this list."}</p> 
+                </div>  
               </div>
                 <div className="game-grid">
                     {showList.gameList.map((game) => (

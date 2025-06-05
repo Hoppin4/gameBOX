@@ -27,7 +27,7 @@ import Modal from 'react-modal';
 function UserPage() {     
     const { userName } = useParams(); 
     const nav = useNavigate()
-    const { myCommunityList,removeFromList,addToList,session,loggedIn } = useContext(AuthContext);
+    const { myCommunityList,session,loggedIn } = useContext(AuthContext);
     const [posts, setPosts] = useState([]);  
     const [selectedSort, setSelectedSort] = useState("New");
     const [postLoading,setPostLoading] = useState(true);  
@@ -53,7 +53,9 @@ function UserPage() {
      const [likedGames,setLikedGames] = useState([]); 
      const [likedGamesLoading,setLikedGamesLoading]= useState(true)
     const [userLoading,setUserLoading]=useState(true);
-    const [isOpenList, setIsOpenList] = useState(false); 
+    const [isOpenList, setIsOpenList] = useState(false);  
+    const [likedLists,setLikedLists] = useState([]) 
+    const [liketype,setlikeType] = useState(1)
     dayjs.extend(relativeTime); 
     const timeago = (time) =>dayjs(time).fromNow()  
   
@@ -112,6 +114,22 @@ function UserPage() {
             })  
             console.log(response)
             setLikedGames(response.data)
+        }catch(error){ 
+            console.log(error)
+        }finally{ 
+              setLikedGamesLoading(false);
+        }
+    }   
+     const getLikedLists = async()=>{   
+        setLikedGamesLoading(true);
+        try{ 
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/user/getLikedLists`,{ 
+                params:{
+                    userId:userId
+                }
+            })  
+            console.log(response)
+            setLikedLists(response.data.data)
         }catch(error){ 
             console.log(error)
         }finally{ 
@@ -314,7 +332,7 @@ function UserPage() {
     useEffect(()=>{ 
         getUser();
     },[userName]) 
-   
+   console.log(likedLists)
     return(
         <div className="main">   
       
@@ -538,15 +556,59 @@ function UserPage() {
                             <div style={{display:"flex",justifyContent:"center",alignItems:"center",  width:"100%",height:"100%"}}> 
                                 <div className="spinner"></div>
                             </div>
-                        ): ( 
-                            <div className="likedgamecontainer">  
-                                {likedGames.map((data,index)=>( 
-                                    <Link to={`/GameDetailPage/${data.game.game_id}/${data.game.game_name}`} state={{gameImage:data.game.game_image}}>
-                                        <img className="likedgame-img" src={data.game.game_image}></img> 
-                                    </Link>
-                                ))}
-                                
+                        ): (   
+                            <div style={{width:"100%"}}>  
+                            <div style={{display:"flex",gap:"10px"}}>
+                                <p className={liketype===1 ? "active-user-liked-type" : "user-liked-type"} onClick={()=>setlikeType(1)}>Games</p> 
+                                <p className={liketype===2 ? "active-user-liked-type" : "user-liked-type"} onClick={()=>{getLikedLists();setlikeType(2);}}>Lists</p> 
                             </div>
+                            {liketype === 1 && ( 
+                                 <div className="likedgamecontainer">  
+                                    {likedGames.map((data,index)=>( 
+                                        <Link to={`/GameDetailPage/${data.game.game_id}/${data.game.game_name}`} state={{gameImage:data.game.game_image}}>
+                                            <img className="likedgame-img" src={data.game.game_image}></img> 
+                                        </Link>
+                                    ))}
+                                    
+                                </div>
+                            )}
+                            {liketype === 2 && (  
+                               <div className="listItemsContainer" style={{backgroundColor:"black"}}>  
+                                                        {likedLists.length > 0 ? (   
+                                                            likedLists.map((list) => list.list.gamecount > 0 && ( 
+                                                                <div key={list.id} className="listItem" >  
+                                                              
+                                                                     
+                                                                        <Link className="listImageContainer" to={`/list/${list.list_id}`} style={{textDecoration:"none"}}>
+                                                                            <div className="imageCover"> <img src={list.list.first_four_images && list.list.first_four_images.length > 0 ? list.list.first_four_images[0] : blackScreen }  /></div> 
+                                                                            <div className="imageCover"> <img src={list.list.first_four_images && list.list.first_four_images.length > 1 ? list.list.first_four_images[1] : blackScreen }  /></div> 
+                                                                            <div className="imageCover"><img src={list.list.first_four_images && list.list.first_four_images.length > 2 ? list.list.first_four_images[2] : blackScreen }  /></div> 
+                                                                            <div className="imageCover"><img src={list.list.first_four_images && list.list.first_four_images.length > 3 ? list.list.first_four_images[3] : blackScreen }  /></div> 
+                                                                        </Link> 
+                                                                  
+                                                                    <div className="listNameContainer" > 
+                                                                        <p style={{marginTop:"5px",color:"white",fontSize:"20px",fontWeight:"bold"}}>{list.list.name}</p>    
+                                                                        <div style={{display:"flex",alignItems:"center",padding:"6px 0px 5px 0px",borderRadius:"10px"}}>  
+                                                                            <Link style={{display:"flex",alignItems:"center",textDecoration:"none"}} to={`/user/${list.user.userName}`}>
+                                                                                <img src={list.user.avatar_url} style={{width:"30px",height:"30px",objectFit:"contain",borderRadius:"50%",marginRight:"5px"}}></img>  
+                                                                                <p style={{fontSize:"12px",margin:0,marginRight:"15px"}}>{list.user.userName}</p>
+                                                                            </Link> 
+                                                                             <p style={{fontSize:"12px",margin:0}}>{list.list.gamecount} Games</p>   
+                                                                            
+                                                                        </div>
+                                                                        <p>{list.list.description}</p>  
+                                                                    </div>
+                                                                    
+                                                                
+                                                                </div> 
+                                                            )) 
+                                                        ) : ( 
+                                                            <p>No lists available</p> 
+                                                        )}
+                                                       </div>
+
+                            )}
+                           </div>
                         )
                         
                     )}    

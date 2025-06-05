@@ -241,3 +241,12 @@
   transform: scale(1.1); 
   
 }
+.user-liked-type{ 
+  color: grey; 
+  cursor: pointer;
+} 
+.active-user-liked-type{ 
+  color: white; 
+  cursor: pointer; 
+  border-bottom: 1px solid grey;
+} 

@@ -331,7 +331,7 @@ const likeList = async(req,res)=>{
   const {userId,listId} = req.body 
       try{ 
         const {data,error}= await supabase.from('lists_like') 
-        .insert([{userId,listId}]) 
+        .insert([{user_id:userId,list_id:listId}]) 
 
       }catch(error){
         res.json(error)
@@ -348,7 +348,35 @@ const unlikeList = async(req,res)=>{
       }catch(error){
         res.json(error)
       }
-}
+} 
+const checkLikedList = async(req,res)=>{ 
+  const userId = req.query.userId 
+  const listId = req.query.listId 
+  try{ 
+        const response= await supabase.from('lists_like')  
+        .select('*')
+        .eq('list_id',listId) 
+        .eq('user_id',userId)  
+        .maybeSingle();
+       
+        res.json(response)
+      }catch(error){
+        res.json(error)
+      }
+} 
+const getLikedLists = async(req,res)=>{ 
+  const userId = req.query.userId 
+
+  try{ 
+        const response= await supabase.from('lists_like')  
+        .select('*,list:GameLists(*),user:Users(id,userName,avatar_url)') 
+        .eq('user_id',userId)  
+       
+        res.json(response)
+      }catch(error){
+        res.json(error)
+      }
+} 
 module.exports = { getUser,registerUser,userLogin,getSession,logOut,updateProfile,upload, 
    uploadImage,verify,getUser2,getNotifications,handleread ,handlefollow,handleunfollow, 
-   checkfollows,getFollowers,getFollowings,getLikedGames,likeList,unlikeList}; 
+   checkfollows,getFollowers,getFollowings,getLikedGames,likeList,unlikeList,checkLikedList,getLikedLists}; 
