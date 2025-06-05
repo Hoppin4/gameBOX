@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "moviebox-a4351"
-  }
+    "default": "gamebox-2ccdf"
+  },
+  "targets": {},
+  "etags": {}
 }
