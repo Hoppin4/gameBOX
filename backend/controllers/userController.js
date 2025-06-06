@@ -369,7 +369,7 @@ const getLikedLists = async(req,res)=>{
 
   try{ 
         const response= await supabase.from('lists_like')  
-        .select('*,list:GameLists(*),user:Users(id,userName,avatar_url)') 
+        .select('*,list:GameLists(*,user:Users(id,userName,avatar_url))') 
         .eq('user_id',userId)  
        
         res.json(response)
