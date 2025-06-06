@@ -589,9 +589,9 @@ function UserPage() {
                                                                     <div className="listNameContainer" > 
                                                                         <p style={{marginTop:"5px",color:"white",fontSize:"20px",fontWeight:"bold"}}>{list.list.name}</p>    
                                                                         <div style={{display:"flex",alignItems:"center",padding:"6px 0px 5px 0px",borderRadius:"10px"}}>  
-                                                                            <Link style={{display:"flex",alignItems:"center",textDecoration:"none"}} to={`/user/${list.user.userName}`}>
-                                                                                <img src={list.user.avatar_url} style={{width:"30px",height:"30px",objectFit:"contain",borderRadius:"50%",marginRight:"5px"}}></img>  
-                                                                                <p style={{fontSize:"12px",margin:0,marginRight:"15px"}}>{list.user.userName}</p>
+                                                                            <Link style={{display:"flex",alignItems:"center",textDecoration:"none"}} to={`/user/${list.list.user.userName}`}>
+                                                                                <img src={list.list.user.avatar_url} style={{width:"30px",height:"30px",objectFit:"contain",borderRadius:"50%",marginRight:"5px"}}></img>  
+                                                                                <p style={{fontSize:"12px",margin:0,marginRight:"15px"}}>{list.list.user.userName}</p>
                                                                             </Link> 
                                                                              <p style={{fontSize:"12px",margin:0}}>{list.list.gamecount} Games</p>   
                                                                             
