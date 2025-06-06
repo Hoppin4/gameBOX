@@ -86,15 +86,15 @@ const registerUser = async (req, res) => {
         
     if (error) { 
         console.error(error)
-        if (error.message === 'duplicate key value violates unique constraint "Users_userName_key"') {
+        if (error.message === 'duplicate key value violates unique constraint "Users_userName_key1"') {
           return res.status(409).json({ message: 'This Username aldready exist,Choose another username!' });
-        }else if (error.message === 'duplicate key value violates unique constraint "Users_user_email_key"') {
+        }else if (error.message === 'duplicate key value violates unique constraint "Users_user_email_key1"') {
           return res.status(409).json({ message: 'This Email aldready exist,Choose another email!' });
         }
         console.error('Kullanıcı kaydetme hatası:', error);
         return res.status(500).json({ message: 'An error occurred while saving the user.' });
       } else  { 
-        const link = `http://localhost:3000/verify?token=${token}`; 
+        const link = `https://gamebox-2ccdf.web.app/verify?token=${token}`; 
         const transporter = nodemailer.createTransport({
           service: 'Gmail',
           auth: {
