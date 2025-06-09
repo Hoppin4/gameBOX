@@ -210,7 +210,7 @@ function PopularPostsPage() {
                         <Link key={index} onClick={() => saveScrollPosition(location.pathname, window.scrollY)} to={`/c/comment/${data.id}`} style={{textDecoration:"none",padding:"10px",borderBottom:"1px solid grey",display:"flex",justifyContent:"center",alignItems:"center",width:"100%"}}>
                         <div key={index} className="post-con">  
                             <div className="post-username-con">
-                                <Link style={{display:"flex",alignItems:"center",textDecoration:"none"}} onClick={() => saveScrollPosition(location.pathname, window.scrollY)} to={`/user/${data.user.userName}`}>
+                                <Link style={{display:"flex",alignItems:"center",textDecoration:"none"}} onClick={() => saveScrollPosition(location.pathname, window.scrollY)} to={`/user/${data.user.userName}/Posts`}>
                                         <img className="post-con-avatar" src={data.user.avatar_url}></img>
                                     
                                     <p>{data.user.userName}</p>  

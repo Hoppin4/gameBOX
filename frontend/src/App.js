@@ -70,7 +70,7 @@ function App() {
             <Route path='/c/myposts' element={<MyPostsPage/>}/> 
             <Route path='/verify' element={<VerifyPage/>}/> 
             <Route path='/mycommunities' element={<MyCommunitiesPage/>}/> 
-            <Route path='/user/:userName' element={<UserPage/>}/> 
+            <Route path='/user/:userName/:type' element={<UserPage/>}/> 
             <Route path='/notifications' element={<NotificationPage/>}/>  
             <Route path='/:userName/likes' element={<LikesPage/>}/>
           

@@ -25,7 +25,7 @@ import { FaTrash } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 
 function UserPage() {     
-    const { userName } = useParams(); 
+    const { userName,type } = useParams(); 
     const nav = useNavigate()
     const { myCommunityList,session,loggedIn } = useContext(AuthContext);
     const [posts, setPosts] = useState([]);  
@@ -169,7 +169,8 @@ function UserPage() {
         }
         
     }  
-    const getList = async () => {    
+    const getList = async () => {   
+        setPostLoading(true)  
         if(listData.length>0){ 
             return
         }
@@ -184,6 +185,7 @@ function UserPage() {
         }  
         finally { 
             setListLoading(false); 
+            setPostLoading(false) 
         }
     }
     const deletePost = async(postId)=>{  
@@ -283,7 +285,8 @@ function UserPage() {
     }catch(error){ 
         console.log(error)
     }finally{
-        setFollowerLoading(false)
+        setFollowerLoading(false) 
+        setPostLoading(false)
     }
    } 
    const openmodal2 = async()=>{  
@@ -301,7 +304,8 @@ function UserPage() {
     }catch(error){ 
         console.log(error)
     }finally{
-        setFollowerLoading(false)
+        setFollowerLoading(false) 
+        setPostLoading(false)
     }
    } 
    const getUserReviews = async()=>{  
@@ -338,7 +342,8 @@ function UserPage() {
         }catch(error){
             console.log(error)
         }finally{ 
-            setLikedGamesLoading(false);
+            setLikedGamesLoading(false); 
+            setPostLoading(false)
         }
    } 
    const deleteReview = async(reviewId) => { 
@@ -355,13 +360,13 @@ function UserPage() {
         }catch(error){ 
             console.error('Error deleting review:', error); 
         } 
-    } 
-    const handlereviewlike= async(reviewId,creator_id,gameId)=>{  
+    }  
+      const handlereviewslike= async(reviewId,creator_id,gameId)=>{  
         if(!session){ 
             return nav('/signup');
         }   
-        setLikedReviews((prev)=>prev.map((r)=>r.review_id===reviewId ? {...r,isLiked:true,review:{...r.review,like_count:r.review.like_count+1}} : r))
-       
+        setReviews((prev)=>prev.map((r)=>r.id===reviewId ? {...r,isLiked:true,like_count:r.like_count+1} : r))
+       console.log(reviewId)
         try{ 
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/reviewlike`,{ 
                 params:{ 
@@ -376,7 +381,48 @@ function UserPage() {
         }catch(error){ 
             console.log(error)
         }finally{ 
-           
+           setPostLoading(false)
+        }
+    }  
+    const handlereviewsunlike = async(reviewId)=>{ 
+          if(!session){ 
+            return nav('/signup');
+        }   
+        setReviews((prev)=>prev.map((r)=>r.id===reviewId ? {...r,isLiked:false,like_count:r.like_count-1} : r))
+        try{ 
+            const response = await axios.delete(`${process.env.REACT_APP_BACKEND}/user/unreviewlike`,{ 
+                params:{ 
+                    userId:session.userId, 
+                    review_id:reviewId
+                }
+            })
+        }catch(error){ 
+            console.log(error)
+        }finally{ 
+            setPostLoading(false)
+        }
+    } 
+    const handlereviewlike= async(reviewId,creator_id,gameId)=>{  
+        if(!session){ 
+            return nav('/signup');
+        }   
+        setLikedReviews((prev)=>prev.map((r)=>r.review_id===reviewId ? {...r,isLiked:true,review:{...r.review,like_count:r.review.like_count+1}} : r))
+       console.log(reviewId)
+        try{ 
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/reviewlike`,{ 
+                params:{ 
+                    userId:session.userId, 
+                    reviewId:reviewId, 
+                    gameId:gameId, 
+                    creator_id:creator_id, 
+                    
+                }
+            }) 
+            
+        }catch(error){ 
+            console.log(error)
+        }finally{ 
+           setPostLoading(false)
         }
     } 
     const handlereviewunlike = async(reviewId)=>{ 
@@ -394,7 +440,7 @@ function UserPage() {
         }catch(error){ 
             console.log(error)
         }finally{ 
-            
+            setPostLoading(false)
         }
     } 
     const getLikedReviews= async()=>{ 
@@ -407,7 +453,8 @@ function UserPage() {
                 params:{ 
                     userId:userId, 
                 }
-            })   
+            })    
+           console.log(response)
             if(session){  
                 comments = response.data.data
                 commentIds = response.data.data.map(c=>c.review.id)  
@@ -417,7 +464,8 @@ function UserPage() {
                         userId:session.userId, 
                         commentIds:commentIds
                     }
-                })    
+                })     
+                console.log(response2)
                 likedIds = new Set(response2.data.data.map(r => r.review_id));  
                 const reviewsWithLikes = comments.map(comment => ({
                     ...comment,
@@ -430,11 +478,12 @@ function UserPage() {
                 setLikedReviews(response.data.data)
             }
             
-            console.log(response)
+           
         }catch(error){ 
             console.log(error)
-        }finally{ 
-            setLikedGamesLoading(false)
+        }finally{  
+            setLikedGamesLoading(false) 
+           
         }
     }
    const skipNextPageEffect = useRef(false);
@@ -467,17 +516,24 @@ function UserPage() {
     }, [page]); 
     
     useEffect(()=>{  
-        setPosts([])
-        setLikedGames([])
-        setLikedReviews([]) 
-        setLikedLists([]) 
-        setListData([])
-        SetSelectedButton(1)  
         setlikeType(1) 
-
         getUser();
-    },[userName]) 
-   console.log(likedReviews)
+    },[userName])  
+    useEffect(()=>{  
+        if(userId){
+             if(type === "Likes"){ 
+                getGames(); 
+            
+            }else if(type === "Reviews"){
+                getUserReviews(); 
+            
+            }else if(type === "Lists"){ 
+                getList(); 
+            
+            }
+        }
+    },[type,userId])
+   console.log(reviews)
     return(
         <div className="main">   
       
@@ -549,12 +605,12 @@ function UserPage() {
                        
                     </div>  
                     <div style={{display:"flex",justifyContent:"flex-start",alignItems:"center",width:"100%",padding:"10px"}}>
-                        <button style={{cursor:"pointer"}} className={selectedButton === 1 ? "users-button-active": "users-button"} onClick={()=>SetSelectedButton(1)}>Posts</button> 
-                        <button style={{cursor:"pointer"}} className={selectedButton === 2 ? "users-button-active": "users-button"} onClick={()=>{SetSelectedButton(2);getList();}}>Lists</button>  
-                        <button style={{cursor:"pointer"}} className={selectedButton === 4 ? "users-button-active": "users-button"} onClick={()=>{SetSelectedButton(4);getUserReviews();}}>Reviews</button> 
-                        <button style={{cursor:"pointer"}} className={selectedButton === 3 ? "users-button-active": "users-button"} onClick={()=>{SetSelectedButton(3);getGames();}}>Likes</button>  
+                        <button style={{cursor:"pointer"}} className={type === "Posts" ? "users-button-active": "users-button"} onClick={()=>{nav(`/user/${userData.userName}/Posts`)}}>Posts</button> 
+                        <button style={{cursor:"pointer"}} className={type === "Lists" ? "users-button-active": "users-button"} onClick={()=>{nav(`/user/${userData.userName}/Lists`);getList();}}>Lists</button>  
+                        <button style={{cursor:"pointer"}} className={type === "Reviews" ? "users-button-active": "users-button"} onClick={()=>{getUserReviews();nav(`/user/${userData.userName}/Reviews`);}}>Reviews</button> 
+                        <button style={{cursor:"pointer"}} className={type === "Likes" ? "users-button-active": "users-button"} onClick={()=>{getGames();nav(`/user/${userData.userName}/Likes`);}}>Likes</button>  
                      </div> 
-                     {selectedButton === 1 && ( 
+                     {type === "Posts" && ( 
                         <div>
                       <div style={{display:"flex",flexDirection:"row",width:"100%",marginTop:"20px"}}>  
                                   <div  class="dropdown2">   
@@ -658,7 +714,7 @@ function UserPage() {
                         </div>  
                     </div>
                         )}
-                    {selectedButton === 2 && (  
+                    {type === "Lists" && (  
                         listLoading ? (  
                             <div style={{display:"flex",justifyContent:"center",alignItems:"center",  width:"100%",height:"100%"}}> 
                                 <div className="spinner"></div>
@@ -697,7 +753,7 @@ function UserPage() {
                         )
                         
                     )}
-                    {selectedButton === 3 && (  
+                    {type === "Likes" && (  
                         likedGamesLoading ? ( 
                             <div style={{display:"flex",justifyContent:"center",alignItems:"center",  width:"100%",height:"100%"}}> 
                                 <div className="spinner"></div>
@@ -768,7 +824,7 @@ function UserPage() {
                                                             <div style={{maxWidth:"100%",overflow:"hidden"}}>  
                                                                 <p style={{color:"white",padding:"10px",margin:0,marginTop:"20px"}}>{data.review.review}</p> 
                                                                 <div style={{display:"flex",alignItems:"center",marginLeft:"10PX",marginBottom:"10px"}}>  
-                                                                    <Link  to={`/user/${data.review.creator.userName}`} >
+                                                                    <Link  to={`/user/${data.review.creator.userName}/Posts`} >
                                                                         <img style={{width:"40px",borderRadius:"50%",height:"40px"}} src={data.review.creator.avatar_url}></img> 
                                                                     </Link>   
                                                                     <div style={{marginLeft:"10px"}}>
@@ -813,7 +869,7 @@ function UserPage() {
                         )
                         
                     )}  
-                    {selectedButton === 4 && ( 
+                    {type === "Reviews" && ( 
                         likedGamesLoading ? (  
                             <div style={{display:"flex",justifyContent:"center",alignItems:"center",  width:"100%",height:"100%"}}> 
                                 <div className="spinner"></div>
@@ -846,12 +902,12 @@ function UserPage() {
                                                             </div>
                                                             <div style={{display:"flex",alignItems:"center",marginTop:"10px",marginLeft:"10PX"}}> 
                                                                     {data.isLiked ?   
-                                                                        <div  className="review-hearth-container-liked" onClick={(e)=>{e.preventDefault();handlereviewunlike(data.review_id.id)}}>
+                                                                        <div  className="review-hearth-container-liked" onClick={(e)=>{e.preventDefault();handlereviewsunlike(data.id)}}>
                                                                             <FaHeart className="hearth-review" style={{marginTop:"3px"}} size={15} color="red"  /> 
                                                                             <p>Liked</p>   
                                                                         </div>
                                                                             :     
-                                                                        <div className="review-hearth-container" onClick={(e)=>{e.preventDefault();handlereviewlike(data.review_id,data.user_id,data.game_id)}}>
+                                                                        <div className="review-hearth-container" onClick={(e)=>{e.preventDefault();handlereviewslike(data.id,data.user_id,data.game_id)}}>
                                                                             <FaHeart  style={{marginTop:"3px"}}  size={15} color="grey" />  
                                                                             <p>Like Review</p>
                                                                         </div>  }  

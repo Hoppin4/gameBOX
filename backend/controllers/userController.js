@@ -409,11 +409,11 @@ const unreviewlike = async(req,res)=>{
 const getlikedReviews = async(req,res)=>{ 
     const userId = req.query.userId 
      try{
-        const response = await supabase.from('reviews_like') 
-        .select('*,game:Games(*),review:Reviews(*,creator:Users(*))')
-        .eq('user_id',userId)  
-        .order('created_at',{ascending:false})
-         
+        const response = await supabase
+        .from('reviews_like')
+        .select('*, game:Games(*), review:Reviews(*, creator:Users(*))')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
         res.json(response)
     }catch(error){ 
         res.json(error)
