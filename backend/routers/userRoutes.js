@@ -4,7 +4,10 @@ const {registerUser,userLogin,getSession,logOut,updateProfile,getUser,upload,upl
     getLikedGames,likeList,
     unlikeList,
     checkLikedList,
-    getLikedLists} = require('../controllers/userController');
+    getLikedLists,
+    checkReviewLiked,
+    unreviewlike,
+    getlikedReviews} = require('../controllers/userController');
 const router = express.Router();
 
 router.post('/upload', upload.single('image'), uploadImage);
@@ -27,5 +30,8 @@ router.get('/getLikedGames',getLikedGames)
 router.post('/likeList',likeList) 
 router.delete('/unlikeList',unlikeList) 
 router.get('/checkLikedList',checkLikedList) 
-router.get('/getLikedLists',getLikedLists)
+router.get('/getLikedLists',getLikedLists) 
+router.get('/checkReviewLiked',checkReviewLiked) 
+router.delete('/unreviewlike',unreviewlike) 
+router.get('/getLikedReviews',getlikedReviews)
 module.exports = router;

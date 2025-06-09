@@ -376,7 +376,50 @@ const getLikedLists = async(req,res)=>{
       }catch(error){
         res.json(error)
       }
+}  
+const checkReviewLiked = async (req,res)=>{
+  const userId = req.query.userId; 
+  const commentIds = req.query.commentIds 
+   
+  try{ 
+    const response = await supabase.from('reviews_like') 
+    .select('review_id') 
+    .eq('user_id',userId) 
+    .in('review_id',commentIds) 
+    res.json(response)
+  }catch(error){
+    res.json(error)
+  }
 } 
+const unreviewlike = async(req,res)=>{ 
+    const userId = req.query.userId; 
+    const  review_id = req.query.review_id  
+    
+    try{
+        const response = await supabase.from('reviews_like') 
+        .delete()
+        .eq('user_id',userId)  
+        .eq('review_id',review_id)
+         
+        res.json(response)
+    }catch(error){ 
+        res.json(error)
+    }
+} 
+const getlikedReviews = async(req,res)=>{ 
+    const userId = req.query.userId 
+     try{
+        const response = await supabase.from('reviews_like') 
+        .select('*,game:Games(*),review:Reviews(*,creator:Users(*))')
+        .eq('user_id',userId)  
+        .order('created_at',{ascending:false})
+         
+        res.json(response)
+    }catch(error){ 
+        res.json(error)
+    }
+}
 module.exports = { getUser,registerUser,userLogin,getSession,logOut,updateProfile,upload, 
    uploadImage,verify,getUser2,getNotifications,handleread ,handlefollow,handleunfollow, 
-   checkfollows,getFollowers,getFollowings,getLikedGames,likeList,unlikeList,checkLikedList,getLikedLists}; 
+   checkfollows,getFollowers,getFollowings,getLikedGames,likeList,unlikeList,checkLikedList 
+   ,getLikedLists,checkReviewLiked,unreviewlike,getlikedReviews}; 

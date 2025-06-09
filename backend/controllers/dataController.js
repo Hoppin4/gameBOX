@@ -557,6 +557,7 @@ const getUserReviews = async(req,res) =>{
         .from('Reviews')  
         .select('*,games:Games(game_id,game_name,game_image)') 
         .eq('user_id',userId) 
+        .order('created_at',{ascending:false}) 
         .limit(limit) 
          
         res.status(200).json({ message: 'Data sent successfully', response });
