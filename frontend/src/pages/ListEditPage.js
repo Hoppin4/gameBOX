@@ -147,7 +147,7 @@ function ListEditPage() {
                 await Promise.all(deletePromises); 
               }
                 
-                console.log(listId);
+                
                 const gamePromises = addedGames.map((game) => { 
                       return axios.post(`${process.env.REACT_APP_BACKEND}/api/insertGameToList`, { 
                           listId: listId, 
@@ -160,7 +160,7 @@ function ListEditPage() {
                   await Promise.all(gamePromises);    
                   
                 setTimeout(() => {
-                  navigate(`user/${session.userName}/Lists`);
+                  navigate(`/user/${session.userName}/Lists`);
                 }, 1500);
 
                
