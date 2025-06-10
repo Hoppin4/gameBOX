@@ -9,11 +9,13 @@ import { FaHeart,FaHotjar,FaCrown,FaWindows,FaPlaystation,FaXbox,FaApple } from 
 import { AiFillDashboard } from "react-icons/ai"; 
 import { TbPlayerTrackNextFilled } from "react-icons/tb";
 import { GiTrophyCup } from "react-icons/gi";  
-import { BsNintendoSwitch,BsAndroid2 } from "react-icons/bs";
+import { BsNintendoSwitch,BsAndroid2 } from "react-icons/bs"; 
+import { CiLogout } from "react-icons/ci"; 
+import { useNavigate } from "react-router-dom";
 
 function LeftLayout(){   
-    const { loggedIn, setLoggedIn,session } = useContext(AuthContext);
-  
+    const { loggedIn, setLoggedIn,session,setSession } = useContext(AuthContext);
+    const navigate = useNavigate()
    
     const [searchResults,setSearchResults] = useState([]); 
     const [searchLoading,setSearchLoading] = useState(false); 
@@ -32,7 +34,20 @@ function LeftLayout(){
       } finally {
         setSearchLoading(false);
       }
-    };
+    }; 
+    const logOut = async () => {        
+        try{ 
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND}/user/logout`);  
+            
+        }catch(error){ 
+            console.error('Error fetching session:', error); 
+        }finally{
+            setLoggedIn(false) 
+            setSession(null)
+            navigate("/signup"); 
+        }
+        console.log("User logged out");     
+    }; 
    useEffect(() => {
           const delayDebounce = setTimeout(() => {
             if (searchTerm.length > 2   ) {
@@ -82,18 +97,18 @@ function LeftLayout(){
             </div> 
             {loggedIn && session && session.userName && ( 
                 <div> 
-                    <Link style={{textDecoration:"none",color:"white",display:"flex",alignItems:"center"}} to={`/${session.userName}`}>
-                    <img  src={session.user_avatar}></img>
-                    <h2 style={{fontWeight:"bold",marginLeft:"5px",marginBottom:"0"}}>{session.userName}</h2> 
+                    <Link style={{textDecoration:"none",color:"white",display:"flex",alignItems:"center"}} to={`/user/${session.userName}/Posts`}>
+                        <img  src={session.user_avatar}></img>
+                        <h2 style={{fontWeight:"bold",marginLeft:"5px",marginBottom:"0"}}>{session.userName}</h2> 
                     </Link>   
-                    <Link className="link-container"  to={`/reviews/${session.userId}`} >  
+                    <Link className="link-container"  to={`/user/${session.userName}/Reviews`} >  
                         <div className="layoutIcons"> 
                             <FaHeart size={20} className="layoutI"/>
                         </div>
                         
                         <p>My Reviews</p>  
                     </Link> 
-                    <Link className="link-container" to={`/${session.userName}`}>  
+                    <Link className="link-container" to={`/user/${session.userName}/Lists`}>  
                     <div className="layoutIcons"> 
                         <BsCollection size={20} className="layoutI"/>   
                     </div>
@@ -174,7 +189,15 @@ function LeftLayout(){
                         </div>
                         <p>Android</p>
                     </Link>    
-
+                    {session && ( 
+                                            <div className="link-container" onClick={()=>logOut()}>  
+                                                <div className="layoutIcons1">
+                                                    <CiLogout  size={20} className="layoutI" /> 
+                                                </div>
+                                                <p>Logout</p>  
+                                            
+                                        </div>
+                                        )}
             <Outlet/>
         </div>
     )

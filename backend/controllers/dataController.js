@@ -178,11 +178,6 @@ const getReview = async (req, res) => {
             .eq('user_id', userId)
             .eq('game_id', gameId)
             .maybeSingle(); 
-     const {data:user}= await supabase 
-            .from('reviews_like') 
-            .select(`*`)
-            .eq('game_id', gameId) 
-            .eq('user_id',userId) 
     const {data:liked} = await supabase 
             .from('LikedGames') 
             .select('*') 
@@ -190,7 +185,7 @@ const getReview = async (req, res) => {
             .eq('user_id',userId)  
             .maybeSingle(); 
 
-            return res.status(200).json({ review: data , userLike:user,liked:liked });
+            return res.status(200).json({ review: data ,liked:liked });
     } catch (error) { 
         res.status(500).json({ message: 'Veri çekme hatası', error: error.message });
     }

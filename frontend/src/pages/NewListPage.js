@@ -101,7 +101,7 @@ function NewListPage() {
                   await Promise.all(gamePromises);    
                 }  
                 setTimeout(() => {
-                  navigate(`/${session.userName}`);
+                  navigate(`/user/${session.userName}/Lists`);
                 }, 1500);
 
                

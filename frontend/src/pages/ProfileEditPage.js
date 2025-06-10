@@ -66,8 +66,8 @@ function ProfileEditPage() {
   },[]);
 
 
-    const handleUpdate = async (e) => { 
-        e.preventDefault(); 
+    const handleUpdate = async () => { 
+        
         try { 
             const response = await axios.post(`${process.env.REACT_APP_BACKEND}/user/updateProfile`, {id,user_email,userName,firstName,lastName,bio,birthday,gender});  
             alert("Profile updated successfully!")
@@ -138,7 +138,7 @@ function ProfileEditPage() {
             </select>
             </div> 
             
-            <button className="saveButton"onClick={handleUpdate}>Save Changes</button> 
+            <button className="saveButton"onClick={()=>handleUpdate()}>Save Changes</button> 
             </div>
           </div>
       )}

@@ -174,7 +174,7 @@ if (notificationLoading) {
 
  
   return (
-    <AuthContext.Provider value={{myCommunityList,getMyList,removeFromList,addToList,listLoading , loggedIn, setLoggedIn,loading,session,notifications}}> 
+    <AuthContext.Provider value={{myCommunityList,getMyList,removeFromList,addToList,listLoading , loggedIn, setLoggedIn,loading,session,notifications,setSession}}> 
     <Toaster position="top-left" />
       {children}
     </AuthContext.Provider>

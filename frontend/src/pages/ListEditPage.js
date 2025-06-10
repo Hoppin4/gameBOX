@@ -135,10 +135,6 @@ function ListEditPage() {
                
                 const deletedGames = oldList.filter((oldGame) => !gameList.some((newGame) => newGame.game_id === oldGame.game_id)); 
                 const addedGames = gameList.filter((newGame) => !oldList.some((oldGame) => oldGame.game_id === newGame.game_id)); 
-               console.log("deletedGames",deletedGames); 
-                console.log("addedGames",addedGames);
-                
-
               if(deletedGames.length > 0 ) {
                 const deletePromises = deletedGames.map((game) => { 
                   console.log(game.game_id); 
@@ -164,7 +160,7 @@ function ListEditPage() {
                   await Promise.all(gamePromises);    
                   
                 setTimeout(() => {
-                  navigate(`/${session.userName}`);
+                  navigate(`user/${session.userName}/Lists`);
                 }, 1500);
 
                

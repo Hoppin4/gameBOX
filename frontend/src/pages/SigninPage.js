@@ -48,7 +48,7 @@ const SingupPage = () => {
     useEffect(() => {
         if (loggedIn && session?.userName) { 
             console.log("session",session)
-          navigate(`/${session.userName}`);
+          navigate(`/user/${session.userName}/Posts`);
         }
       }, [loggedIn, session]); 
     

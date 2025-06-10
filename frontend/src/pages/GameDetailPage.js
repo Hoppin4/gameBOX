@@ -124,9 +124,14 @@ import LeftLayout from "./LeftLayout";
         
                 
 
-   
+    console.log(gameId) 
+             console.log(image) 
+              console.log(gameTitle)
   
-    useEffect(()=>{ 
+    useEffect(()=>{  
+        let commentIds; 
+        let likedIds; 
+        let comments;
         setRating("") 
         setLiked(false) 
         setPlayed(false)  
@@ -134,8 +139,6 @@ import LeftLayout from "./LeftLayout";
         const getGamebyId = async () => {  
             
 
-            if (hasFetched.current) return; 
-                hasFetched.current = true; 
      
             setLoading(true);       
             try{ 
@@ -147,10 +150,28 @@ import LeftLayout from "./LeftLayout";
                 setReviews(response.data.reviews); 
                 setSlider(response.data.screenshots); 
                 setSeries(response.data.series); 
-                setUserReview(response.data.userReview);  
                 setStores(response.data.stores); 
-                setPosts(response.data.posts); 
-
+                setPosts(response.data.posts);  
+                
+                if(session){  
+                    comments = response.data.userReview
+                    commentIds = response.data.userReview.map(c=>c.id) 
+                    const response2 = await axios.get(`${process.env.REACT_APP_BACKEND}/user/checkReviewLiked`,{
+                        params:{
+                            userId:session.userId, 
+                            commentIds:commentIds
+                        }
+                    })    
+                    likedIds = new Set(response2.data.data.map(r => r.review_id));  
+                    const reviewsWithLikes = comments.map(comment => ({
+                        ...comment,
+                        liked_by_me: likedIds.has(comment.id)
+                    })); 
+                    setUserReview(reviewsWithLikes) 
+              
+                }else{ 
+                    setUserReview(response.data.userReview); 
+                }
                  
                 
             }catch(error){ 
@@ -158,8 +179,9 @@ import LeftLayout from "./LeftLayout";
             }finally{ 
                 setLoading(false)
             }
-        };   
-        if(gameId !== null){
+        };    
+        if(gameId !== null){ 
+           
                getGamebyId();
         }
      
@@ -172,7 +194,7 @@ import LeftLayout from "./LeftLayout";
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/getReview`, { 
                     params: { gameId: gameId, userId: userId } 
                 });  
-              console.log(response) 
+             
                if(response.data.liked !== null){  
                          setLiked(true); 
                 }
@@ -181,25 +203,14 @@ import LeftLayout from "./LeftLayout";
                     setRating(response.data.review.rating); 
                     setPlayed(response.data.review.played); 
                 }   
-                 
-                const likeMap = new Map(); 
-                    response.data.userLike.forEach(like => {
-                    likeMap.set(like.review_id, like.id);
-                    });
 
-                    setUserReview(userReview.map(comment => ({
-                    ...comment,
-                    liked_by_me: likeMap.has(comment.id),
-                    likeid: likeMap.get(comment.id) || null,
-                })));
-                console.log(response)
             }catch(error){ 
                 console.error('Error getting review:', error); 
             }  finally{ 
                 setReviewLoading(false);
             }
         } 
-        if(loggedIn ){
+        if(loggedIn){
             getReview(gameId,session.userId);
         }
         
@@ -312,14 +323,15 @@ import LeftLayout from "./LeftLayout";
             setUserReview((prev)=>prev.map((r)=>(r.id===reviewId ? {...r,liked_by_me:true,likeid:id,like_count:r.like_count+1} : r )))
         }
     } 
-    const handlereviewunlike = async(reviewId,likeId)=>{ 
+    const handlereviewunlike = async(reviewId)=>{ 
           if(!session){ 
             return navigate('/signup');
         } 
         try{ 
-            const response = await axios.delete(`${process.env.REACT_APP_BACKEND}/api/unreviewlike`,{ 
+            const response = await axios.delete(`${process.env.REACT_APP_BACKEND}/user/unreviewlike`,{ 
                 params:{ 
-                    like_id:likeId
+                    userId:session.userId,
+                    review_id:reviewId
                 }
             })
         }catch(error){ 
@@ -733,7 +745,7 @@ import LeftLayout from "./LeftLayout";
                         <div className="seriesContainer">  
                             
                             {series.results.map((data,index)=>(  
-                                <Link className="serieslink" to={`/GamedetailPage/${data.id}/${data.slug}`} state={{ gameImage: data.background_image }}key={index} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:"white",backgroundColor:"transparent",border:"none",cursor:"pointer",textDecoration:"none",marginLeft:"10px"}}> 
+                                <Link className="serieslink" to={`/GamedetailPage/${data.id}/${data.name}`} state={{ gameImage: data.background_image }}key={index} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:"white",backgroundColor:"transparent",border:"none",cursor:"pointer",textDecoration:"none",marginLeft:"10px"}}> 
                                     <div style={{height:"60px"}}>  
                                         <p style={{fontSize:"15px",marginTop:20,color:"grey"}}>{data.name}</p> 
                                     </div> 

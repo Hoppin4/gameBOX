@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 
 
  function ProfilePage()  {   
-    const { loggedIn,loading, setLoggedIn,session, } = useContext(AuthContext);   
+    const { loggedIn,loading, setLoggedIn,session,setSession } = useContext(AuthContext);   
     const [listData, setListData] = useState([]);
     const [listLoading, setListLoading] = useState(false);
     const [userData, setUserData] = useState("")
@@ -41,7 +41,8 @@ import Swal from 'sweetalert2';
         }catch(error){ 
             console.error('Error fetching session:', error); 
         }finally{
-            setLoggedIn(false)
+            setLoggedIn(false) 
+            setSession(null)
             navigate("/signup"); 
         }
         console.log("User logged out");     

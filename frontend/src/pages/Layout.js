@@ -43,7 +43,7 @@ console.log(notifications)
            ) : (
             session && session.userName && ( 
             <div style={{display:"flex",justifyContent:"center",alignItems:"center"}}> 
-                <li><Link to={`/${session.userName}`}>Profile</Link></li> 
+                <li><Link to={`/user/${session.userName}/Posts`}>Profile</Link></li> 
    
                     <div class="dropdown-notifications">  
                             <IoIosNotifications onClick={()=>handleread()} className="notifications" color="gold" size={25}/> 

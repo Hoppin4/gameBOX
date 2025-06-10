@@ -19,12 +19,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "../styles/leftLayout.css"  
 import { TbBuildingBroadcastTowerFilled } from "react-icons/tb";
-
+import { CiLogout } from "react-icons/ci";
 import { useNavigate } from 'react-router-dom';
 
 function CommunityLeftLayout(){    
     const navigate = useNavigate();
-    const { loggedIn,session,addToList } = useContext(AuthContext);
+    const { loggedIn,session,addToList,setSession,setLoggedIn } = useContext(AuthContext);
     const [isOpenList, setIsOpenList] = useState(false);   
     const closeList = () => {setIsOpenList(false);setCommunityName("");setDescription("");setPage(1);} ;   
     const [communityName,setCommunityName] = useState("");   
@@ -162,7 +162,19 @@ function CommunityLeftLayout(){
     
         }
    }  
-  
+  const logOut = async () => {        
+        try{ 
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND}/user/logout`);  
+            
+        }catch(error){ 
+            console.error('Error fetching session:', error); 
+        }finally{
+            setLoggedIn(false) 
+            setSession(null)
+            navigate("/signup"); 
+        }
+        console.log("User logged out");     
+    }; 
 
 
     return( 
@@ -178,7 +190,7 @@ function CommunityLeftLayout(){
             </Link>    
             {loggedIn && session && session.userName && ( 
                 <div style={{marginTop:"10px"}}> 
-                    <Link style={{textDecoration:"none",color:"white",display:"flex",alignItems:"center"}} to={`/${session.userName}`}>
+                    <Link style={{textDecoration:"none",color:"white",display:"flex",alignItems:"center"}} to={`/user/${session.userName}/Posts`}>
                     <img  src={session.user_avatar}></img>
                     <h2 style={{fontWeight:"bold",marginLeft:"5px",marginBottom:"0"}}>{session.userName}</h2> 
                     </Link>   
@@ -339,8 +351,17 @@ function CommunityLeftLayout(){
                             </div>
                             <p>Create a Community</p>  
                         
+                    </div> 
+                    {session && ( 
+                        <div className="link-container" onClick={()=>logOut()}>  
+                            <div className="layoutIcons1">
+                                <CiLogout  size={20} className="layoutI" /> 
+                            </div>
+                            <p>Logout</p>  
+                        
                     </div>
-
+                    )}
+                   
 
             <Outlet/>
         </div>

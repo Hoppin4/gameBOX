@@ -12,7 +12,7 @@ import { CiChat1 } from "react-icons/ci";
 import Swal from 'sweetalert2'; 
 import CommunityLeftLayout from "../communitypages/CommunityLeftLayout";
 import { GiCakeSlice } from "react-icons/gi";
-import { FaPencilAlt } from "react-icons/fa";
+import { FaPencilAlt,FaTrashAlt } from "react-icons/fa";
 import { GiJetPack } from "react-icons/gi"; 
 import { FaHotjar } from "react-icons/fa";   
 import { FaBoxArchive } from "react-icons/fa6"; 
@@ -171,9 +171,7 @@ function UserPage() {
     }  
     const getList = async () => {   
         setPostLoading(true)  
-        if(listData.length>0){ 
-            return
-        }
+      
         setListLoading(true);
         try { 
             const response = await axios.get(`${process.env.REACT_APP_BACKEND}/api/getList`, { 
@@ -485,6 +483,32 @@ function UserPage() {
             setLikedGamesLoading(false) 
            
         }
+    } 
+    const handleClick = (id) => {
+        Swal.fire({
+          title: 'Are You Sure?',
+          text: "You can't take it back!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            
+            handledelete(id);
+          } 
+        }); 
+    }  
+   
+    const handledelete = async (id) => { 
+        try {  
+            
+            const response = await axios.delete(`${process.env.REACT_APP_BACKEND}/api/deleteList`, { params :{listId: id }}); 
+            console.log("List deleted:", response.data); 
+            setListData((prevList) => prevList.filter((list) => list.id !== id)); 
+        } catch (error) { 
+            console.error('Error deleting list:', error); 
+        } 
     }
    const skipNextPageEffect = useRef(false);
    useEffect(() => {  
@@ -533,7 +557,7 @@ function UserPage() {
             }
         }
     },[type,userId])
-   console.log(reviews)
+   console.log(listData)
     return(
         <div className="main">   
       
@@ -547,8 +571,11 @@ function UserPage() {
                     <div style={{display:"flex",justifyContent:"flex-start",alignItems:"center",gap:"5px",width:"100%",marginTop:"20px",borderBottom:"1px solid grey",padding:"10px",position:"relative",paddingBottom:"30px"}}>  
                         <img style={{width:"80px",height:"80px",borderRadius:"50%",objectFit:"fill"}} src={userData.avatar_url}></img> 
                         <div style={{display:"flex",flexDirection:"column"}}>   
-                            <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:"10px"}}>
-                                <p style={{color:"white",margin:0,marginLeft:"10px",marginBottom:"10px",fontSize:"20px"}}>{userData.userName}</p>     
+                            <div style={{display:"flex",justifyContent:"center",alignItems:"center",gap:"10px"}}> 
+                                <p style={{color:"white",margin:0,marginLeft:"10px",marginBottom:"10px",fontSize:"20px"}}>{userData.userName}</p>  
+                                {session?.userId === userId && (  
+                                    <Link style={{backgroundColor:"#772CE8",textDecoration:"none",color:"white",borderRadius:"20px",padding:"5px",fontWeight:"600",fontSize:"12px",marginBottom:"5px"}} to={`/${session.userName}/edit`} state={{ userData: userData }}>EDIT PROFILE</Link>  
+                                )}   
                                 {session?.userId !== userId && (  
                                     followStatus === null ? ( 
                                         <button className="followbutton" onClick={()=>handlefollow()}>Follow</button>
@@ -559,12 +586,14 @@ function UserPage() {
                             </div>
                           
                             <p style={{color:"grey",margin:0,marginLeft:"10px"}}>{userData?.firstName} {userData?.lastName}</p>  
-                            <p>{userData?.bio}</p> 
+                            <p style={{color:"#525d6b",margin:0,marginLeft:"10px",fontSize:"12px",marginTop:"10PX"}}>{userData?.bio}</p> 
                         </div>   
-                        <div style={{marginLeft:"150px",display:"flex"}}>  
-                            <p style={{color:"grey",cursor:"pointer"}} onClick={()=>{setFstatus("Followers");openmodal2()}}>{followersCount} Followers</p> 
-                            <p style={{color:"grey",marginLeft:"10px",cursor:"pointer"}}onClick={()=>{setFstatus("Following");openmodal()}}>{followingCount} Following</p> 
-                            <Modal 
+                        <div style={{display:"flex"}}>   
+                            <div style={{position:"absolute",display:"flex",right:"40%"}}>
+                                <p style={{color:"grey",cursor:"pointer"}} onClick={()=>{setFstatus("Followers");openmodal2()}}>{followersCount} Followers</p> 
+                                <p style={{color:"grey",marginLeft:"10px",cursor:"pointer"}}onClick={()=>{setFstatus("Following");openmodal()}}>{followingCount} Following</p> 
+                            </div>
+                             <Modal 
                                     isOpen={isOpenList} 
                                     onRequestClose={closeList} 
                                     contentLabel="Information Modal"
@@ -583,7 +612,7 @@ function UserPage() {
                                 ) : (  
                                     <div className="followers_container_up">
                                      {followers.map((data,index)=>( 
-                                        <Link key={index} className="followers_container" onClick={()=>closeList()} to={`/user/${data.user.userName}`}>   
+                                        <Link key={index} className="followers_container" onClick={()=>closeList()} to={`/user/${data.user.userName}/Posts`}>   
                                             <img src={data.user.avatar_url} style={{width:"50px",height:"50px",borderRadius:"50%"}}></img>
                                             <p style={{marginLeft:"10px",fontSize:"16px",fontWeight:"600"}}>{data.user.userName}</p>
                                         </Link>
@@ -606,9 +635,9 @@ function UserPage() {
                     </div>  
                     <div style={{display:"flex",justifyContent:"flex-start",alignItems:"center",width:"100%",padding:"10px"}}>
                         <button style={{cursor:"pointer"}} className={type === "Posts" ? "users-button-active": "users-button"} onClick={()=>{nav(`/user/${userData.userName}/Posts`)}}>Posts</button> 
-                        <button style={{cursor:"pointer"}} className={type === "Lists" ? "users-button-active": "users-button"} onClick={()=>{nav(`/user/${userData.userName}/Lists`);getList();}}>Lists</button>  
-                        <button style={{cursor:"pointer"}} className={type === "Reviews" ? "users-button-active": "users-button"} onClick={()=>{getUserReviews();nav(`/user/${userData.userName}/Reviews`);}}>Reviews</button> 
-                        <button style={{cursor:"pointer"}} className={type === "Likes" ? "users-button-active": "users-button"} onClick={()=>{getGames();nav(`/user/${userData.userName}/Likes`);}}>Likes</button>  
+                        <button style={{cursor:"pointer"}} className={type === "Lists" ? "users-button-active": "users-button"} onClick={()=>{nav(`/user/${userData.userName}/Lists`);}}>Lists</button>  
+                        <button style={{cursor:"pointer"}} className={type === "Reviews" ? "users-button-active": "users-button"} onClick={()=>{nav(`/user/${userData.userName}/Reviews`);}}>Reviews</button> 
+                        <button style={{cursor:"pointer"}} className={type === "Likes" ? "users-button-active": "users-button"} onClick={()=>{nav(`/user/${userData.userName}/Likes`);}}>Likes</button>  
                      </div> 
                      {type === "Posts" && ( 
                         <div>
@@ -722,6 +751,13 @@ function UserPage() {
 
                         ) : ( 
                             <div className="listItemsContainer" style={{backgroundColor:"black"}}>  
+                                {session?.userId === userId && ( 
+                                     <div className="list-header">  
+                                        <p style={{color:"grey",fontSize:"25px",margin:0}}>Your Lists</p> 
+                                        <Link to={`/list/new`} className="create-list">CREATE LIST</Link>
+                                     </div> 
+                                )}   
+                               
                                                         {listData.length > 0 ? (   
                                                             listData.map((list) => list.gamecount > 0 && ( 
                                                                 <div key={list.id} className="listItem" >  
@@ -737,13 +773,20 @@ function UserPage() {
                                                                     <div className="listNameContainer" > 
                                                                         <p style={{marginTop:"5px",color:"white",fontSize:"20px",fontWeight:"bold"}}>{list.name}</p>    
                                                                         <div style={{display:"flex",alignItems:"center",padding:"6px 0px 5px 0px",borderRadius:"10px"}}> 
-                                                                            <p style={{padding:"0px",margin:"0px 10px 0px 0px"}}>{list.gamecount} Games</p>   
+                                                                            <p style={{padding:"0px",margin:"0px 10px 0px 0px"}}>{list.gamecount} Games</p>  
+                                                                            {session?.userId === list.user_id && (
+                                                                                    <Link to={`/list/${list.id}/edit`} state={{ list: list }} style={{textDecoration:"none",color:"white"}}> 
+                                                                                        <FaPencilAlt size={15}  style={{cursor:"pointer"}} className="pencil" /> 
+                                                                                    </Link>
+                                                                            )}  
                                                                             
                                                                         </div>
                                                                         <p>{list.description}</p>  
                                                                     </div>
-                                                                    
-                                                                
+                                                                    {session?.userId === list.user_id && ( 
+                                                                        <FaTrashAlt style={{cursor:"pointer"}} color="red" onClick={()=>handleClick(list.id)} />
+
+                                                                    )}
                                                                 </div> 
                                                             )) 
                                                         ) : ( 
@@ -784,7 +827,7 @@ function UserPage() {
                                                                      
                                                                         <Link className="listImageContainer" to={`/list/${list.list_id}`} style={{textDecoration:"none"}}>
                                                                             <div className="imageCover"> <img src={list.list.first_four_images && list.list.first_four_images.length > 0 ? list.list.first_four_images[0] : blackScreen }  /></div> 
-                                                                            <div className="imageCover"> <img src={list.list.first_four_images && list.list.first_four_images.length > 1 ? list.list.first_four_images[1] : blackScreen }  /></div> 
+                                                                            <div className=" imageCover"> <img src={list.list.first_four_images && list.list.first_four_images.length > 1 ? list.list.first_four_images[1] : blackScreen }  /></div> 
                                                                             <div className="imageCover"><img src={list.list.first_four_images && list.list.first_four_images.length > 2 ? list.list.first_four_images[2] : blackScreen }  /></div> 
                                                                             <div className="imageCover"><img src={list.list.first_four_images && list.list.first_four_images.length > 3 ? list.list.first_four_images[3] : blackScreen }  /></div> 
                                                                         </Link> 
@@ -792,12 +835,12 @@ function UserPage() {
                                                                     <div className="listNameContainer" > 
                                                                         <p style={{marginTop:"5px",color:"white",fontSize:"20px",fontWeight:"bold"}}>{list.list.name}</p>    
                                                                         <div style={{display:"flex",alignItems:"center",padding:"6px 0px 5px 0px",borderRadius:"10px"}}>  
-                                                                            <Link style={{display:"flex",alignItems:"center",textDecoration:"none"}} to={`/user/${list.list.user.userName}`}>
+                                                                            <Link style={{display:"flex",alignItems:"center",textDecoration:"none"}} to={`/user/${list.list.user.userName}/Posts`}>
                                                                                 <img src={list.list.user.avatar_url} style={{width:"30px",height:"30px",objectFit:"contain",borderRadius:"50%",marginRight:"5px"}}></img>  
                                                                                 <p style={{fontSize:"12px",margin:0,marginRight:"15px"}}>{list.list.user.userName}</p>
                                                                             </Link> 
-                                                                             <p style={{fontSize:"12px",margin:0}}>{list.list.gamecount} Games</p>   
-                                                                            
+                                                                             <p style={{fontSize:"12px",margin:0}}>{list.list.gamecount} Games</p>  
+                                    
                                                                         </div>
                                                                         <p>{list.list.description}</p>  
                                                                     </div>
